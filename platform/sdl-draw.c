@@ -1441,17 +1441,21 @@ int BrogueDrawContext_drawAsciiString(
     wchar_t *ustr;
     int i, err;
 
-    ustr = malloc(sizeof(wchar_t) * (strlen(str) + 1));
+    int ws_size = (strlen(str) + 1) * 3 + 1;
+    ustr = malloc(sizeof(wchar_t) * ws_size);
     if (ustr == NULL)
     {
 	return ENOMEM;
     }
 
-    for (i = 0; str[i]; i++)
-    {
-	ustr[i] = str[i];
-    }
-    ustr[i] = 0;
+ //    for (i = 0; str[i]; i++)
+ //    {
+	// ustr[i] = str[i];
+ //    }
+ //    ustr[i] = 0;
+ //    ustr[0] = L'\u6211';
+    T_unpack(str, ustr, ws_size);
+
 
     err = BrogueDrawContext_drawString(context, x, y, ustr);
 

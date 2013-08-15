@@ -4120,3 +4120,107 @@ BROGUE_WINDOW *printFloorItemDetails(item *theItem) {
 
 	return openTextBox(NULL, NULL, textBuf, x, 0, &white, NULL, 0);
 }
+
+
+/***********************************************/
+static unsigned int offsetsFromUTF8[6] = {
+    0x00000000UL, 0x00003080UL, 0x000E2080UL,
+    0x03C82080UL, 0xFA082080UL, 0x82082080UL
+};
+
+static const char trailingBytesForUTF8[256] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
+};
+
+/* conversions without error checking
+   only works for valid UTF-8, i.e. no 5- or 6-byte sequences
+   srcsz = source size in bytes, or -1 if 0-terminated
+   sz = dest size in # of wide characters
+
+   returns # characters converted
+   dest will always be L'\0'-terminated, even if there isn't enough room
+   for all the characters.
+   if sz = srcsz+1 (i.e. 4*srcsz+4 bytes), there will always be enough space.
+*/
+static int u8_toucs(wchar_t *dest, int sz, const char *src, int srcsz)
+{
+    wchar_t ch;
+    const char *src_end = src + srcsz;
+    int nb;
+    int i=0;
+
+    while (i < sz-1) {
+        nb = trailingBytesForUTF8[(unsigned char)*src];
+        if (srcsz == -1) {
+            if (*src == 0)
+                goto done_toucs;
+        }
+        else {
+            if (src + nb >= src_end)
+                goto done_toucs;
+        }
+        ch = 0;
+        switch (nb) {
+            /* these fall through deliberately */
+        case 3: ch += (unsigned char)*src++; ch <<= 6;
+        case 2: ch += (unsigned char)*src++; ch <<= 6;
+        case 1: ch += (unsigned char)*src++; ch <<= 6;
+        case 0: ch += (unsigned char)*src++;
+        }
+        ch -= offsetsFromUTF8[nb];
+        dest[i++] = ch;
+    }
+ done_toucs:
+    dest[i] = 0;
+    return i;
+}
+
+static int u8_wc_toutf8(char *dest, wchar_t ch)
+{
+    if (ch < 0x80) {
+        dest[0] = (char)ch;
+        return 1;
+    }
+    if (ch < 0x800) {
+        dest[0] = (ch>>6) | 0xC0;
+        dest[1] = (ch & 0x3F) | 0x80;
+        return 2;
+    }
+    if (ch < 0x10000) {
+        dest[0] = (ch>>12) | 0xE0;
+        dest[1] = ((ch>>6) & 0x3F) | 0x80;
+        dest[2] = (ch & 0x3F) | 0x80;
+        return 3;
+    }
+    if (ch < 0x110000) {
+        dest[0] = (ch>>18) | 0xF0;
+        dest[1] = ((ch>>12) & 0x3F) | 0x80;
+        dest[2] = ((ch>>6) & 0x3F) | 0x80;
+        dest[3] = (ch & 0x3F) | 0x80;
+        return 4;
+    }
+    return 0;
+}
+
+char* T(const wchar_t *ws) {
+    char* packed = calloc((wcslen(ws)*3 + 1), sizeof(char));
+    char* ptr = packed;
+    while (*ws != 0) {
+        ptr += u8_wc_toutf8(ptr, *ws);
+        ++ws;
+    }
+    *ptr = '\0';
+    return packed;
+}
+
+
+void T_unpack(const char* s, wchar_t *ws, int ws_size) {
+	u8_toucs(ws, ws_size, s, strlen(s)+1);
+}

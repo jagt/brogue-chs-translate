@@ -2855,6 +2855,9 @@ extern "C" {
 	BROGUE_WINDOW *ioGetRoot(void);
 	BROGUE_DRAW_COLOR colorForDisplay(color c);
 	
+	char* T(const wchar_t *ws);
+	void T_unpack(const char* s, wchar_t *ws, int ws_size);
+
 #if defined __cplusplus
 }
 #endif

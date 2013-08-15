@@ -108,7 +108,7 @@ boolean openFile(const char *path) {
 
 void welcome() {
     char buf[DCOLS*3], buf2[DCOLS*3];
-	message("Hello and welcome, adventurer, to the Dungeons of Doom!", false);
+	message(T(L"卧槽Hello and welcome, adventurer, to the Dungeons of Doom!"), false);
     strcpy(buf, "Retrieve the ");
     encodeMessageColor(buf, strlen(buf), &itemMessageColor);
     strcat(buf, "Amulet of Yendor");

@@ -32,7 +32,7 @@
 #include "sdl-svgset.h"
 
 #define MONO_FONT_FILENAME "Andale_Mono.ttf"
-#define SANS_FONT_FILENAME "FreeSans.ttf"
+#define SANS_FONT_FILENAME "Zfull-GB.ttf"
 #define SVG_PATH "svg"
 
 #define SCREEN_WIDTH 100
