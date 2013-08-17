@@ -3066,10 +3066,10 @@ void printHelpScreen() {
 	char helpText[BROGUE_HELP_LINE_COUNT][DCOLS*3] = {
 		"",
 		"",
-		"-- Commands --",
+		"-- 帮助 --",
 		"",
-		"         mouse  ****move cursor (including to examine monsters and terrain)",
-		"         click  ****travel",
+		"          鼠标  ****移动鼠标悬浮在感兴趣的地方，可以查看相关信息。",
+		"      左键单击  ****移动到指定位置，若点击敌人则进行攻击",
 		" control-click  ****advance one space",
 		"      <return>  ****enable keyboard cursor control",
 		"   <space/esc>  ****disable keyboard cursor control",
