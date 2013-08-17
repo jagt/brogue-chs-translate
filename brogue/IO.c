@@ -541,7 +541,7 @@ void mainInputLoop() {
 		originLoc[1] = player.yLoc;
 		
 		if (playingBack && cursorMode) {
-			temporaryMessage("Examine what? (<hjklyubn>, mouse, or <tab>)", false);
+			temporaryMessage("请选取查看的目标 (使用 <hjklyubn>, <tab> 键或者鼠标来进行选择)", false);
 		}
 		
 		if (!playingBack
@@ -1884,7 +1884,7 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 				recordKeystroke(DESCEND_KEY, false, false);
 				useStairs(1);
 			} else {
-				routeTo(rogue.downLoc[0], rogue.downLoc[1], "I see no way down.");
+				routeTo(rogue.downLoc[0], rogue.downLoc[1], "我还没找到往下一层的路。");
 			}
 			//refreshSideBar(-1, -1, false);
 			break;
@@ -1894,7 +1894,7 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 				recordKeystroke(ASCEND_KEY, false, false);
 				useStairs(-1);
 			} else {
-				routeTo(rogue.upLoc[0], rogue.upLoc[1], "I see no way up.");
+				routeTo(rogue.upLoc[0], rogue.upLoc[1], "我还没找到往上一层的路。");
 			}
 			//refreshSideBar(-1, -1, false);
 			break;
@@ -1946,9 +1946,9 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 			displayLevel();
 			refreshSideBar(-1, -1, false);
 			if (rogue.trueColorMode) {
-				messageWithColor("Color effects disabled. Press '\\' again to enable.", &teal, false);
+				messageWithColor("已禁用颜色特效。 再次按下 <\\> 键重新启用。", &teal, false);
 			} else {
-				messageWithColor("Color effects enabled. Press '\\' again to disable.", &teal, false);
+				messageWithColor("已启用颜色特效。 再次按下 <\\> 键重新禁用。", &teal, false);
 			}
 			break;
 //		case FIGHT_KEY:
@@ -1983,14 +1983,14 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 				return;
 			}
 			confirmMessages();
-			if ((rogue.playerTurnNumber < 50 || confirm("End this game and view a recording?", false))
-				&& dialogChooseFile(path, RECORDING_SUFFIX, "View recording: ")) {
+			if ((rogue.playerTurnNumber < 50 || confirm("是否终止当前游戏并播放录像？", false))
+				&& dialogChooseFile(path, RECORDING_SUFFIX, "请输入录像文件名字: ")) {
 				if (fileExists(path)) {
 					strcpy(rogue.nextGamePath, path);
 					rogue.nextGame = NG_VIEW_RECORDING;
 					rogue.gameHasEnded = true;
 				} else {
-					message("File not found.", false);
+					message("无法找到该录像文件。", false);
 				}
 			}
 			break;
@@ -1999,14 +1999,14 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 				return;
 			}
 			confirmMessages();
-			if ((rogue.playerTurnNumber < 50 || confirm("End this game and load a saved game?", false))
-				&& dialogChooseFile(path, GAME_SUFFIX, "Open saved game: ")) {
+			if ((rogue.playerTurnNumber < 50 || confirm("是否终止当前游戏并载入另外的游戏存档？", false))
+				&& dialogChooseFile(path, GAME_SUFFIX, "请输入存档文件名字: ")) {
 				if (fileExists(path)) {
 					strcpy(rogue.nextGamePath, path);
 					rogue.nextGame = NG_OPEN_GAME;
 					rogue.gameHasEnded = true;
 				} else {
-					message("File not found.", false);
+					message("无法找到该存档文件。", false);
 				}
 			}
 			break;
@@ -2014,21 +2014,21 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 			if (rogue.playbackMode) {
 				return;
 			}
-			if (confirm("Suspend this game? (This feature is still in beta.)", false)) {
+			if (confirm("中断当前游戏并存档？(存档功能并不完善，有可能会丢失进度。)", false)) {
 				saveGame();
 			}
 			break;
 		case NEW_GAME_KEY:
-			if (rogue.playerTurnNumber < 50 || confirm("End this game and begin a new game?", false)) {
+			if (rogue.playerTurnNumber < 50 || confirm("是否终止当前游戏并重新开始新游戏？", false)) {
 				rogue.nextGame = NG_NEW_GAME;
 				rogue.gameHasEnded = true;
 			}
 			break;
 		case QUIT_KEY:
-			if (confirm("Quit this game without saving?", false)) {
+			if (confirm("是否强制终止当前游戏？本次游戏的进度将丢失。", false)) {
 				recordKeystroke(QUIT_KEY, false, false);
 				rogue.quit = true;
-				gameOver("Quit", true);
+				gameOver("退出。", true);
 			}
 			break;
 		case SEED_KEY:
@@ -2994,7 +2994,6 @@ void breakUpLongWordsIn(char *sourceText, short width, boolean useHyphens) {
 		}
 	}
 	buf[m] = '\0';
-	printf("\n%s\n", buf);
 	strcpy(sourceText, buf);
 }
 
@@ -3290,25 +3289,25 @@ void printDiscoveriesScreen(void) {
 	BrogueDrawContext_enableJustify(
 		context, x, x + col_width, BROGUE_JUSTIFY_CENTER);
 
-	BrogueDrawContext_drawAsciiString(context, x, y, "Scrolls");	
+	BrogueDrawContext_drawAsciiString(context, x, y, "卷轴");	
 	y += NUMBER_SCROLL_KINDS + 2;
 
-	BrogueDrawContext_drawAsciiString(context, x, y, "Rings");
+	BrogueDrawContext_drawAsciiString(context, x, y, "戒指");
 	x += col_width;
 	y = 1;
 	BrogueDrawContext_enableJustify(
 		context, x, x + col_width, BROGUE_JUSTIFY_CENTER);
 
-	BrogueDrawContext_drawAsciiString(context, x, y, "Potions");
+	BrogueDrawContext_drawAsciiString(context, x, y, "药水");
 	x += col_width;
 	y = 1;
 	BrogueDrawContext_enableJustify(
 		context, x, x + col_width, BROGUE_JUSTIFY_CENTER);
 
-	BrogueDrawContext_drawAsciiString(context, x, y, "Staffs");
+	BrogueDrawContext_drawAsciiString(context, x, y, "法杖");
 	y += NUMBER_STAFF_KINDS + 2;
 	
-	BrogueDrawContext_drawAsciiString(context, x, y, "Wands");
+	BrogueDrawContext_drawAsciiString(context, x, y, "魔棒");
 	BrogueDrawContext_pop(context);
 
 	printDiscoveries(
@@ -3382,7 +3381,7 @@ void printHighScores(boolean hiliteMostRecent) {
 	BrogueDrawContext_setForeground(
 		context, colorForDisplay(scoreColor));
 	BrogueDrawContext_enableJustify(context, 0, COLS, BROGUE_JUSTIFY_CENTER);
-	BrogueDrawContext_drawAsciiString(context, 0, 0, "High Scores");
+	BrogueDrawContext_drawAsciiString(context, 0, 0, "最高分");
 	BrogueDrawContext_pop(context);
 
 	tabStops[0] = leftOffset + 3;
@@ -3410,7 +3409,7 @@ void printHighScores(boolean hiliteMostRecent) {
 	BrogueDrawContext_push(context);
 	BrogueDrawContext_enableJustify(context, 0, COLS, BROGUE_JUSTIFY_CENTER);
 	BrogueDrawContext_drawAsciiString(context, 0, ROWS - 1, 
-									  "Press space to continue.");
+									  "按空格键继续。");
 	BrogueDrawContext_pop(context);
 
 	waitForAcknowledgment();
@@ -3605,7 +3604,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 		} else {
 			healthBarColor = blueBar;
 		}
-		printProgressBar(0, y++, "生命", monst->currentHP, monst->info.maxHP, &healthBarColor, dim);
+		printProgressBar(0, y++, "体力", monst->currentHP, monst->info.maxHP, &healthBarColor, dim);
 	}
 	
 	if (monst == &player) {
@@ -3633,11 +3632,11 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 				sprintf(buf, "%s%i", statusStrings[STATUS_WEAKENED], monst->weaknessAmount);
 				printProgressBar(0, y++, buf, monst->status[i], monst->maxStatus[i], &redBar, dim);
 			} else if (i == STATUS_LEVITATING && monst->status[i] > 0) {
-				printProgressBar(0, y++, (monst == &player ? "Levitating" : "Flying"), monst->status[i], monst->maxStatus[i], &redBar, dim);
+				printProgressBar(0, y++, (monst == &player ? "悬浮" : "飞行"), monst->status[i], monst->maxStatus[i], &redBar, dim);
 			} else if (i == STATUS_POISONED
 					   && monst->status[i] > 0
 					   && monst->status[i] >= monst->currentHP) {
-				printProgressBar(0, y++, "Fatally Poisoned", monst->status[i], monst->maxStatus[i], &redBar, dim);
+				printProgressBar(0, y++, "已中剧毒", monst->status[i], monst->maxStatus[i], &redBar, dim);
 			} else if (statusStrings[i][0] && monst->status[i] > 0) {
 				printProgressBar(0, y++, statusStrings[i], monst->status[i], monst->maxStatus[i], &redBar, dim);
 			}
