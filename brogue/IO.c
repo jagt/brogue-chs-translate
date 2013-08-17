@@ -2257,7 +2257,7 @@ void waitForAcknowledgment() {
 	do {
 		nextBrogueEvent(&theEvent, false, false, false);
 		if (theEvent.eventType == KEYSTROKE && theEvent.param1 != ACKNOWLEDGE_KEY && theEvent.param1 != ESCAPE_KEY) {
-			flashTemporaryAlert(" -- Press space or click to continue -- ", 500);
+			flashTemporaryAlert(T(L" -- 按空格或点击 -- "), 500);
 		}
 	} while (!(theEvent.eventType == KEYSTROKE && (theEvent.param1 == ACKNOWLEDGE_KEY || theEvent.param1 == ESCAPE_KEY)
 			   || theEvent.eventType == MOUSE_UP));
@@ -4209,14 +4209,30 @@ static int u8_wc_toutf8(char *dest, wchar_t ch)
     return 0;
 }
 
+#define PACKED_BUF_SIZE 32
+static char* packed_strings[PACKED_BUF_SIZE] = {0};
+
 char* T(const wchar_t *ws) {
     char* packed = calloc((wcslen(ws)*3 + 1), sizeof(char));
     char* ptr = packed;
+    int ix;
+    boolean stored_flag;
     while (*ws != 0) {
         ptr += u8_wc_toutf8(ptr, *ws);
         ++ws;
     }
     *ptr = '\0';
+
+    stored_flag = false;
+    for (ix = 0; ix < PACKED_BUF_SIZE; ++ix) {
+    	if (packed_strings[ix] == 0) {
+    		packed_strings[ix] = packed;
+    		stored_flag = true;
+    		break;
+    	}
+    }
+
+    assert(stored_flag);
     return packed;
 }
 
@@ -4224,3 +4240,17 @@ char* T(const wchar_t *ws) {
 void T_unpack(const char* s, wchar_t *ws, int ws_size) {
 	u8_toucs(ws, ws_size, s, strlen(s)+1);
 }
+
+void T_free() {
+    int ix;
+    // this seems really dangerous
+    for (ix = 0; ix < PACKED_BUF_SIZE; ++ix) {
+    	if (packed_strings[ix] == 0) {
+    		return;
+    	}
+		free(packed_strings[ix]);
+		packed_strings[ix] = 0;
+	}
+}
+
+

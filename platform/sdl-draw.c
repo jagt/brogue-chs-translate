@@ -1460,7 +1460,8 @@ int BrogueDrawContext_drawAsciiString(
     err = BrogueDrawContext_drawString(context, x, y, ustr);
 
     free(ustr);
-
+    T_free();
+    
     return err;
 }
 
