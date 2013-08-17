@@ -118,6 +118,7 @@ void welcome() {
 	message(buf, false);
 	messageWithColor(T(L"游戏中可以随时按下 <?> 键获取帮助。"), &backgroundMessageColor, false);
 	flavorMessage("出口的大门突然自己关闭了。");
+	message(T(L"很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"), false);
 }
 
 // Seed is used as the dungeon seed unless it's zero, in which case generate a new one.

@@ -2953,7 +2953,7 @@ void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst
 // clever regarding hyphen placement. Plays nicely with color escapes.
 void breakUpLongWordsIn(char *sourceText, short width, boolean useHyphens) {
 	char buf[COLS * ROWS * 2] = "";
-	short i, m, nextChar, wordWidth;
+	short i, m, nextChar, wordWidth, u8clen;
 	//const short maxLength = useHyphens ? width - 1 : width;
 	
 	// i iterates over characters in sourceText; m keeps track of the length of buf.
@@ -2967,25 +2967,34 @@ void breakUpLongWordsIn(char *sourceText, short width, boolean useHyphens) {
 			wordWidth = 0;
 			buf[m++] = sourceText[i++];
 		} else {
-			if (!useHyphens && wordWidth >= width) {
-				buf[m++] = '\n';
-				wordWidth = 0;
-			} else if (useHyphens && wordWidth >= width - 1) {
-				nextChar = i+1;
-				while (sourceText[nextChar] == COLOR_ESCAPE) {
-					nextChar += 4;
-				}
-				if (sourceText[nextChar] && sourceText[nextChar] != ' ' && sourceText[nextChar] != '\n') {
-					buf[m++] = '-';
+			u8clen = u8_seqlen(sourceText + i);
+			if (u8clen == 1) {
+				if (!useHyphens && wordWidth >= width) {
 					buf[m++] = '\n';
 					wordWidth = 0;
+				} else if (useHyphens && wordWidth >= width - 1) {
+					nextChar = i+1;
+					while (sourceText[nextChar] == COLOR_ESCAPE) {
+						nextChar += 4;
+					}
+					if (sourceText[nextChar] && sourceText[nextChar] != ' ' && sourceText[nextChar] != '\n') {
+						buf[m++] = '-';
+						buf[m++] = '\n';
+						wordWidth = 0;
+					}
+				}
+				buf[m++] = sourceText[i++];
+				wordWidth++;
+			} else {
+				// do not break up unicode characters
+				while (u8clen--) {
+					buf[m++] = sourceText[i++];
 				}
 			}
-			buf[m++] = sourceText[i++];
-			wordWidth++;
 		}
 	}
 	buf[m] = '\0';
+	printf("\n%s\n", buf);
 	strcpy(sourceText, buf);
 }
 
@@ -2995,14 +3004,17 @@ short wrapText(char *to, const char *sourceText, short width) {
 	short i, w, textLength, lineCount;
 	char printString[COLS * ROWS * 2];
 	short spaceLeftOnLine, wordWidth;
+	short u8clen;
 	
 	strcpy(printString, sourceText); // a copy we can write on
 	breakUpLongWordsIn(printString, width, true); // break up any words that are wider than the width.
 	
-	textLength = strlen(printString); // do NOT discount escape sequences
+	// textLength = strlen(printString); // do NOT discount escape sequences
+	textLength = u8_displen(printString);
 	lineCount = 1;
 	
 	// Now go through and replace spaces with newlines as needed.
+	// Since now we have long unicode lines, replacing spaces is not fesible
 	
 	// Fast foward until i points to the first character that is not a color escape.
 	for (i=0; printString[i] == COLOR_ESCAPE; i+= 4);
@@ -4123,6 +4135,8 @@ BROGUE_WINDOW *printFloorItemDetails(item *theItem) {
 
 
 /***********************************************/
+// utf8 routines from
+// http://www.cprogramming.com/tutorial/utf8.c
 static unsigned int offsetsFromUTF8[6] = {
     0x00000000UL, 0x00003080UL, 0x000E2080UL,
     0x03C82080UL, 0xFA082080UL, 0x82082080UL
@@ -4210,10 +4224,13 @@ static int u8_wc_toutf8(char *dest, wchar_t ch)
 }
 
 #define PACKED_BUF_SIZE 128
-static char* packed_strings[PACKED_BUF_SIZE] = {0};
+#define PACKED_LINE_SIZE 1024
+static char packed_strings[PACKED_BUF_SIZE][PACKED_LINE_SIZE] = {{0}};
+static char packed_ix = 0;
 
 char* T(const wchar_t *ws) {
-    char* packed = calloc((wcslen(ws)*3 + 1), sizeof(char));
+    // char* packed = calloc((wcslen(ws)*3 + 1), sizeof(char));
+    char* packed = packed_strings[packed_ix++];
     char* ptr = packed;
     int ix;
     boolean stored_flag;
@@ -4223,16 +4240,16 @@ char* T(const wchar_t *ws) {
     }
     *ptr = '\0';
 
-    stored_flag = false;
-    for (ix = 0; ix < PACKED_BUF_SIZE; ++ix) {
-    	if (packed_strings[ix] == 0) {
-    		packed_strings[ix] = packed;
-    		stored_flag = true;
-    		break;
-    	}
-    }
-
-    assert(stored_flag);
+    // stored_flag = false;
+    // for (ix = 0; ix < PACKED_BUF_SIZE; ++ix) {
+    // 	if (packed_strings[ix] == 0) {
+    // 		packed_strings[ix] = packed;
+    // 		stored_flag = true;
+    // 		break;
+    // 	}
+    // }
+    // assert(stored_flag);
+    
     return packed;
 }
 
@@ -4242,15 +4259,60 @@ void T_unpack(const char* s, wchar_t *ws, int ws_size) {
 }
 
 void T_free() {
-    int ix;
-    // this seems really dangerous
-    for (ix = 0; ix < PACKED_BUF_SIZE; ++ix) {
-    	if (packed_strings[ix] == 0) {
-    		return;
-    	}
-		free(packed_strings[ix]);
-		packed_strings[ix] = 0;
-	}
+ //    int ix;
+ //    // this seems really dangerous
+ //    for (ix = 0; ix < PACKED_BUF_SIZE; ++ix) {
+ //    	if (packed_strings[ix] == 0) {
+ //    		return;
+ //    	}
+	// 	free(packed_strings[ix]);
+	// 	packed_strings[ix] = 0;
+	// }
 }
 
+/* reads the next utf-8 sequence out of a string, updating an index */
+wchar_t u8_nextchar(char *s, int *i) {
+    wchar_t ch = 0;
+    int sz = 0;
+
+    do {
+        ch <<= 6;
+        ch += (unsigned char)s[(*i)++];
+        sz++;
+    } while (s[*i] && !isutf(s[*i]));
+    ch -= offsetsFromUTF8[sz-1];
+
+    return ch;
+}
+
+/* number of characters */
+int u8_strlen(char *s) {
+    int count = 0;
+    int i = 0;
+
+    while (u8_nextchar(s, &i) != 0)
+        count++;
+
+    return count;
+}
+
+/* display lengh, in which any unicode char count as 2 char long */
+int u8_displen(char *s) {
+	short len, u8clen;
+	len = 0;
+
+	while (*s) {
+		u8clen = u8_seqlen(s);
+		len += 1 + (u8clen > 1); // unicode char all count as two char long
+		s += u8clen;
+	}
+
+	return len;
+}
+
+/* returns length of next utf-8 sequence */
+int u8_seqlen(char *s)
+{
+    return trailingBytesForUTF8[(unsigned int)(unsigned char)s[0]] + 1;
+}
 
