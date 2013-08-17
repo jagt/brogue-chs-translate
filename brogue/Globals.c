@@ -49,11 +49,12 @@ item *floorItems;
 item *packItems;
 item *monsterItemsHopper;
 
-char displayedMessage[MESSAGE_LINES][COLS*2];
+// expand all message related store since using utf8
+char displayedMessage[MESSAGE_LINES][COLS*2 * 6];
 boolean messageConfirmed[MESSAGE_LINES];
-char combatText[COLS * 2];
+char combatText[COLS * 2 * 6];
 short messageArchivePosition;
-char messageArchive[MESSAGE_ARCHIVE_LINES][COLS*2];
+char messageArchive[MESSAGE_ARCHIVE_LINES][COLS*2 * 6];
 
 char currentFilePath[BROGUE_FILENAME_MAX];
 

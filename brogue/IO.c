@@ -2464,7 +2464,7 @@ void flavorMessage(char *msg) {
 
 void messageWithoutCaps(char *msg, boolean requireAcknowledgment) {
 	short i;
-	
+
 #ifdef BROGUE_ASSERTS
 	assert(msg[0]);
 #endif
@@ -2519,8 +2519,8 @@ void message(const char *msg, boolean requireAcknowledgment) {
 	lines = wrapText(text, msg, DCOLS);
 	msgPtr = &(text[0]);
 	
-	for(i=0; text[i] == COLOR_ESCAPE; i+=4);
-	upperCase(&(text[i]));
+	// for(i=0; text[i] == COLOR_ESCAPE; i+=4);
+	// upperCase(&(text[i]));
 	
 	if (lines > 1) {
 		for (i=0; text[i] != '\0'; i++) {
@@ -3002,50 +3002,57 @@ void breakUpLongWordsIn(char *sourceText, short width, boolean useHyphens) {
 // Puts the output in "to" only if we receive a "to" -- can make it null and just get a line count.
 short wrapText(char *to, const char *sourceText, short width) {
 	short i, w, textLength, lineCount;
-	char printString[COLS * ROWS * 2];
-	short spaceLeftOnLine, wordWidth;
-	short u8clen;
+	char printString[COLS * ROWS * 10];
+	short u8clen, writeCount, currentLineLength;
 	
-	strcpy(printString, sourceText); // a copy we can write on
-	breakUpLongWordsIn(printString, width, true); // break up any words that are wider than the width.
-	
-	// textLength = strlen(printString); // do NOT discount escape sequences
-	textLength = u8_displen(printString);
+	// ! write when wraping
+	textLength = strlen(sourceText); // do NOT discount escape sequences
 	lineCount = 1;
 	
-	// Now go through and replace spaces with newlines as needed.
-	// Since now we have long unicode lines, replacing spaces is not fesible
-	
-	// Fast foward until i points to the first character that is not a color escape.
-	for (i=0; printString[i] == COLOR_ESCAPE; i+= 4);
-	spaceLeftOnLine = width;
-	
+	// ! Since now we have long unicode lines, replacing spaces is not fesible
+	// ! so don't break on spaces now. just hard break anything longer than the width
+	w = currentLineLength = 0;
 	while (i < textLength) {
-		// wordWidth counts the word width of the next word without color escapes.
-		// w indicates the position of the space or newline or null terminator that terminates the word.
-		wordWidth = 0;
-		for (w = i + 1; w < textLength && printString[w] != ' ' && printString[w] != '\n';) {
-			if (printString[w] == COLOR_ESCAPE) {
-				w += 4;
+		if (sourceText[i] == COLOR_ESCAPE) {
+			writeCount = 4;
+		} else if (sourceText[i] == '\n') {
+			// string itself contains a new line
+			++lineCount;
+			currentLineLength = 0;
+			writeCount = 1;
+		} else {
+			u8clen = u8_seqlen(sourceText + i);
+			if (u8clen == 1) {
+				++currentLineLength;
 			} else {
-				w++;
-				wordWidth++;
+				currentLineLength += 2; // count unicode as 2 chars wide
+			}
+			writeCount = u8clen;
+
+			// write an additional line break when too long
+			if (currentLineLength + 1 > width) {
+				printString[w++] = '\n';
+				++lineCount;
+				currentLineLength = 0;
 			}
 		}
-		
-		if (1 + wordWidth > spaceLeftOnLine || printString[i] == '\n') {
-			printString[i] = '\n';
-			lineCount++;
-			spaceLeftOnLine = width - wordWidth; // line width minus the width of the word we just wrapped
-			//printf("\n\n%s", printString);
-		} else {
-			spaceLeftOnLine -= 1 + wordWidth;
+
+		while (writeCount--) {
+			printString[w++] = sourceText[i++];
 		}
-		i = w; // Advance to the terminator that follows the word.
 	}
+
+	// end the string
+	printString[w] = '\0';
+	printf("%d, %d\n%s\n", lineCount, strlen(printString), printString);
+
+	assert(strlen(printString) <= COLS * 20);
+	assert(strlen(printString) <= COLS * ROWS * 20);
+
 	if (to) {
 		strcpy(to, printString);
 	}
+
 	return lineCount;
 }
 
@@ -4271,7 +4278,7 @@ void T_free() {
 }
 
 /* reads the next utf-8 sequence out of a string, updating an index */
-wchar_t u8_nextchar(char *s, int *i) {
+wchar_t u8_nextchar(const char *s, int *i) {
     wchar_t ch = 0;
     int sz = 0;
 
@@ -4286,7 +4293,7 @@ wchar_t u8_nextchar(char *s, int *i) {
 }
 
 /* number of characters */
-int u8_strlen(char *s) {
+int u8_strlen(const char *s) {
     int count = 0;
     int i = 0;
 
@@ -4297,7 +4304,7 @@ int u8_strlen(char *s) {
 }
 
 /* display lengh, in which any unicode char count as 2 char long */
-int u8_displen(char *s) {
+int u8_displen(const char *s) {
 	short len, u8clen;
 	len = 0;
 
@@ -4311,7 +4318,7 @@ int u8_displen(char *s) {
 }
 
 /* returns length of next utf-8 sequence */
-int u8_seqlen(char *s)
+int u8_seqlen(const char *s)
 {
     return trailingBytesForUTF8[(unsigned int)(unsigned char)s[0]] + 1;
 }

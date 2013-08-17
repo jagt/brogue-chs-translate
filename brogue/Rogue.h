@@ -2860,10 +2860,10 @@ extern "C" {
 
 	/* is c the start of a utf8 sequence? */
 #define isutf(c) (((c)&0xC0)!=0x80)
-	wchar_t u8_nextchar(char *s, int *i);
-	int u8_strlen(char *s);
-	int u8_seqlen(char *s);
-	int u8_displen(char *s);
+	wchar_t u8_nextchar(const char *s, int *i);
+	int u8_strlen(const char *s);
+	int u8_seqlen(const char *s);
+	int u8_displen(const char *s);
 
 
 #if defined __cplusplus

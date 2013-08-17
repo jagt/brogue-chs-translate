@@ -108,6 +108,7 @@ boolean openFile(const char *path) {
 
 void welcome() {
     char buf[DCOLS*3], buf2[DCOLS*3];
+	message(T(L"很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"), false);
 	message(T(L"冒险者，欢迎来到厄运之地下城。"), false);
     sprintf(buf, T(L"你的目标是到地下第 %i 层取得 "), AMULET_LEVEL);
     encodeMessageColor(buf, strlen(buf), &itemMessageColor);
@@ -118,7 +119,6 @@ void welcome() {
 	message(buf, false);
 	messageWithColor(T(L"游戏中可以随时按下 <?> 键获取帮助。"), &backgroundMessageColor, false);
 	flavorMessage("出口的大门突然自己关闭了。");
-	message(T(L"很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长"), false);
 }
 
 // Seed is used as the dungeon seed unless it's zero, in which case generate a new one.

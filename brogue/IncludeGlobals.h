@@ -49,11 +49,12 @@ extern item *packItems;
 extern item *monsterItemsHopper;
 extern short numberOfWaypoints;
 
-extern char displayedMessage[MESSAGE_LINES][COLS];
+// holy fuck these needs to be consistent as in globals.c too
+extern char displayedMessage[MESSAGE_LINES][COLS*2 * 6];
 extern boolean messageConfirmed[3];
-extern char combatText[COLS];
+extern char combatText[COLS * 2 * 6];
 short messageArchivePosition;
-char messageArchive[MESSAGE_ARCHIVE_LINES][COLS*2];
+char messageArchive[MESSAGE_ARCHIVE_LINES][COLS*2 * 6];
 
 extern char currentFilePath[BROGUE_FILENAME_MAX];
 extern unsigned long randomNumbersGenerated;
