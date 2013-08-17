@@ -4209,7 +4209,7 @@ static int u8_wc_toutf8(char *dest, wchar_t ch)
     return 0;
 }
 
-#define PACKED_BUF_SIZE 32
+#define PACKED_BUF_SIZE 128
 static char* packed_strings[PACKED_BUF_SIZE] = {0};
 
 char* T(const wchar_t *ws) {

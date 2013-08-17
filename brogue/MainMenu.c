@@ -331,7 +331,7 @@ void titleMenu() {
 	// Initialize the title menu buttons.
 	encodeMessageColor(whiteColorEscape, 0, &white);
 	encodeMessageColor(goldColorEscape, 0, &itemMessageColor);
-	sprintf(newGameText, "      %sN%sew Game      ", goldColorEscape, whiteColorEscape);
+	sprintf(newGameText, T(L" %s(N)%s 开始新游戏"), goldColorEscape, whiteColorEscape);
 	sprintf(customNewGameText, " %sN%sew Game (custom)  ", goldColorEscape, whiteColorEscape);
 	b = 0;
 	button = -1;
@@ -343,25 +343,25 @@ void titleMenu() {
 	b++;
 	
 	initializeButton(&(buttons[b]));
-	sprintf(buttons[b].text, "     %sO%spen Game      ", goldColorEscape, whiteColorEscape);
+	sprintf(buttons[b].text, T(L" %s(O)%s 读取存档   "), goldColorEscape, whiteColorEscape);
 	buttons[b].hotkey[0] = 'o';
 	buttons[b].hotkey[1] = 'O';
 	b++;
 	
 	initializeButton(&(buttons[b]));
-	sprintf(buttons[b].text, "   %sV%siew Recording   ", goldColorEscape, whiteColorEscape);
+	sprintf(buttons[b].text, " %s(V)%s 观看录像   ", goldColorEscape, whiteColorEscape);
 	buttons[b].hotkey[0] = 'v';
 	buttons[b].hotkey[1] = 'V';
 	b++;
 	
 	initializeButton(&(buttons[b]));
-	sprintf(buttons[b].text, "    %sH%sigh Scores     ", goldColorEscape, whiteColorEscape);
+	sprintf(buttons[b].text, " %s(H)%s 最高分      ", goldColorEscape, whiteColorEscape);
 	buttons[b].hotkey[0] = 'h';
 	buttons[b].hotkey[1] = 'H';
 	b++;
 	
 	initializeButton(&(buttons[b]));
-	sprintf(buttons[b].text, "        %sQ%suit        ", goldColorEscape, whiteColorEscape);
+	sprintf(buttons[b].text, " %s(Q)%s 退出游戏   ", goldColorEscape, whiteColorEscape);
 	buttons[b].hotkey[0] = 'q';
 	buttons[b].hotkey[1] = 'Q';
 	b++;
