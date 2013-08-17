@@ -448,27 +448,27 @@ void initializeMenuButtons(buttonState *state, brogueButton buttons[5]) {
 		buttons[buttonCount].hotkey[2] = NUMPAD_6;
 		buttonCount++;
 		
-		strcpy(buttons[buttonCount].text,		"  Menu  ");
+		strcpy(buttons[buttonCount].text,	"    菜单    ");
 		buttonCount++;
 	} else {
-		sprintf(buttons[buttonCount].text,	"   E%sx%splore   ", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"(x) 自动探索", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = EXPLORE_KEY;
 		buttons[buttonCount].hotkey[1] = 'X';
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text,	"   Rest (%sz%s)   ", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"  (z) 休息  ", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = REST_KEY;
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text,	"  Search (%ss%s)  ", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"(s) 搜索周围", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = SEARCH_KEY;
 		buttonCount++;
 		
-		strcpy(buttons[buttonCount].text,		"    Menu    ");
+		strcpy(buttons[buttonCount].text,   "    菜单    ");
 		buttonCount++;
 	}
 	
-	sprintf(buttons[4].text,	"   %sI%snventory   ", goldTextEscape, whiteTextEscape);
+	sprintf(buttons[4].text,	" (i) 物品栏 ", goldTextEscape, whiteTextEscape);
 	buttons[4].hotkey[0] = INVENTORY_KEY;
 	buttons[4].hotkey[1] = 'I';
 	
@@ -2257,7 +2257,7 @@ void waitForAcknowledgment() {
 	do {
 		nextBrogueEvent(&theEvent, false, false, false);
 		if (theEvent.eventType == KEYSTROKE && theEvent.param1 != ACKNOWLEDGE_KEY && theEvent.param1 != ESCAPE_KEY) {
-			flashTemporaryAlert(T(L" -- 按空格或点击 -- "), 500);
+			flashTemporaryAlert(" -- 按空格或点击 -- ", 500);
 		}
 	} while (!(theEvent.eventType == KEYSTROKE && (theEvent.param1 == ACKNOWLEDGE_KEY || theEvent.param1 == ESCAPE_KEY)
 			   || theEvent.eventType == MOUSE_UP));
@@ -2388,7 +2388,7 @@ void displayMessageArchive() {
 			context, 0, DCOLS, BROGUE_JUSTIFY_CENTER);
 		BrogueDrawContext_drawAsciiString(
 			context, 0, ROWS - 1,
-			"-- press any key to continue --");
+			"-- 按任意键继续 --");
 
 		waitForAcknowledgment();
 
@@ -2931,7 +2931,7 @@ void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst
 	}
 	
 	if (gotFocusedEntityOnScreen) {
-		sprintf(buf, "  -- Depth: %i --%s   ", rogue.depthLevel, (rogue.depthLevel < 10 ? " " : ""));
+		sprintf(buf, "  -- 第 %i 层 --%s   ", rogue.depthLevel, (rogue.depthLevel < 10 ? " " : ""));
 
 		BrogueDrawContext_push(io_state.sidebar_context);
 		BrogueDrawContext_enableJustify(
@@ -3044,11 +3044,7 @@ short wrapText(char *to, const char *sourceText, short width) {
 
 	// end the string
 	printString[w] = '\0';
-	printf("%d, %d\n%s\n", lineCount, strlen(printString), printString);
-
-	assert(strlen(printString) <= COLS * 20);
-	assert(strlen(printString) <= COLS * ROWS * 20);
-
+	
 	if (to) {
 		strcpy(to, printString);
 	}
@@ -3099,7 +3095,7 @@ void printHelpScreen() {
 		"             \\  ****disable/enable color effects",
 		"   <space/esc>  ****clear message or cancel command",
 		"",
-		"-- press any key to continue --"
+		"-- 按任意键继续 --"
 	};
 	char *helpPtr[BROGUE_HELP_LINE_COUNT];
 	int i;
@@ -3336,7 +3332,7 @@ void printDiscoveriesScreen(void) {
 		context, 1, DCOLS - 4, BROGUE_JUSTIFY_CENTER);
 	BrogueDrawContext_drawAsciiString(
 		context, 1, 5 + NUMBER_STAFF_KINDS + NUMBER_WAND_KINDS,
-		"-- press any key to continue --");
+		"-- 按任意键继续 --");
 
 	waitForKeystrokeOrMouseClick();
 
@@ -3567,19 +3563,19 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 					io_state.sidebar_context, 
 					colorForDisplay(playerInvisibleColor));
 				BrogueDrawContext_drawAsciiString(
-					io_state.sidebar_context, x, y, " (invisible)");
+					io_state.sidebar_context, x, y, " (隐形)");
             } else if (playerInDarkness()) {
 				BrogueDrawContext_setForeground(
 					io_state.sidebar_context, colorForDisplay(monstForeColor));
 				BrogueDrawContext_drawAsciiString(
-					io_state.sidebar_context, x, y, " (dark)");
+					io_state.sidebar_context, x, y, " (在暗处)");
             } else if (pmap[player.xLoc][player.yLoc].flags & IS_IN_SHADOW) {
                 
             } else {
 				BrogueDrawContext_setForeground(
 					io_state.sidebar_context, colorForDisplay(monstForeColor));
 				BrogueDrawContext_drawAsciiString(
-					io_state.sidebar_context, x, y, " (lit)");
+					io_state.sidebar_context, x, y, " (在明处)");
             }
         }
 
@@ -3730,7 +3726,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 					}
 				}
 				encodeMessageColor(strColorEscape, 0, &tempColor);
-				sprintf(buf, "Str: %s%i", strColorEscape,
+				sprintf(buf, "力量: %s%i", strColorEscape,
 						rogue.strength - player.weaknessAmount);
 				BrogueDrawContext_drawAsciiString(
 					io_state.sidebar_context, 4, y, buf);
@@ -3740,9 +3736,9 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 				
 				if (!rogue.armor || rogue.armor->flags & ITEM_IDENTIFIED || rogue.playbackOmniscience) {
 					
-					sprintf(buf, "  Armor: %i", displayedArmor);
+					sprintf(buf, "  护甲: %i", displayedArmor);
 				} else {
-					sprintf(buf, "  Armor: %i?", 
+					sprintf(buf, "  护甲: %i?", 
 							max(0, (short) (((armorTable[rogue.armor->kind].range.upperBound + armorTable[rogue.armor->kind].range.lowerBound) / 2) / 10 + strengthModifier(rogue.armor))));
 				}
 				BrogueDrawContext_drawAsciiString(

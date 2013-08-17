@@ -109,7 +109,7 @@ boolean openFile(const char *path) {
 void welcome() {
     char buf[DCOLS*3], buf2[DCOLS*3];
 	message("很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长", false);
-	message("冒险者，欢迎来到厄运之地下城。", false);
+	message("冒险者，欢迎来到厄运之地牢", false);
     sprintf(buf, "你的目标是到地下第 %i 层取得 ", AMULET_LEVEL);
     encodeMessageColor(buf, strlen(buf), &itemMessageColor);
     strcat(buf, "Amulet of Yendor");
@@ -118,7 +118,7 @@ void welcome() {
     strcat(buf, buf2);
 	message(buf, false);
 	messageWithColor("游戏中可以随时按下 <?> 键获取帮助。", &backgroundMessageColor, false);
-	flavorMessage("入口处的大门突然自己关闭了。");
+	flavorMessage("地牢出口处的大门突然自己关闭了。");
 }
 
 // Seed is used as the dungeon seed unless it's zero, in which case generate a new one.

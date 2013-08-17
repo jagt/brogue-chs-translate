@@ -574,7 +574,7 @@ void printPlaybackHelpScreen() {
 		"               N: ****begin a new game",
 		"               Q: ****quit to title screen",
 		"",
-		"        -- press any key to continue --"
+		"        -- 按任意键继续 --"
 	};
 	char *helpPtr[PLAYBACK_HELP_LINE_COUNT];
 	int i;

@@ -2133,7 +2133,7 @@ boolean explore(short frameDelay) {
 	}
 	
 	if (!rogue.autoPlayingLevel) {
-		message("Exploring... press any key to stop.", false);
+		message("自动探索中... 按任意键停止。", false);
 		// A little hack so the exploring message remains bright while exploring and then auto-dims when
 		// another message is displayed:
 		confirmMessages();

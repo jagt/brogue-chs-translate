@@ -1473,17 +1473,19 @@ BROGUE_TEXT_SIZE BrogueDrawContext_measureAsciiString(
     int i = 0;
     BROGUE_TEXT_SIZE size = { 0, 0 };
 
-    ustr = malloc(sizeof(wchar_t) * (strlen(str) + 1));
+    int ws_size = (strlen(str) + 1) * 3 + 1;
+    ustr = malloc(sizeof(wchar_t) * ws_size);
     if (ustr == NULL)
     {
 	return size;
     }
 
-    for (i = 0; str[i]; i++)
-    {
-	ustr[i] = str[i];
-    }
-    ustr[i] = 0;
+ //    for (i = 0; str[i]; i++)
+ //    {
+	// ustr[i] = str[i];
+ //    }
+ //    ustr[i] = 0;
+    T_unpack(str, ustr, ws_size);
 
     size = BrogueDrawContext_measureString(context, x, ustr);
 

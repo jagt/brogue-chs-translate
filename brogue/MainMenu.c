@@ -331,7 +331,7 @@ void titleMenu() {
 	// Initialize the title menu buttons.
 	encodeMessageColor(whiteColorEscape, 0, &white);
 	encodeMessageColor(goldColorEscape, 0, &itemMessageColor);
-	sprintf(newGameText, T(L" %s(N)%s 开始新游戏"), goldColorEscape, whiteColorEscape);
+	sprintf(newGameText, " %s(N)%s 开始新游戏", goldColorEscape, whiteColorEscape);
 	sprintf(customNewGameText, " %sN%sew Game (custom)  ", goldColorEscape, whiteColorEscape);
 	b = 0;
 	button = -1;
@@ -343,7 +343,7 @@ void titleMenu() {
 	b++;
 	
 	initializeButton(&(buttons[b]));
-	sprintf(buttons[b].text, T(L" %s(O)%s 读取存档   "), goldColorEscape, whiteColorEscape);
+	sprintf(buttons[b].text, " %s(O)%s 读取存档   ", goldColorEscape, whiteColorEscape);
 	buttons[b].hotkey[0] = 'o';
 	buttons[b].hotkey[1] = 'O';
 	b++;

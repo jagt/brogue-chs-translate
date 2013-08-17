@@ -192,7 +192,7 @@ boolean canDirectlySeeMonster(creature *monst) {
 void monsterName(char *buf, creature *monst, boolean includeArticle) {
 	
 	if (monst == &player) {
-		strcpy(buf, "you");
+		strcpy(buf, "你");
 		return;
 	}
 	if (canSeeMonster(monst) || rogue.playbackOmniscience) {
@@ -205,12 +205,12 @@ void monsterName(char *buf, creature *monst, boolean includeArticle) {
 			
 			return;
 		}
-		sprintf(buf, "%s%s", (includeArticle ? (monst->creatureState == MONSTER_ALLY ? "your " : "the ") : ""),
+		sprintf(buf, "%s%s", (includeArticle ? (monst->creatureState == MONSTER_ALLY ? "你的" : "") : ""),
 				monst->info.monsterName);
 		//monsterText[monst->info.monsterID].name);
 		return;
 	} else {
-		strcpy(buf, "something");
+		strcpy(buf, "某物");
 		return;
 	}
 }
