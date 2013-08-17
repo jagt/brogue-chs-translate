@@ -3609,24 +3609,24 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 		} else {
 			healthBarColor = blueBar;
 		}
-		printProgressBar(0, y++, "Health", monst->currentHP, monst->info.maxHP, &healthBarColor, dim);
+		printProgressBar(0, y++, "生命", monst->currentHP, monst->info.maxHP, &healthBarColor, dim);
 	}
 	
 	if (monst == &player) {
 		// nutrition
 		if (player.status[STATUS_NUTRITION] > HUNGER_THRESHOLD) {
-			printProgressBar(0, y++, "Nutrition", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
+			printProgressBar(0, y++, "食物", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
 		} else if (player.status[STATUS_NUTRITION] > WEAK_THRESHOLD) {
-			printProgressBar(0, y++, "Nutrition (Hungry)", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
+			printProgressBar(0, y++, "食物 (饥饿)", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
 		} else if (player.status[STATUS_NUTRITION] > FAINT_THRESHOLD) {
-			printProgressBar(0, y++, "Nutrition (Weak)", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
+			printProgressBar(0, y++, "食物 (虚弱)", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
 		} else if (player.status[STATUS_NUTRITION] > 0) {
-			printProgressBar(0, y++, "Nutrition (Faint)", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
+			printProgressBar(0, y++, "食物 (饿晕)", player.status[STATUS_NUTRITION], STOMACH_SIZE, &blueBar, dim);
 		} else if (y < ROWS - 1) {
 			BrogueDrawContext_setForeground(
 				io_state.sidebar_context, colorForDisplay(badMessageColor));
 			BrogueDrawContext_drawAsciiString(
-				io_state.sidebar_context, 0, y++, "      STARVING      ");
+				io_state.sidebar_context, 0, y++, "      急需食物      ");
 		}
 	}
 	
