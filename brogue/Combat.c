@@ -1188,6 +1188,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 // Gets the length of a string without the four-character color escape sequences, since those aren't displayed.
 short strLenWithoutEscapes(const char *str) {
 	short i, count;
+	short u8clen;
 	
 	count = 0;
 	for (i=0; str[i];) {
@@ -1195,8 +1196,14 @@ short strLenWithoutEscapes(const char *str) {
 			i += 4;
 			continue;
 		}
-		count++;
-		i++;
+		u8clen = u8_seqlen(str);
+		if (u8clen > 1) {
+			count += 2;
+			i += u8clen;
+		} else {
+			count++;
+			i++;
+		}
 	}
 	return count;
 }

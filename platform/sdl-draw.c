@@ -1243,101 +1243,171 @@ static void drawSubstring(
 
 /*  Draw a string, which might be split into multiple deferred string
     draws internally, applying justification and wrapping automatically  */
+// have to indent these to know what's happending...
 int BrogueDrawContext_drawString(
     BROGUE_DRAW_CONTEXT *context, int x, int y, const wchar_t *str)
 {
     int i, begin_word, begin_line, begin_line_x, font_width;
     BROGUE_EFFECT *effect;
 
+    int u8c_minx, u8c_maxx, u8c_width, line_pixel_width, len;
+    TTF_Font *font;
+
     font_width = context->window->display->font_width;
 
     effect = context->state.effect;
     if (effect != NULL && effect->effect_class != NULL)
     {
-	BROGUE_DEFERRED_DRAW *draw;
+    	BROGUE_DEFERRED_DRAW *draw;
 
-	draw = effect->effect_class->draw_string_func(
-	    context->window, &context->state, effect->state, x, y, str);
-	if (draw != NULL)
-	{
-	    BrogueWindow_replaceCell(context->window, x, y, draw);
-	    BrogueDeferredDraw_unref(draw);
+    	draw = effect->effect_class->draw_string_func(
+    	    context->window, &context->state, effect->state, x, y, str);
+    	if (draw != NULL)
+    	{
+    	    BrogueWindow_replaceCell(context->window, x, y, draw);
+    	    BrogueDeferredDraw_unref(draw);
 
-	    return 0;
-	}
+    	    return 0;
+    	}
     }
 
+    // rewritten to wrap based on string length only
     if (context->state.justify_mode == BROGUE_JUSTIFY_LEFT)
     {
-	begin_word = 0;
-	begin_line = 0;
-	begin_line_x = x * font_width;
+        begin_line = 0;
+        begin_line_x = x * font_width;
+        line_pixel_width = 0;
+        len = wcslen(str);
 
-	for (i = 0; str[i]; i++)
-	{
-	    if (str[i] == '\n')
-	    {
-		drawSubstring(
-		    context, &str[begin_line], i - begin_line,
-		    begin_line_x, y);
+        if (context->state.proportional_enable)
+        {
+            font = context->window->display->sans_font;
+        }
+        else
+        {
+            font = context->window->display->mono_font;
+        }
 
-		begin_line = i + 1;
-		begin_line_x = context->state.wrap_left * font_width;
-		begin_word = i + 1;
-		y++;
-	    }
-	    else if (str[i] == ' ')
-	    {
-		begin_word = i + 1;
-	    }
-	    else
-	    {
-		x = measureSubstring(
-		    context, &str[begin_line], i - begin_line + 1,
-		    begin_line_x);
-		
-		if (context->state.wrap_enable 
-		    && x >= context->state.wrap_right * font_width
-		    && begin_word != begin_line)
-		{
-		    drawSubstring(
-			context, &str[begin_line], begin_word - begin_line,
-			begin_line_x, y);
+        for (i = 0; str[i]; ++i)
+        {
+            if (str[i] == '\n' || (context->state.wrap_enable &&
+                line_pixel_width >= context->state.wrap_right * font_width))
+            {
+                drawSubstring(
+                    context, &str[begin_line], i - begin_line,
+                    begin_line_x, y);
+                begin_line = i + 1;
+                begin_line_x = context->state.wrap_left * font_width;
+                line_pixel_width = 0;
+                ++y;
+            }
+            else
+            {
+                if (str[i] == COLOR_ESCAPE)
+                {
+                   if (i + 3 < len)
+                   {
+                        i += 3;  // only add 3 since for loop adds 1
+                   } 
+                }
+                else if (str[i] == '*')
+                {
+                    line_pixel_width += font_width;
+                }
+                else if (str[i] == '\t')
+                {
+                    line_pixel_width += 3 * font_width; // FIXME this obviously isn't accurate
+                }
+                else
+                {
+                    TTF_GlyphMetrics(font, (Uint16)(str[i]), &u8c_minx, &u8c_maxx, NULL, NULL, &u8c_width);
+                    printf("%d, %d\n", u8c_maxx - u8c_minx, u8c_width);
+                    line_pixel_width += u8c_width; //u8c_maxx - u8c_minx;
+                }
+            }
+        }
 
-		    begin_line_x = context->state.wrap_left * font_width;
-		    begin_line = begin_word;
-		    y++;
-		}
-	    }
-	}
-
-	drawSubstring(
-	    context, &str[begin_line], i - begin_line,
-	    begin_line_x, y);
+        // draw remaining
+        drawSubstring(
+            context, &str[begin_line], i - begin_line,
+            begin_line_x, y);
     }
+
+    /*
+    // openTextBox and most normal uses left justify
+    // and seems only this justify mode implemented wrapping
+    if (context->state.justify_mode == BROGUE_JUSTIFY_LEFT)
+    {
+    	begin_word = 0;
+    	begin_line = 0;
+    	begin_line_x = x * font_width;
+
+    	for (i = 0; str[i]; i++)
+    	{
+    	    if (str[i] == '\n')
+    	    {
+        		drawSubstring(
+        		    context, &str[begin_line], i - begin_line,
+        		    begin_line_x, y);
+
+        		begin_line = i + 1;
+        		begin_line_x = context->state.wrap_left * font_width;
+        		begin_word = i + 1;
+        		y++;
+    	    }
+    	    else if (str[i] == ' ')
+    	    {
+        		begin_word = i + 1;
+    	    }
+    	    else
+    	    {
+        		x = measureSubstring(
+        		    context, &str[begin_line], i - begin_line + 1,
+        		    begin_line_x);
+    		
+        		if (context->state.wrap_enable 
+        		    && x >= context->state.wrap_right * font_width
+        		    && begin_word != begin_line)
+        		{
+        		    drawSubstring(
+        			context, &str[begin_line], begin_word - begin_line,
+        			begin_line_x, y);
+
+        		    begin_line_x = context->state.wrap_left * font_width;
+        		    begin_line = begin_word;
+        		    y++;
+        		}
+    	    }
+    	}
+
+    	drawSubstring(
+    	    context, &str[begin_line], i - begin_line,
+    	    begin_line_x, y);
+    }
+    */
     else
     {
-	int w = measureSubstring(context, str, wcslen(str), 0);
+    	int w = measureSubstring(context, str, wcslen(str), 0);
 
-	if (context->state.justify_mode == BROGUE_JUSTIFY_CENTER)
-	{
-	    int pos;
+    	if (context->state.justify_mode == BROGUE_JUSTIFY_CENTER)
+    	{
+    	    int pos;
 
-	    pos = context->state.wrap_left * font_width +
-		((context->state.wrap_right - context->state.wrap_left) 
-		 * font_width - w) / 2;
-	    drawSubstring(
-		context, str, wcslen(str),
-		pos, y);
-	}
-	else
-	{
-	    assert(context->state.justify_mode == BROGUE_JUSTIFY_RIGHT);
+    	    pos = context->state.wrap_left * font_width +
+    		((context->state.wrap_right - context->state.wrap_left) 
+    		 * font_width - w) / 2;
+    	    drawSubstring(
+        		context, str, wcslen(str),
+        		pos, y);
+    	}
+    	else
+    	{
+    	    assert(context->state.justify_mode == BROGUE_JUSTIFY_RIGHT);
 
-	    drawSubstring(
-		context, str, wcslen(str),
-		context->state.wrap_right * font_width - w, y);
-	}
+    	    drawSubstring(
+    		context, str, wcslen(str),
+    		context->state.wrap_right * font_width - w, y);
+    	}
     }
 
     return 0;
@@ -1345,6 +1415,7 @@ int BrogueDrawContext_drawString(
 
 /*  Measure the size of a string, as it would be drawn with current
     draw context settings  */
+// FIXME this is also considering wrap, so needs to change this too
 BROGUE_TEXT_SIZE BrogueDrawContext_measureString(
     BROGUE_DRAW_CONTEXT *context, int x, const wchar_t *str)
 {
