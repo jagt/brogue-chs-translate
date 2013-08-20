@@ -1250,7 +1250,7 @@ int BrogueDrawContext_drawString(
     int i, begin_word, begin_line, begin_line_x, font_width;
     BROGUE_EFFECT *effect;
 
-    int u8c_minx, u8c_maxx, u8c_width, line_pixel_width, len;
+    int u8c_width, line_pixel_width, len, new_wrap_right;
     TTF_Font *font;
 
     font_width = context->window->display->font_width;
@@ -1290,8 +1290,7 @@ int BrogueDrawContext_drawString(
 
         for (i = 0; str[i]; ++i)
         {
-            if (str[i] == '\n' || (context->state.wrap_enable &&
-                line_pixel_width >= context->state.wrap_right * font_width))
+            if (str[i] == '\n')
             {
                 drawSubstring(
                     context, &str[begin_line], i - begin_line,
@@ -1320,9 +1319,19 @@ int BrogueDrawContext_drawString(
                 }
                 else
                 {
-                    TTF_GlyphMetrics(font, (Uint16)(str[i]), &u8c_minx, &u8c_maxx, NULL, NULL, &u8c_width);
-                    printf("%d, %d\n", u8c_maxx - u8c_minx, u8c_width);
+                    TTF_GlyphMetrics(font, (Uint16)(str[i]), NULL, NULL, NULL, NULL, &u8c_width);
                     line_pixel_width += u8c_width; //u8c_maxx - u8c_minx;
+
+                    if (context->state.wrap_enable && line_pixel_width >= context->state.wrap_right * font_width)
+                    {
+                        drawSubstring(
+                            context, &str[begin_line], i - begin_line + 1,
+                            begin_line_x, y);
+                        begin_line = i + 1;
+                        begin_line_x = context->state.wrap_left * font_width;
+                        line_pixel_width = 0;
+                        ++y;
+                    }
                 }
             }
         }
