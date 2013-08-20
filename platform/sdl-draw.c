@@ -1424,7 +1424,7 @@ int BrogueDrawContext_drawString(
 
 /*  Measure the size of a string, as it would be drawn with current
     draw context settings  */
-// FIXME this is also considering wrap, so needs to change this too
+//  this is also considering wrap, so needs to change this too
 BROGUE_TEXT_SIZE BrogueDrawContext_measureString(
     BROGUE_DRAW_CONTEXT *context, int x, const wchar_t *str)
 {
@@ -1432,15 +1432,83 @@ BROGUE_TEXT_SIZE BrogueDrawContext_measureString(
     int h = 1;
     int minx, maxx;
     int i, begin_word, begin_line, begin_line_x, font_width;
+    int line_pixel_width, u8c_width, len;
+    TTF_Font *font;
 
     font_width = context->window->display->font_width;
 
+    // x is the first line pre indent
     minx = maxx = x * font_width;
 
     begin_word = 0;
     begin_line = 0;
     begin_line_x = x * font_width;
 
+    line_pixel_width = 0;
+    len = wcslen(str); 
+    if (context->state.proportional_enable)
+    {
+        font = context->window->display->sans_font;
+    }
+    else
+    {
+        font = context->window->display->mono_font;
+    }
+
+    for (i = 0; str[i]; ++i)
+    {
+        if (str[i] == '\n' )
+        {
+            x = measureSubstring(
+                context, &str[begin_line], i - begin_line,
+                begin_line_x);
+
+            maxx = x > maxx ? x : maxx;
+            minx = x < minx ? x : minx;
+
+            begin_line = i + 1;
+            begin_line_x = context->state.wrap_left * font_width;
+            line_pixel_width = 0;
+            ++h;
+        }
+        else
+        {
+            if (str[i] == COLOR_ESCAPE)
+            {
+               if (i + 3 < len)
+               {
+                    i += 3;  // only add 3 since for loop adds 1
+               } 
+            }
+            else if (str[i] == '*')
+            {
+                line_pixel_width += font_width;
+            }
+            else if (str[i] == '\t')
+            {
+                line_pixel_width += 3 * font_width; // FIXME this obviously isn't accurate
+            }
+            else
+            {
+                TTF_GlyphMetrics(font, (Uint16)(str[i]), NULL, NULL, NULL, NULL, &u8c_width);
+                line_pixel_width += u8c_width;
+
+                if (context->state.wrap_enable && line_pixel_width >= context->state.wrap_right * font_width)
+                {
+                    x = line_pixel_width;
+
+                    maxx = x > maxx ? x : maxx;
+                    minx = x < minx ? x : minx;
+
+                    begin_line = i + 1;
+                    begin_line_x = context->state.wrap_left * font_width;
+                    line_pixel_width = 0;
+                    ++h;
+                }
+            }
+        }
+    }
+    /*
     for (i = 0; str[i]; i++)
     {
 	if (str[i] == '\n')
@@ -1498,6 +1566,7 @@ BROGUE_TEXT_SIZE BrogueDrawContext_measureString(
 	    }
 	}
     }
+    */
 
     x = measureSubstring(
 	context, &str[begin_line], i - begin_line,

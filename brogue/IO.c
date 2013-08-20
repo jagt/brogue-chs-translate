@@ -3970,9 +3970,13 @@ BROGUE_WINDOW *openTextBox(
 		x = STAT_BAR_WIDTH + (DCOLS - w) / 2;
 	}
 
+	// BrogueWindow_reposition(
+	// 	window, x, MESSAGE_LINES + (DROWS - h) / 2,	w, h);
+	
+	// +2 is hack to add a little padding to button text boxes so text can be shown complete and it just works
 	BrogueWindow_reposition(
-		window, x, MESSAGE_LINES + (DROWS - h) / 2,	w, h);
-
+		window, x, MESSAGE_LINES + (DROWS - h) / 2,	w + 2, h);
+	
 	BrogueWindow_setColor(window, windowColor);
 
 	BrogueDrawContext_drawAsciiString(context, 1, 1, textBuf);

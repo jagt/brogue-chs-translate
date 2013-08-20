@@ -2046,7 +2046,7 @@ const itemTable foodTable[NUMBER_FOOD_KINDS] = {
 };
 
 const itemTable weaponTable[NUMBER_WEAPON_KINDS] = {
-	{"dagger",				"", "", 10, 190,		10,	{3,	4,	1},		true, false, "A simple iron dagger with a well-worn wooden handle. 啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"},
+	{"dagger",				"", "", 10, 190,		10,	{3,	4,	1},		true, false, "A simple iron dagger with a well-worn wooden handle. 一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九"},
 	{"sword",				"", "", 10, 440,		14, {6,	10,	1},		true, false, "The razor-sharp length of steel blade shines reassuringly. "},
 	{"broadsword",			"", "", 10, 990,		19,	{14, 22, 1},	true, false, "This towering blade inflicts heavy damage by investing its heft into every cut. "},
 	
