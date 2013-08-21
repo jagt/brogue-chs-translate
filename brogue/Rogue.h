@@ -1606,8 +1606,8 @@ typedef struct floorTileType {
 	short glowLight;						// if it glows, this is the ID of the light type
 	unsigned long flags;
     unsigned long mechFlags;
-	char description[COLS];
-	char flavorText[COLS];
+	char description[COLS * 3]; // expand storage for utf8 string
+	char flavorText[COLS * 3];  // expand storage for utf8 string
 } floorTileType;
 
 enum terrainFlagCatalog {

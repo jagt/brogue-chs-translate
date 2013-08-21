@@ -407,7 +407,7 @@ void describeLocation(char *buf, short x, short y) {
 			
 
 		} else { // no item
-			sprintf(buf, "you %s %s.", (playerCanDirectlySee(x, y) ? "see" : "sense"), object);
+			sprintf(buf, "你%s%s。", (playerCanDirectlySee(x, y) ? "看到了" : "感觉到那是"), object);
 			return;
 		}
 	}
@@ -4239,7 +4239,7 @@ void updateFieldOfViewDisplay(boolean updateDancingTerrain, boolean refreshDispl
 						theItem = itemAtLoc(i, j);
 						if (theItem && (theItem->category & KEY)) {
                             itemName(theItem, name, false, true, NULL);
-                            sprintf(buf, "you see %s", name);
+                            sprintf(buf, "你看到了%s", name);
 							combatMessage(buf, NULL);
 						}
 					}

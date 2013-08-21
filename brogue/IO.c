@@ -2542,14 +2542,14 @@ void displayMoreSignWithoutWaitingForAcknowledgment() {
 	BrogueDrawContext_setForeground(
 		io_state.message_context, colorForDisplay(white));
 	BrogueDrawContext_drawAsciiString(
-		io_state.message_context, DCOLS - 8, MESSAGE_LINES - 1, "--MORE--");
+		io_state.message_context, DCOLS - 8, MESSAGE_LINES - 1, "--继续--");
 }
 
 void displayMoreSign() {
 	BrogueDrawContext_setForeground(
 		io_state.message_context, colorForDisplay(white));
 	BrogueDrawContext_drawAsciiString(
-		io_state.message_context, DCOLS - 8, MESSAGE_LINES - 1, "--MORE--");
+		io_state.message_context, DCOLS - 8, MESSAGE_LINES - 1, "--继续--");
 	waitForAcknowledgment();
 	BrogueDrawContext_drawAsciiString(
 		io_state.message_context, DCOLS - 8, MESSAGE_LINES - 1, "");
