@@ -210,7 +210,7 @@ void monsterName(char *buf, creature *monst, boolean includeArticle) {
 		//monsterText[monst->info.monsterID].name);
 		return;
 	} else {
-		strcpy(buf, "某物");
+		strcpy(buf, "某样东西。");
 		return;
 	}
 }

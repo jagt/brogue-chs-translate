@@ -1582,7 +1582,7 @@ typedef struct dungeonFeature {
 	short startProbability;
 	short probabilityDecrement;
 	unsigned long flags;
-	char description[DCOLS];
+	char description[DCOLS*3]; // expand for utf8 string
     enum lightType lightFlare;
 	const color *flashColor;
 	short flashRadius;
@@ -1828,7 +1828,7 @@ enum monsterBookkeepingFlags {
 // Defines all creatures, which include monsters and the player:
 typedef struct creatureType {
 	enum monsterTypes monsterID; // index number for the monsterCatalog
-	char monsterName[COLS];
+	char monsterName[COLS * 3]; // expand storage for utf8 string
 	uchar displayChar;
 	const color *foreColor;
 	short maxHP;
