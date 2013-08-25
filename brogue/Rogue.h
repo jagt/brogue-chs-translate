@@ -1849,12 +1849,12 @@ typedef struct creatureType {
 } creatureType;
 
 typedef struct monsterWords {
-	char flavorText[COLS*5];
-	char absorbing[40];
-	char absorbStatus[40];
-	char attack[5][30];
-	char DFMessage[DCOLS * 2];
-	char summonMessage[DCOLS * 2];
+	char flavorText[COLS*5*3]; // expand chars for utf8 strings
+	char absorbing[40*2];
+	char absorbStatus[40*2];
+	char attack[5][30*3];
+	char DFMessage[DCOLS * 2*3];
+	char summonMessage[DCOLS * 2*3];
 } monsterWords;
 
 enum creatureStates {
