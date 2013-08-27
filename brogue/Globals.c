@@ -2248,10 +2248,10 @@ const char monsterBehaviorFlagDescriptions[32][COLS] = {
 const char monsterAbilityFlagDescriptions[33][COLS] = {
 	"能让敌人产生幻觉",							// MA_HIT_HALLUCINATE
 	"能盗取敌人的物品",							// MA_HIT_STEAL_FLEE
-	"会召集 $HISHER 的同胞",						// MA_ENTER_SUMMONS
+	"会召集$HISHER的同胞",						// MA_ENTER_SUMMONS
 	"攻击会腐蚀敌人的盔甲",							// MA_HIT_DEGRADE_ARMOR
-	"能治疗 $HISHER 的盟友",						// MA_CAST_HEAL
-	"能加速 $HISHER 的盟友",						// MA_CAST_HASTE
+	"能治疗$HISHER的盟友",						// MA_CAST_HEAL
+	"能加速$HISHER的盟友",						// MA_CAST_HASTE
 	"能释放保护法术",								// MA_CAST_PROTECTION
 	"能释放召唤法术",								// MA_CAST_SUMMON
 	"会朝着目标短距离闪烁",						// MA_CAST_BLINK
@@ -2264,7 +2264,7 @@ const char monsterAbilityFlagDescriptions[33][COLS] = {
 	"能喷出炙热的的火焰",							// MA_BREATHES_FIRE
 	"可以发射黏人的网",							// MA_SHOOTS_WEBS
 	"能使用距离攻击",								// MA_ATTACKS_FROM_DISTANCE
-	"会束缚 $HISHER 敌人",						// MA_SEIZES
+	"会束缚$HISHER敌人",						// MA_SEIZES
 	"攻击附带剧毒",								// MA_POISONS
 	"",											// MA_DF_ON_DEATH
 	"受到攻击时会分裂成两个",						// MA_CLONE_SELF_ON_DEFEND

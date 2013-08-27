@@ -210,7 +210,7 @@ void monsterName(char *buf, creature *monst, boolean includeArticle) {
 		//monsterText[monst->info.monsterID].name);
 		return;
 	} else {
-		strcpy(buf, "某样东西。");
+		strcpy(buf, "某样东西");
 		return;
 	}
 }
@@ -285,10 +285,10 @@ void resolvePronounEscapes(char *text, creature *monst) {
 	// Note: Escape sequences MUST be longer than EACH of the possible replacements.
 	// That way, the string only contracts, and we don't need a buffer.
 	const char pronouns[4][5][20] = {
-		{"$HESHE", "you", "he", "she", "it"},
-		{"$HIMHER", "you", "him", "her", "it"},
-		{"$HISHER", "your", "his", "her", "its"},
-		{"$HIMSELFHERSELF", "yourself", "himself", "herself", "itself"}};
+		{"$HESHE", "你", "他", "她", "它"},
+		{"$HIMHER", "你", "他", "她", "它"},
+		{"$HISHER", "你的", "他的", "她的", "它的"},
+		{"$HIMSELFHERSELF", "你自己", "他自己", "她自己", "它自己"}};
 	
 	if (monst == &player) {
 		gender = 1;
@@ -3577,9 +3577,9 @@ void monsterDetails(char buf[], creature *monst) {
 	if (!(monst->info.flags & MONST_ATTACKABLE_THRU_WALLS)
 		&& cellHasTerrainFlag(monst->xLoc, monst->yLoc, T_OBSTRUCTS_PASSABILITY)) {
 		// If the monster is trapped in impassible terrain, explain as much.
-		sprintf(newText, "%s is trapped %s %s.\n     ",
+		sprintf(newText, "%s被%s困住了。\n     ",
 				capMonstName,
-				(tileCatalog[pmap[monst->xLoc][monst->yLoc].layers[layerWithFlag(monst->xLoc, monst->yLoc, T_OBSTRUCTS_PASSABILITY)]].mechFlags & TM_STAND_IN_TILE) ? "in" : "on",
+				//(tileCatalog[pmap[monst->xLoc][monst->yLoc].layers[layerWithFlag(monst->xLoc, monst->yLoc, T_OBSTRUCTS_PASSABILITY)]].mechFlags & TM_STAND_IN_TILE) ? "in" : "on",
 				tileCatalog[pmap[monst->xLoc][monst->yLoc].layers[layerWithFlag(monst->xLoc, monst->yLoc, T_OBSTRUCTS_PASSABILITY)]].description);
 		strcat(buf, newText);
 	}
@@ -3595,16 +3595,16 @@ void monsterDetails(char buf[], creature *monst) {
 	}
 	
 	if ((monst->info.flags & MONST_RESTRICTED_TO_LIQUID) && !cellHasTMFlag(monst->xLoc, monst->yLoc, TM_ALLOWS_SUBMERGING)) {
-		sprintf(newText, "     %s writhes helplessly on dry land.\n     ", capMonstName);
+		sprintf(newText, "     %s在地面上无助的扭动。\n     ", capMonstName);
 	} else if (rogue.armor
 			   && (rogue.armor->flags & ITEM_RUNIC)
 			   && (rogue.armor->flags & ITEM_RUNIC_IDENTIFIED)
 			   && rogue.armor->enchant2 == A_IMMUNITY
 			   && rogue.armor->vorpalEnemy == monst->info.monsterID) {
 		
-		sprintf(newText, "Your armor renders you immune to %s.\n     ", monstName);
+		sprintf(newText, "你的盔甲使你对%s的攻击完全免疫。\n     ", monstName);
 	} else if (monst->info.damage.upperBound * monsterDamageAdjustmentAmount(monst) == 0) {
-		sprintf(newText, "%s deals no direct damage.\n     ", capMonstName);
+		sprintf(newText, "%s不能对你造成伤害。\n     ", capMonstName);
 	} else {
 		i = strlen(buf);
 		i = encodeMessageColor(buf, i, &badMessageColor);
@@ -3612,12 +3612,12 @@ void monsterDetails(char buf[], creature *monst) {
         if (combatMath < 1) {
             combatMath = 1;
         }
-		sprintf(newText, "%s has a %i%% chance to hit you, typically hits for %i%% of your current health, and at worst, could defeat you in %i hit%s.\n     ",
+		sprintf(newText, "%s能以%i%%的几率击中你，大约能消耗你当前生命值的%i%%，最差情况能在%i次攻击后杀死你。\n     ",
 				capMonstName,
 				combatMath2,
 				(int) (100 * (monst->info.damage.lowerBound + monst->info.damage.upperBound) * monsterDamageAdjustmentAmount(monst) / 2 / player.currentHP + FLOAT_FUDGE),
-				combatMath,
-				(combatMath > 1 ? "s" : ""));
+				combatMath);
+				//(combatMath > 1 ? "s" : ""));
 	}
 	upperCase(newText);
 	strcat(buf, newText);
@@ -3626,7 +3626,7 @@ void monsterDetails(char buf[], creature *monst) {
 		i = strlen(buf);
 		i = encodeMessageColor(buf, i, &goodMessageColor);
 		
-		sprintf(newText, "%s is your ally.", capMonstName);
+		sprintf(newText, "%s现在是你的同伴。", capMonstName);
 		if (monst->absorbXPXP > XPXP_NEEDED_FOR_ABSORB) {
 			upperCase(newText);
 			strcat(buf, newText);
@@ -3634,14 +3634,14 @@ void monsterDetails(char buf[], creature *monst) {
 			i = strlen(buf);
 			i = encodeMessageColor(buf, i, &advancementMessageColor);
 			
-			strcpy(newText, "$HESHE seems ready to learn something new.");
+			strcpy(newText, "$HESHE看起来学会了些新东西。");
 			resolvePronounEscapes(newText, monst); // So that it gets capitalized appropriately.
 		}
 	} else if (monst->bookkeepingFlags & MONST_CAPTIVE) {
 		i = strlen(buf);
 		i = encodeMessageColor(buf, i, &goodMessageColor);
 		
-		sprintf(newText, "%s is being held captive.", capMonstName);
+		sprintf(newText, "%s被笼子困住了。", capMonstName);
 	} else {
 		
 		if (!rogue.weapon || (rogue.weapon->flags & ITEM_IDENTIFIED)) {
@@ -3656,7 +3656,7 @@ void monsterDetails(char buf[], creature *monst) {
 			i = strlen(buf);
 			i = encodeMessageColor(buf, i, &white);
 			
-			sprintf(newText, "You deal no direct damage.");
+			sprintf(newText, "你无法直接造成伤害。");
 		} else {
 			i = strlen(buf);
 			i = encodeMessageColor(buf, i, &goodMessageColor);
@@ -3673,12 +3673,12 @@ void monsterDetails(char buf[], creature *monst) {
 			} else {
 				combatMath2 = hitProbability(&player, monst);
 			}
-			sprintf(newText, "You have a %i%% chance to hit %s, typically hit for %i%% of $HISHER current health, and at best, could defeat $HIMHER in %i hit%s.",
+			sprintf(newText, "你能以%i%%的概率击中%s，能消耗掉$HISHER当前生命值的%i%%，最好情况下你能在%i击内杀死$HIMHER。",
 					combatMath2,
 					monstName,
 					100 * playerKnownAverageDamage / monst->currentHP,
-					combatMath,
-					(combatMath > 1 ? "s" : ""));
+					combatMath);
+					// (combatMath > 1 ? "s" : ""));
 		}
 	}
 	upperCase(newText);
@@ -3695,7 +3695,7 @@ void monsterDetails(char buf[], creature *monst) {
 			switch (theItem->kind) {
 				case STAFF_FIRE:
 					if (monst->status[STATUS_IMMUNE_TO_FIRE]) {
-						sprintf(newText, "\n     Your %s (%c) will not harm %s.",
+						sprintf(newText, "\n     你的%s(%c)没有办法对%s造成伤害。",
 								theItemName,
 								theItem->inventoryLetter,
 								monstName);
@@ -3704,7 +3704,7 @@ void monsterDetails(char buf[], creature *monst) {
 					}
 					// otherwise continue to the STAFF_LIGHTNING template
 				case STAFF_LIGHTNING:
-					sprintf(newText, "\n     Your %s (%c) will hit %s for between %i%% and %i%% of $HISHER current health.",
+					sprintf(newText, "\n     你的%s(%c)能对%s有效，会消耗$HISHER当前生命值的%i%%到%i%%。",
 							theItemName,
 							theItem->inventoryLetter,
 							monstName,
@@ -3714,12 +3714,12 @@ void monsterDetails(char buf[], creature *monst) {
 					break;
 				case STAFF_POISON:
 					if (monst->info.flags & MONST_INANIMATE) {
-						sprintf(newText, "\n     Your %s (%c) will not affect %s.",
+						sprintf(newText, "\n     你的%s(%c)对%s无效。",
 								theItemName,
 								theItem->inventoryLetter,
 								monstName);
 					} else {
-						sprintf(newText, "\n     Your %s (%c) will poison %s for %i%% of $HISHER current health.",
+						sprintf(newText, "\n     你的%s(%c)能使%s中毒，消耗$HISHER当前生命值的%i%%。",
 								theItemName,
 								theItem->inventoryLetter,
 								monstName,
@@ -3737,10 +3737,10 @@ void monsterDetails(char buf[], creature *monst) {
 				   && monst->creatureState != MONSTER_ALLY) {
 			printedDominationText = true;
 			if (monst->info.flags & MONST_INANIMATE) {
-				sprintf(newText, "\n     A wand of domination will have no effect on inanimate objects like %s.",
+				sprintf(newText, "\n     支配魔棒对像%s这种没有生命的物体是无效的。",
 						monstName);
 			} else {
-				sprintf(newText, "\n     A wand of domination will have a %i%% chance of success at %s's current health level.",
+				sprintf(newText, "\n     支配魔棒能以%i%%的成功率控制%s，若血量更少则成功率更高。",
 						wandDominate(monst),
 						monstName);
 			}
@@ -3757,7 +3757,7 @@ void monsterDetails(char buf[], creature *monst) {
 		i = strlen(buf);
 		i = encodeMessageColor(buf, i, &itemMessageColor);
 		itemName(monst->carriedItem, theItemName, true, true, NULL);
-		sprintf(newText, "%s has %s.", capMonstName, theItemName);
+		sprintf(newText, "%s身上带着%s。", capMonstName, theItemName);
 		upperCase(newText);
 		strcat(buf, "\n     ");
 		strcat(buf, newText);
@@ -3769,51 +3769,52 @@ void monsterDetails(char buf[], creature *monst) {
 	i = encodeMessageColor(buf, i, &white);
 	
 	anyFlags = false;
-	sprintf(newText, "%s ", capMonstName);
+	sprintf(newText, "%s", capMonstName);
 	
 	if (monst->attackSpeed < 100) {
-		strcat(newText, "attacks quickly");
+		strcat(newText, "攻击速度很快");
 		anyFlags = true;
 	} else if (monst->attackSpeed > 100) {
-		strcat(newText, "attacks slowly");
+		strcat(newText, "攻击速度很慢");
 		anyFlags = true;
 	}
 	
 	if (monst->movementSpeed < 100) {
 		if (anyFlags) {
-			strcat(newText, "& ");
+			strcat(newText, "&");
 			commaCount++;
 		}
-		strcat(newText, "moves quickly");
+		strcat(newText, "移动速度很快");
 		anyFlags = true;
 	} else if (monst->movementSpeed > 100) {
 		if (anyFlags) {
-			strcat(newText, "& ");
+			strcat(newText, "&");
 			commaCount++;
 		}
-		strcat(newText, "moves slowly");
+		strcat(newText, "移动速度很慢");
 		anyFlags = true;
 	}
 	
 	if (monst->info.turnsBetweenRegen == 0) {
 		if (anyFlags) {
-			strcat(newText, "& ");
+			strcat(newText, "&");
 			commaCount++;
 		}
-		strcat(newText, "does not regenerate");
+		strcat(newText, "不会恢复生命值");
 		anyFlags = true;
 	} else if (monst->info.turnsBetweenRegen < 5000) {
 		if (anyFlags) {
-			strcat(newText, "& ");
+			strcat(newText, "&");
 			commaCount++;
 		}
-		strcat(newText, "regenerates quickly");
+		strcat(newText, "能迅速恢复生命值");
 		anyFlags = true;
 	}
 	
 	// ability flags
 	for (i=0; i<32; i++) {
-		if ((monst->info.abilityFlags & (Fl(i)))
+		// !!!!! DEBUG
+		if ((true || monst->info.abilityFlags & (Fl(i)))
 			&& monsterAbilityFlagDescriptions[i][0]) {
 			if (anyFlags) {
 				strcat(newText, "& ");
