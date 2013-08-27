@@ -967,7 +967,7 @@ void decrementWeaponAutoIDTimer() {
 // returns whether the attack hit
 boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 	short damage, transferenceAmount, poisonDamage;
-	char buf[COLS*2], buf2[COLS*2], attackerName[COLS], defenderName[COLS], verb[DCOLS], explicationClause[DCOLS] = "", armorRunicString[DCOLS*3];
+	char buf[COLS*2*3], buf2[COLS*2*3], attackerName[COLS*3], defenderName[COLS*3], verb[DCOLS*3], explicationClause[DCOLS*3] = "", armorRunicString[DCOLS*3];
 	boolean sneakAttack, defenderWasAsleep, defenderWasParalyzed, degradesAttackerWeapon, sightUnseen;
 	
 	if (attacker->info.abilityFlags & MA_KAMIKAZE) {
@@ -1011,7 +1011,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 		attacker->bookkeepingFlags |= MONST_SEIZING;
 		defender->bookkeepingFlags |= MONST_SEIZED;
 		if (canSeeMonster(attacker) || canSeeMonster(defender)) {
-			sprintf(buf, "%s seizes %s!", attackerName, (defender == &player ? "your legs" : defenderName));
+			sprintf(buf, "%s缠住了%s!", attackerName, (defender == &player ? "你的腿" : defenderName));
 			messageWithColor(buf, &white, false);
 		}
 		return false;
@@ -1053,7 +1053,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 			attacker->currentHP += transferenceAmount;
 			
 			if (attacker == &player && player.currentHP <= 0) {
-				gameOver("Drained by a cursed ring", true);
+				gameOver("被受诅咒的指环吸收了生命而死。", true);
 				return false;
 			}
 		}
@@ -1062,8 +1062,9 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 			applyArmorRunicEffect(armorRunicString, attacker, &damage, true);
 		}
 		
+		// TODO these must be re-ordered to be more fluent in chinese
 		if (damage == 0) {
-			sprintf(explicationClause, " but %s no damage", (attacker == &player ? "do" : "does"));
+			sprintf(explicationClause, "但是没有造成伤害");
 			if (attacker == &player) {
 				rogue.disturbed = true;
 			}
@@ -1089,22 +1090,22 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 		
 		if (inflictDamage(defender, damage, &red)) { // if the attack killed the defender
 			if (defenderWasAsleep || sneakAttack || defenderWasParalyzed || lungeAttack) {
-				sprintf(buf, "%s %s %s%s", attackerName,
-						((defender->info.flags & MONST_INANIMATE) ? "destroyed" : "dispatched"),
+				sprintf(buf, "%s%s%s%s", attackerName,
+						((defender->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
 						defenderName,
 						explicationClause);
 			} else {
-				sprintf(buf, "%s %s %s%s",
+				sprintf(buf, "%s%s%s%s",
 						attackerName,
-						((defender->info.flags & MONST_INANIMATE) ? "destroyed" : "defeated"),
+						((defender->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
 						defenderName,
 						explicationClause);
 			}
 			if (sightUnseen) {
 				if (defender->info.flags & MONST_INANIMATE) {
-					combatMessage("you hear something get destroyed in combat", 0);
+					combatMessage("你听见什么东西在战斗中被摧毁了", 0);
 				} else {
-					combatMessage("you hear something die in combat", 0);
+					combatMessage("你听见什么东西在战斗中被杀死了", 0);
 				}
 			} else {
 				combatMessage(buf, (damage > 0 ? messageColorFromVictim(defender) : &white));
@@ -1117,11 +1118,11 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 			if (!rogue.blockCombatText && (canSeeMonster(attacker) || canSeeMonster(defender))) {
 				attackVerb(verb, attacker, max(damage - attacker->info.damage.lowerBound * monsterDamageAdjustmentAmount(attacker), 0) * 100
 						   / max(1, (attacker->info.damage.upperBound - attacker->info.damage.lowerBound) * monsterDamageAdjustmentAmount(attacker)));
-				sprintf(buf, "%s %s %s%s", attackerName, verb, defenderName, explicationClause);
+				sprintf(buf, "%s%s%s%s", attackerName, verb, defenderName, explicationClause);
 				if (sightUnseen) {
 					if (!rogue.heardCombatThisTurn) {
 						rogue.heardCombatThisTurn = true;
-						combatMessage("you hear combat in the distance", 0);
+						combatMessage("你听到附近有战斗的声音", 0);
 					}
 				} else {
 					combatMessage(buf, messageColorFromVictim(defender));
@@ -1164,7 +1165,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
             }
 			equipItem(rogue.weapon, true);
 			itemName(rogue.weapon, buf2, false, false, NULL);
-			sprintf(buf, "your %s weakens!", buf2);
+			sprintf(buf, "你的%s被弱化了!", buf2);
 			messageWithColor(buf, &itemMessageColor, false);
 		}
 		
@@ -1174,10 +1175,10 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 			if (sightUnseen) {
 				if (!rogue.heardCombatThisTurn) {
 					rogue.heardCombatThisTurn = true;
-					combatMessage("you hear combat in the distance", 0);
+					combatMessage("你听到附近有战斗的声音", 0);
 				}
 			} else {
-				sprintf(buf, "%s missed %s", attackerName, defenderName);
+				sprintf(buf, "%s没有击中%s", attackerName, defenderName);
 				combatMessage(buf, 0);
 			}
 		}
@@ -1209,7 +1210,7 @@ short strLenWithoutEscapes(const char *str) {
 }
 
 void combatMessage(char *theMsg, color *theColor) {
-	char newMsg[COLS * 2];
+	char newMsg[COLS * 2 * 3];
 	
 	if (theColor == 0) {
 		theColor = &white;
@@ -1232,10 +1233,10 @@ void combatMessage(char *theMsg, color *theColor) {
 }
 
 void displayCombatText() {
-	char buf[COLS];
+	char buf[COLS*3];
 	
 	if (combatText[0]) {
-		sprintf(buf, "%s.", combatText);
+		sprintf(buf, "%s。", combatText);
 		combatText[0] = '\0';
 		message(buf, rogue.cautiousMode);
 		rogue.cautiousMode = false;

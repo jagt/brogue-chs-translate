@@ -3543,7 +3543,7 @@ void toggleMonsterDormancy(creature *monst) {
 }
 
 void monsterDetails(char buf[], creature *monst) {
-	char monstName[COLS], capMonstName[COLS], theItemName[COLS], newText[10*COLS];
+	char monstName[COLS*3], capMonstName[COLS*3], theItemName[COLS*3], newText[10*COLS];
 	short i, j, combatMath, combatMath2, playerKnownAverageDamage, playerKnownMaxDamage, commaCount, realArmorValue;
 	boolean anyFlags, printedDominationText = false;
 	item *theItem;
@@ -3817,7 +3817,7 @@ void monsterDetails(char buf[], creature *monst) {
 		if ((true || monst->info.abilityFlags & (Fl(i)))
 			&& monsterAbilityFlagDescriptions[i][0]) {
 			if (anyFlags) {
-				strcat(newText, "& ");
+				strcat(newText, "&");
 				commaCount++;
 			}
 			strcat(newText, monsterAbilityFlagDescriptions[i]);
@@ -3830,7 +3830,7 @@ void monsterDetails(char buf[], creature *monst) {
 		if ((monst->info.flags & (Fl(i)))
 			&& monsterBehaviorFlagDescriptions[i][0]) {
 			if (anyFlags) {
-				strcat(newText, "& ");
+				strcat(newText, "&");
 				commaCount++;
 			}
 			strcat(newText, monsterBehaviorFlagDescriptions[i]);
@@ -3843,7 +3843,7 @@ void monsterDetails(char buf[], creature *monst) {
 		if ((monst->bookkeepingFlags & (Fl(i)))
 			&& monsterBookkeepingFlagDescriptions[i][0]) {
 			if (anyFlags) {
-				strcat(newText, "& ");
+				strcat(newText, "&");
 				commaCount++;
 			}
 			strcat(newText, monsterBookkeepingFlagDescriptions[i]);
@@ -3852,17 +3852,21 @@ void monsterDetails(char buf[], creature *monst) {
 	}
 	
 	if (anyFlags) {
-		strcat(newText, ". ");
+		strcat(newText, "。 ");
 		//strcat(buf, "\n\n");
 		j = strlen(buf);
 		for (i=0; newText[i] != '\0'; i++) {
 			if (newText[i] == '&') {
 				if (!--commaCount) {
 					buf[j] = '\0';
-					strcat(buf, " and");
-					j += 4;
+					strcat(buf, "并且");
+					j += strlen("并且");
 				} else {
-					buf[j++] = ',';
+					char uComma[] = "，";
+					int iix;
+					for (iix = 0; iix < u8_seqlen(uComma); ++iix) {
+						buf[j++] = uComma[iix];
+					}
 				}
 			} else {
 				buf[j++] = newText[i];

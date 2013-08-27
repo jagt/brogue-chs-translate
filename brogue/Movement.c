@@ -845,7 +845,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
 void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
 	short itemCandidates, randItemIndex;
 	short x = monst->xLoc, y = monst->yLoc, damage;
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	item *theItem;
 	enum dungeonLayers layer;
 	
@@ -870,7 +870,7 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
 					theItem = dropItem(theItem);
 					if (theItem) {
 						itemName(theItem, buf2, false, true, NULL);
-						sprintf(buf, "%s floats away in the current!", buf2);
+						sprintf(buf, "%s被水流冲走了！", buf2);
 						messageWithColor(buf, &itemMessageColor, false);
 					}
 				}
@@ -890,14 +890,14 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
 		if (monst == &player) {
             if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC) && rogue.armor->enchant2 == A_RESPIRATION) {
                 if (!(rogue.armor->flags & ITEM_RUNIC_IDENTIFIED)) {
-                    message("Your armor trembles and a pocket of clean air swirls around you.", false);
+                    message("你的盔甲突然震动了一下，你感到身体周围有一阵新鲜的空气围绕着你。", false);
                     autoIdentify(rogue.armor);
                 }
             } else {
                 rogue.disturbed = true;
                 messageWithColor(tileCatalog[pmap[x][y].layers[layer]].flavorText, &badMessageColor, false);
                 if (inflictDamage(&player, damage, tileCatalog[pmap[x][y].layers[layer]].backColor)) {
-                    sprintf(buf, "Killed by %s", tileCatalog[pmap[x][y].layers[layer]].description);
+                    sprintf(buf, "被%s杀死。", tileCatalog[pmap[x][y].layers[layer]].description);
                     gameOver(buf, true);
                     return;
                 }
@@ -909,7 +909,7 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
 			if (inflictDamage(monst, damage, tileCatalog[pmap[x][y].layers[layer]].backColor)) {
 				if (canSeeMonster(monst)) {
 					monsterName(buf, monst, true);
-					sprintf(buf2, "%s dies.", buf);
+					sprintf(buf2, "%s死掉了。", buf);
 					messageWithColor(buf2, messageColorFromVictim(monst), false);
 				}
 				refreshDungeonCell(x, y);
@@ -927,7 +927,7 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
         if (monst->currentHP < monst->info.maxHP) {
             monst->currentHP += min(damage, monst->info.maxHP - monst->currentHP);
             if (monst == &player) {
-                messageWithColor("you feel much better.", &goodMessageColor, false);
+                messageWithColor("你受到了治疗，感觉好多了。", &goodMessageColor, false);
             }
         }
     }
@@ -982,7 +982,7 @@ void vomit(creature *monst) {
 	
 	if (canDirectlySeeMonster(monst)) {
 		monsterName(monstName, monst, true);
-		sprintf(buf, "%s vomit%s profusely", monstName, (monst == &player ? "" : "s"));
+		sprintf(buf, "%s剧烈的呕吐", monstName);
 		combatMessage(buf, NULL);
 	}
 }
