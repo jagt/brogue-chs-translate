@@ -2028,7 +2028,7 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 			if (confirm("是否强制终止当前游戏？本次游戏的进度将丢失。", false)) {
 				recordKeystroke(QUIT_KEY, false, false);
 				rogue.quit = true;
-				gameOver("退出。", true);
+				gameOver("主动退出游戏。", true);
 			}
 			break;
 		case SEED_KEY:

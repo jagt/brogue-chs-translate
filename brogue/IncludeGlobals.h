@@ -228,6 +228,6 @@ extern const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30];
 
 extern const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30];
 
-extern char monsterBehaviorFlagDescriptions[32][COLS];
-extern char monsterAbilityFlagDescriptions[32][COLS];
-extern char monsterBookkeepingFlagDescriptions[32][COLS];
+extern char monsterBehaviorFlagDescriptions[32][COLS*3];
+extern char monsterAbilityFlagDescriptions[32][COLS*3];
+extern char monsterBookkeepingFlagDescriptions[32][COLS*3];

@@ -1700,22 +1700,22 @@ const monsterWords monsterText[NUMBER_MONSTER_KINDS] = {
 
 const mutation mutationCatalog[NUMBER_MUTATORS] = {
 	//Title         textColor       healthFactor    moveSpdMult attackSpdMult   defMult damMult DF% DFtype  monstFlags  abilityFlags    forbiddenFlags      forbiddenAbilities
-	{"explosive",   &orange,        50,             100,        100,            50,     100,    0,  DF_MUTATION_EXPLOSION, 0, MA_DF_ON_DEATH, 0,            0,
-		"A rare mutation will cause $HIMHER to explode violently when $HESHE dies."},
-	{"infested",    &lichenColor,   50,             100,        100,            50,     100,    0,  DF_MUTATION_LICHEN, 0, MA_DF_ON_DEATH, 0,               0,
-		"$HESHE has been infested by deadly lichen spores; poisonous fungus will spread from $HISHER corpse when $HESHE dies."},
-	{"agile",       &lightBlue,     100,            50,         100,            150,    100,    -1, 0,      MONST_FLEES_NEAR_DEATH, MA_CAST_BLINK, MONST_FLEES_NEAR_DEATH, MA_CAST_BLINK,
-		"A rare mutation greatly enhances $HISHER mobility."},
-	{"juggernaut",  &brown,         300,            200,        200,            75,     200,    -1, 0,      0,          0,              MONST_MAINTAINS_DISTANCE, 0,
-		"A rare mutation has hardened $HISHER flesh, increasing $HISHER health and power but compromising $HISHER speed."},
-	{"grappling",   &tanColor,      100,            100,        100,            50,     100,    -1, 0,      0,          MA_SEIZES,      0,                  MA_SEIZES,
-		"A rare mutation has caused suckered tentacles to sprout from $HISHER frame, increasing $HISHER health and allowing $HIMHER to grapple with $HISHER prey."},
-	{"vampiric",    &red,           100,            100,        100,            100,    100,    -1, 0,      0,          MA_TRANSFERENCE, MONST_MAINTAINS_DISTANCE, MA_TRANSFERENCE,
-		"A rare mutation allows $HIMHER to heal $HIMSELFHERSELF with every attack."},
-	{"toxic",       &green,         100,            100,        100,            100,    100,    -1, 0,      0,          (MA_CAUSES_WEAKNESS | MA_POISONS), 0, (MA_CAUSES_WEAKNESS | MA_POISONS),
-		"A rare mutation causes $HIMHER to poison $HISHER victims and sap their strength with every attack."},
-	{"reflective",  &darkTurquoise, 100,            100,        100,            100,    100,    -1, 0,      MONST_REFLECT_4, 0,         (MONST_REFLECT_4 | MONST_ALWAYS_USE_ABILITY), 0,
-		"A rare mutation has coated $HISHER flesh with a strange reflective material."},
+	{"爆炸性的",   &orange,        50,             100,        100,            50,     100,    0,  DF_MUTATION_EXPLOSION, 0, MA_DF_ON_DEATH, 0,            0,
+		"一种罕见的变异使得$HIMHER在死亡的时候会产生剧烈的爆炸。"},
+	{"被感染的",    &lichenColor,   50,             100,        100,            50,     100,    0,  DF_MUTATION_LICHEN, 0, MA_DF_ON_DEATH, 0,               0,
+		"$HESHE被某种致命的真菌感染了; 死亡的时候会爆发出大量的孢子。"},
+	{"敏捷的",       &lightBlue,     100,            50,         100,            150,    100,    -1, 0,      MONST_FLEES_NEAR_DEATH, MA_CAST_BLINK, MONST_FLEES_NEAR_DEATH, MA_CAST_BLINK,
+		"一种罕见的变异使得$HIMHER移动飞快。"},
+	{"坚硬的",  &brown,         300,            200,        200,            75,     200,    -1, 0,      0,          0,              MONST_MAINTAINS_DISTANCE, 0,
+		"一种罕见的变异使得$HISHER的皮肤变得坚硬，生命力和力量得到了提升但速度却因此下降了。"},
+	{"带触手的",   &tanColor,      100,            100,        100,            50,     100,    -1, 0,      0,          MA_SEIZES,      0,                  MA_SEIZES,
+		"一种罕见的变异使得$HIMHER长出了触手，$HISHER生命力提高了，还能用触手抓住猎物。"},
+	{"吸血",    &red,           100,            100,        100,            100,    100,    -1, 0,      0,          MA_TRANSFERENCE, MONST_MAINTAINS_DISTANCE, MA_TRANSFERENCE,
+		"一种罕见的变异使得$HIMHER每次攻击都会恢复一些体力。"},
+	{"剧毒",       &green,         100,            100,        100,            100,    100,    -1, 0,      0,          (MA_CAUSES_WEAKNESS | MA_POISONS), 0, (MA_CAUSES_WEAKNESS | MA_POISONS),
+		"一种罕见的变异使得$HIMER每次攻击都会使$HISHER猎物中毒，使其力量不断减少。"},
+	{"反弹的",  &darkTurquoise, 100,            100,        100,            100,    100,    -1, 0,      MONST_REFLECT_4, 0,         (MONST_REFLECT_4 | MONST_ALWAYS_USE_ABILITY), 0,
+		"一种罕见的变异使得$HISHER的身体被反射性的物质覆盖。"},
 };
 
 #pragma mark Horde definitions
@@ -2035,22 +2035,22 @@ const char itemGemsRef[NUMBER_ITEM_GEMS][30] = {
 //} itemTable;
 
 const itemTable keyTable[NUMBER_KEY_TYPES] = {
-	{"door key",			"", "", 1, 0,	0, {0,0,0}, true, false, "The notches on this ancient iron key are well worn; its leather lanyard is battered by age. What door might it open?"},
-	{"cage key",			"", "", 1, 0,	0, {0,0,0}, true, false, "The rust accreted on this iron key has been stained with flecks of blood; it must have been used recently. What cage might it open?"},
-	{"crystal orb",			"", "", 1, 0,	0, {0,0,0}, true, false, "A faceted orb, seemingly cut from a single crystal, sparkling and perpetually warm to the touch. What manner of device might such an object activate?"},
+	{"门钥匙",			"", "", 1, 0,	0, {0,0,0}, true, false, "钥匙上的边角已被磨平，从皮质系带上的磨损能看出其年代久远。不知道它能打开哪里的门呢？"},
+	{"笼子钥匙",			"", "", 1, 0,	0, {0,0,0}, true, false, "仔细看看钥匙上沾有暗红色的血迹，估计最近才被使用过。不知道它能打开哪里的笼子呢？"},
+	{"水晶球",			"", "", 1, 0,	0, {0,0,0}, true, false, "一个不断发出光芒的的水晶球，似乎是又一整块水晶切割打磨而成。 不知道它能开启哪里的机关呢？"},
 };
 
 const itemTable foodTable[NUMBER_FOOD_KINDS] = {
-	{"ration of food",		"", "", 3, 25,	1800, {0,0,0}, true, false, "A ration of food. Was it left by former adventurers? Is it a curious byproduct of the subterranean ecosystem?"},
-	{"mango",				"", "", 1, 15,	1550, {0,0,0}, true, false, "An odd fruit to be found so deep beneath the surface of the earth, but only slightly less filling than a ration of food."}
+	{"粮食",		"", "", 3, 25,	1800, {0,0,0}, true, false, "包装好的食品，能用来迅速填满肚子。这是之前的冒险者留下的，还是这地牢里的特产呢？"},
+	{"芒果",				"", "", 1, 15,	1550, {0,0,0}, true, false, "不知道为什么在地面下真么深的地方可以找到这种奇怪的水果，但光吃这个还是吃不饱的。"}
 };
 
 const itemTable weaponTable[NUMBER_WEAPON_KINDS] = {
-	{"dagger",				"", "", 10, 190,		10,	{3,	4,	1},		true, false, "A simple iron dagger with a well-worn wooden handle. 一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九一二三四五六七八九"},
-	{"sword",				"", "", 10, 440,		14, {6,	10,	1},		true, false, "The razor-sharp length of steel blade shines reassuringly. "},
-	{"broadsword",			"", "", 10, 990,		19,	{14, 22, 1},	true, false, "This towering blade inflicts heavy damage by investing its heft into every cut. "},
+	{"匕首",				"", "", 10, 190,		10,	{3,	4,	1},		true, false, "一把简单的木柄匕首。"},
+	{"短剑",				"", "", 10, 440,		14, {6,	10,	1},		true, false, "短剑锋利的铁刃上闪着寒光。"},
+	{"砍刀",				"", "", 10, 990,		19,	{14, 22, 1},	true, false, "这把锋利的刀一砍就是一个口。"},
 	
-	{"rapier",				"", "", 10, 440,		15, {3,	5,	1},		true, false, "This blade is thin and flexible, intended for deft and rapid maneuvers. It inflicts less damage than comparable weapons, but permits you to attack twice as quickly. If there is one space between you and an enemy and you step directly toward it, you will perform a devastating lunge attack, which deals treble damage and never misses. "},
+	{"刺剑",				"", "", 10, 440,		15, {3,	5,	1},		true, false, "This blade is thin and flexible, intended for deft and rapid maneuvers. It inflicts less damage than comparable weapons, but permits you to attack twice as quickly. If there is one space between you and an enemy and you step directly toward it, you will perform a devastating lunge attack, which deals treble damage and never misses. "},
 	
 	{"mace",				"", "", 10, 660,		16, {18, 30, 1},	true, false, "The symmetrical iron flanges at the head of this weapon inflict substantial damage, but attacking takes two turns because of its weight. "},
 	{"war hammer",			"", "", 10, 1100,		20, {30, 50, 1},	true, false, "Few creatures can withstand the crushing blow of this towering mass of lead and steel, but only the strongest of adventurers can use it effectively, and attacking takes two turns because of its weight. "},
@@ -2213,7 +2213,7 @@ const color *boltColors[NUMBER_BOLT_KINDS] = {
 	&shieldingColor,	// shielding
 };
 
-const char monsterBehaviorFlagDescriptions[32][COLS] = {
+const char monsterBehaviorFlagDescriptions[32][COLS*3] = {
 	"是隐形的",									// MONST_INVISIBLE
 	"不是生物",									// MONST_INANIMATE
 	"无法移动",									// MONST_IMMOBILE
@@ -2245,7 +2245,7 @@ const char monsterBehaviorFlagDescriptions[32][COLS] = {
 	"仅在被激活时行动"	,							// MONST_GETS_TURN_ON_ACTIVATION
 };
 
-const char monsterAbilityFlagDescriptions[33][COLS] = {
+const char monsterAbilityFlagDescriptions[33][COLS*3] = {
 	"能让敌人产生幻觉",							// MA_HIT_HALLUCINATE
 	"能盗取敌人的物品",							// MA_HIT_STEAL_FLEE
 	"会召集$HISHER的同胞",						// MA_ENTER_SUMMONS
@@ -2273,7 +2273,7 @@ const char monsterAbilityFlagDescriptions[33][COLS] = {
 	"攻击时偷取力量",								// MA_CAUSE_WEAKNESS
 };
 
-const char monsterBookkeepingFlagDescriptions[32][COLS] = {
+const char monsterBookkeepingFlagDescriptions[32][COLS*3] = {
 	"",											// MONST_WAS_VISIBLE
 	"",											// unused
 	"",											// MONST_PREPLACED
@@ -2283,10 +2283,10 @@ const char monsterBookkeepingFlagDescriptions[32][COLS] = {
 	"",											// MONST_LEADER
 	"",											// MONST_FOLLOWER
 	"",											// MONST_CAPTIVE
-	"has been immobilized",						// MONST_SEIZED
-	"is currently holding $HISHER prey immobile",// MONST_SEIZING
-	"is submerged",								// MONST_SUBMERGED
+	"被困住了",									// MONST_SEIZED
+	"困住了$HISHER猎物",						// MONST_SEIZING
+	"潜入了水中",								// MONST_SUBMERGED
 	"",											// MONST_JUST_SUMMONED
 	"",											// MONST_WILL_FLASH
-	"is anchored to reality by $HISHER summoner",// MONST_BOUND_TO_LEADER
+	"的存在受到$HISHER召唤者控制",// MONST_BOUND_TO_LEADER
 };
