@@ -1829,6 +1829,7 @@ enum monsterBookkeepingFlags {
 typedef struct creatureType {
 	enum monsterTypes monsterID; // index number for the monsterCatalog
 	char monsterName[COLS * 3]; // expand storage for utf8 string
+	char monsterArticle[COLS * 3]; // chinese article
 	uchar displayChar;
 	const color *foreColor;
 	short maxHP;

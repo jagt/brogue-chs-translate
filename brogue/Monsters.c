@@ -199,7 +199,7 @@ void monsterName(char *buf, creature *monst, boolean includeArticle) {
 		if (player.status[STATUS_HALLUCINATING] && !rogue.playbackOmniscience) {
 			
 			assureCosmeticRNG;
-			sprintf(buf, "%s%s", (includeArticle ? "the " : ""),
+			sprintf(buf, "%s%s", (includeArticle ? "这个" : ""),
 					monsterCatalog[rand_range(1, NUMBER_MONSTER_KINDS - 1)].monsterName);
 			restoreRNG;
 			

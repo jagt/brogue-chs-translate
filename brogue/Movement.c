@@ -3936,9 +3936,9 @@ void playerTurnEnded() {
 					if (rogue.cautiousMode || rogue.automationActive) {
 						assureCosmeticRNG;
 						monsterName(buf2, monst, false);
-						sprintf(buf, "you %s a%s %s",
-								playerCanDirectlySee(monst->xLoc, monst->yLoc) ? "see" : "sense",
-								(isVowelish(buf2) ? "n" : ""),
+						sprintf(buf, "你%s一%s%s",
+								playerCanDirectlySee(monst->xLoc, monst->yLoc) ? "看到了" : "感觉到有",
+								monst->info.monsterArticle,
 								buf2);
 						if (rogue.cautiousMode) {
 							strcat(buf, ".");
