@@ -967,7 +967,7 @@ void decrementWeaponAutoIDTimer() {
 // returns whether the attack hit
 boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 	short damage, transferenceAmount, poisonDamage;
-	char buf[COLS*2*3], buf2[COLS*2*3], attackerName[COLS*3], defenderName[COLS*3], verb[DCOLS*3], explicationClause[DCOLS*3] = "", armorRunicString[DCOLS*3];
+	char buf[COLS*2*3], buf2[COLS*2*3], attackerName[COLS*3], defenderName[COLS*3], verb[DCOLS*3], explicationClause[DCOLS*3] = "", interClause[DCOLS*3] = "", describeClause[DCOLS*3] = "", armorRunicString[DCOLS*3];
 	boolean sneakAttack, defenderWasAsleep, defenderWasParalyzed, degradesAttackerWeapon, sightUnseen;
 	
 	if (attacker->info.abilityFlags & MA_KAMIKAZE) {
@@ -1069,19 +1069,18 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 				rogue.disturbed = true;
 			}
         } else if (lungeAttack) {
-            strcpy(explicationClause, " with a vicious lunge attack");
+            strcpy(interClause, "猛冲上去");
 		} else if (defenderWasParalyzed) {
-			sprintf(explicationClause, " while $HESHE %s paralyzed", (defender == &player ? "are" : "is"));
+			sprintf(describeClause, "被麻痹的");
 		} else if (defenderWasAsleep) {
-			strcpy(explicationClause, " in $HISHER sleep");
+			strcpy(describeClause, "在睡觉的");
 		} else if (sneakAttack) {
-			strcpy(explicationClause, ", catching $HIMHER unaware");
+			strcpy(describeClause, "毫无防备的");
 		} else if (defender->status[STATUS_STUCK] || defender->bookkeepingFlags & MONST_CAPTIVE) {
-			sprintf(explicationClause, " while %s dangle%s helplessly",
-					(canSeeMonster(defender) ? "$HESHE" : "it"),
-					(defender == &player ? "" : "s"));
+			sprintf(describeClause, "被困住的");
 		}
-		resolvePronounEscapes(explicationClause, defender);
+		// resolvePronounEscapes(explicationClause, defender);
+		// resolvePronounEscapes(interClause, defender);
 		
 		if ((attacker->info.abilityFlags & MA_POISONS) && damage > 0) {
 			poisonDamage = damage;
@@ -1090,15 +1089,15 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 		
 		if (inflictDamage(defender, damage, &red)) { // if the attack killed the defender
 			if (defenderWasAsleep || sneakAttack || defenderWasParalyzed || lungeAttack) {
-				sprintf(buf, "%s%s%s%s", attackerName,
+				sprintf(buf, "%s%s%s%s%s%s", attackerName, interClause,
 						((defender->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
-						defenderName,
+						describeClause, defenderName,
 						explicationClause);
 			} else {
-				sprintf(buf, "%s%s%s%s",
+				sprintf(buf, "%s%s%s%s%s", interClause,
 						attackerName,
 						((defender->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
-						defenderName,
+						describeClause, defenderName,
 						explicationClause);
 			}
 			if (sightUnseen) {
@@ -1118,7 +1117,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 			if (!rogue.blockCombatText && (canSeeMonster(attacker) || canSeeMonster(defender))) {
 				attackVerb(verb, attacker, max(damage - attacker->info.damage.lowerBound * monsterDamageAdjustmentAmount(attacker), 0) * 100
 						   / max(1, (attacker->info.damage.upperBound - attacker->info.damage.lowerBound) * monsterDamageAdjustmentAmount(attacker)));
-				sprintf(buf, "%s%s%s%s", attackerName, verb, defenderName, explicationClause);
+				sprintf(buf, "%s%s%s%s%s%s", attackerName, interClause, verb, describeClause, defenderName, explicationClause);
 				if (sightUnseen) {
 					if (!rogue.heardCombatThisTurn) {
 						rogue.heardCombatThisTurn = true;
