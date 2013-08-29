@@ -3298,7 +3298,7 @@ void printDiscoveriesScreen(void) {
 	BrogueDrawContext_enableJustify(
 		context, x, x + col_width, BROGUE_JUSTIFY_CENTER);
 
-	BrogueDrawContext_drawAsciiString(context, x, y, "药水");
+	BrogueDrawContext_drawAsciiString(context, x, y, "药剂");
 	x += col_width;
 	y = 1;
 	BrogueDrawContext_enableJustify(

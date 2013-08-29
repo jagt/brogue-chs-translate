@@ -2050,29 +2050,29 @@ const itemTable weaponTable[NUMBER_WEAPON_KINDS] = {
 	{"短剑",				"", "", 10, 440,		14, {6,	10,	1},		true, false, "短剑锋利的铁刃上闪着寒光。"},
 	{"砍刀",				"", "", 10, 990,		19,	{14, 22, 1},	true, false, "这把锋利的刀一砍就是一个口。"},
 	
-	{"刺剑",				"", "", 10, 440,		15, {3,	5,	1},		true, false, "This blade is thin and flexible, intended for deft and rapid maneuvers. It inflicts less damage than comparable weapons, but permits you to attack twice as quickly. If there is one space between you and an enemy and you step directly toward it, you will perform a devastating lunge attack, which deals treble damage and never misses. "},
+	{"刺剑",				"", "", 10, 440,		15, {3,	5,	1},		true, false, "比起其他的剑，刺剑握在手上更像一只细长的针，轻巧的剑身能方便使用者灵活操作。它普通攻击力比较低，但是如果你和目标间隔一格的时候，向目标方向移动可以使出冲刺攻击，给敌人造成可怕的伤害，且总能命中。"},
 	
-	{"mace",				"", "", 10, 660,		16, {18, 30, 1},	true, false, "The symmetrical iron flanges at the head of this weapon inflict substantial damage, but attacking takes two turns because of its weight. "},
-	{"war hammer",			"", "", 10, 1100,		20, {30, 50, 1},	true, false, "Few creatures can withstand the crushing blow of this towering mass of lead and steel, but only the strongest of adventurers can use it effectively, and attacking takes two turns because of its weight. "},
+	{"狼牙棒",				"", "", 10, 660,		16, {18, 30, 1},	true, false, "粗壮的木棒除了手拿的地方都被填上了尖利的铁刺。使用狼牙棒每次攻击需要两个回合，但是能给敌人造成巨大的伤害。"},
+	{"战锤",				"", "", 10, 1100,		20, {30, 50, 1},	true, false, "需要双手使用的巨大锤子。很少生物能承受其凶猛的攻击，但只要相当强壮的冒险者才能使用的了它。每次攻击需要两回合。"},
 	
-	{"spear",				"", "", 10, 330,		13, {4, 5, 1},		true, false, "A slender wooden rod tipped with sharpened iron. The reach of the spear permits you to simultaneously attack an adjacent enemy and the enemy directly behind it. "},
-	{"war pike",			"", "", 10, 880,		18, {9, 15, 1},		true, false, "A long steel pole ending in a razor-sharp point. The reach of the pike permits you to simultaneously attack an adjacent enemy and the enemy directly behind it. "},
+	{"长矛",				"", "", 10, 330,		13, {4, 5, 1},		true, false, "一根细长的木棒前端附着尖利的刃。长矛能同时攻击邻接的以及它身后一个身位的敌人。"},
+	{"战戟",				"", "", 10, 880,		18, {9, 15, 1},		true, false, "纯铁打造的细长战戟。它能同时攻击邻接的以及它身后一个身位的敌人。"},
 	
-	{"axe",					"", "", 10, 550,		15, {6, 9, 1},		true, false, "The blunt iron edge on this axe glints in the darkness. The arc of its swing permits you to attack all adjacent enemies simultaneously. "},
-	{"war axe",				"", "", 10, 990,		19, {10, 17, 1},	true, false, "The enormous steel head of this war axe puts considerable heft behind each stroke. The arc of its swing permits you to attack all adjacent enemies simultaneously. "},
+	{"斧头",				"", "", 10, 550,		15, {6, 9, 1},		true, false, "让人拿在手里就很上头的单手斧。能让你攻击时同时达到周围所有的敌人。"},
+	{"斩首斧",				"", "", 10, 990,		19, {10, 17, 1},	true, false, "刽子手使用的斩首斧。能让你攻击时同时打到周围所有的敌人。"},
 
-	{"dart",				"", "",	0,	15,			10,	{2,	4,	1},		true, false, "These simple metal spikes are weighted to fly true and sting their prey with a flick of the wrist. "},
-	{"incendiary dart",		"", "",	10, 25,			12,	{1,	2,	1},		true, false, "The spike on each of these darts is designed to pin it to its target while the unstable compounds strapped to its length burst into brilliant flames. "},
-	{"javelin",				"", "",	10, 40,			15,	{3, 11, 3},		true, false, "This length of metal is weighted to keep the spike at its tip foremost as it sails through the air. "},
+	{"飞镖",				"", "",	0,	15,			10,	{2,	4,	1},		true, false, "这些铁质的飞镖重心很完美的平衡在了头部的刃上。你可以很轻松的将飞镖准确的投掷出去。"},
+	{"火焰飞镖",			"", "",	10, 25,			12,	{1,	2,	1},		true, false, "这些特质的飞镖里带有不稳定化合物，在撞击的时候就会产生小型爆炸。"},
+	{"标枪",				"", "",	10, 40,			15,	{3, 11, 3},		true, false, "铁质的标枪需要你用力才能投掷出去，但杀伤力也非常惊人。"},
 };
 
 const itemTable armorTable[NUMBER_ARMOR_KINDS] = {
-	{"leather armor",	"", "", 10,	250,		10,	{30,30,0},		true, false, "This lightweight armor offers basic protection. "},
-	{"scale mail",		"", "", 10, 350,		12, {40,40,0},		true, false, "Bronze scales cover the surface of treated leather, offering greater protection than plain leather with minimal additional weight. "},
-	{"chain mail",		"", "", 10, 500,		13, {50,50,0},		true, false, "Interlocking metal links make for a tough but flexible suit of armor. "},
-	{"banded mail",		"", "", 10, 800,		15, {70,70,0},		true, false, "Overlapping strips of metal horizontally encircle a chain mail base, offering an additional layer of protection at the cost of greater weight. "},
-	{"splint mail",		"", "", 10, 1000,		17, {90,90,0},		true, false, "Thick plates of metal are embedded into a chain mail base, providing the wearer with substantial protection. "},
-	{"plate armor",		"", "", 10, 1300,		19, {110,110,0},	true, false, "Enormous plates of metal are joined together into a suit that provides unmatched protection to any adventurer strong enough to bear its staggering weight. "}
+	{"皮甲",			"", "", 10,	250,		10,	{30,30,0},		true, false, "冒险者的标配，能提供一些基本的保护。"},
+	{"铜鳞甲",			"", "", 10, 350,		12, {40,40,0},		true, false, "紧身皮甲外面裹满了铜制的鳞。鳞甲稍微有些重量，但穿在身上让人更安心。"},
+	{"锁子甲",			"", "", 10, 500,		13, {50,50,0},		true, false, "细条的金属交叉着编织在一起，锁子甲是一套相当保险的护甲。"},
+	{"组合夹",			"", "", 10, 800,		15, {70,70,0},		true, false, "顾名思义，身体各个部位都有自己的一块护甲，能提供全身上下的保护。"},
+	{"锁子甲",			"", "", 10, 1000,		17, {90,90,0},		true, false, "厚重的金属板外部缠满了精巧的金属环，能够很好的低档常见攻击。"},
+	{"板甲",			"", "", 10, 1300,		19, {110,110,0},	true, false, "华丽而厚重的板甲，虽然很拉风但是其重量不是所有人都能承受的。"}
 };
 
 const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30] = {

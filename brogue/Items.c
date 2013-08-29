@@ -1042,11 +1042,12 @@ void call(item *theItem) {
 //	a "sandalwood" staff, a "ruby" ring) will be in dark purple, and the Amulet of Yendor and lumenstones will be in yellow.
 //  BaseColor itself will be the color that the name reverts to outside of these colored portions.
 void itemName(item *theItem, char *root, boolean includeDetails, boolean includeArticle, color *baseColor) {
-	char buf[DCOLS], pluralization[10], article[10] = "",
+	char buf[DCOLS*3], pluralization[10], article[10] = "",
 	grayEscapeSequence[5], purpleEscapeSequence[5], yellowEscapeSequence[5], baseEscapeSequence[5];
 	color tempColor;
 	
-	strcpy(pluralization, (theItem->quantity > 1 ? "s" : ""));
+	// strcpy(pluralization, (theItem->quantity > 1 ? "s" : ""));
+	strcpy(pluralization, "");
 	
 	grayEscapeSequence[0] = '\0';
 	purpleEscapeSequence[0] = '\0';
@@ -1071,13 +1072,13 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 	switch (theItem -> category) {
 		case FOOD:
 			if (theItem -> kind == FRUIT) {
-				sprintf(root, "mango%s", pluralization);
+				sprintf(root, "芒果");
 			} else {
 				if (theItem->quantity == 1) {
-					sprintf(article, "some ");
-					sprintf(root, "food");
+					sprintf(article, "一份");
+					sprintf(root, "食物");
 				} else {
-					sprintf(root, "ration%s of food", pluralization);
+					sprintf(root, "粮食");
 				}
 			}
 			break;
@@ -1085,19 +1086,19 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 			sprintf(root, "%s%s", weaponTable[theItem->kind].name, pluralization);
 			if (includeDetails) {
 				if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
-					sprintf(buf, "%s%i %s", (theItem->enchant1 < 0 ? "" : "+"), theItem->enchant1, root);
+					sprintf(buf, " %s%i %s", (theItem->enchant1 < 0 ? "" : "+"), theItem->enchant1, root);
 					strcpy(root, buf);
 				}
 				
 				if (theItem->flags & ITEM_RUNIC) {
 					if ((theItem->flags & ITEM_RUNIC_IDENTIFIED) || rogue.playbackOmniscience) {
 						if (theItem->enchant2 == W_SLAYING) {
-							sprintf(root, "%s of %s slaying%s",
+							sprintf(root, "%s(屠戳%s)%s",
 									root,
 									monsterCatalog[theItem->vorpalEnemy].monsterName,
 									grayEscapeSequence);
 						} else {
-							sprintf(root, "%s of %s%s",
+							sprintf(root, "%s(%s)%s",
 									root,
 									weaponRunicNames[theItem->enchant2],
 									grayEscapeSequence);
@@ -1106,7 +1107,7 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 						if (grayEscapeSequence[0]) {
 							strcat(root, grayEscapeSequence);
 						}
-						strcat(root, " (unknown runic)");
+						strcat(root, "(未知效果)");
 					}
 				}
 				sprintf(root, "%s%s <%i>", root, grayEscapeSequence, theItem->strengthRequired);
@@ -1120,9 +1121,9 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 					&& ((theItem->flags & ITEM_RUNIC_IDENTIFIED)
 						|| rogue.playbackOmniscience)) {
 						if (theItem->enchant2 == A_IMMUNITY) {
-							sprintf(root, "%s of %s immunity", root, monsterCatalog[theItem->vorpalEnemy].monsterName);
+							sprintf(root, "%s(免疫%s)", root, monsterCatalog[theItem->vorpalEnemy].monsterName);
 						} else {
-							sprintf(root, "%s of %s", root, armorRunicNames[theItem->enchant2]);
+							sprintf(root, "%s(%s)", root, armorRunicNames[theItem->enchant2]);
 						}
 					}
 				
@@ -1130,7 +1131,7 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 					if (theItem->enchant1 == 0) {
 						sprintf(buf, "%s%s [%i]<%i>", root, grayEscapeSequence, theItem->armor/10, theItem->strengthRequired);
 					} else {
-						sprintf(buf, "%s%i %s%s [%i]<%i>",
+						sprintf(buf, " %s%i %s%s [%i]<%i>",
 								(theItem->enchant1 < 0 ? "" : "+"),
 								theItem->enchant1,
 								root,
@@ -1147,22 +1148,20 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 					&& (theItem->flags & (ITEM_IDENTIFIED | ITEM_RUNIC_HINTED))
 					&& !(theItem->flags & ITEM_RUNIC_IDENTIFIED)
 					&& !rogue.playbackOmniscience) {
-					strcat(root, " (unknown runic)");
+					strcat(root, "(未知效果)");
 				}
 			}
 			break;
 		case SCROLL:
 			if (scrollTable[theItem->kind].identified || rogue.playbackOmniscience) {
-				sprintf(root, "scroll%s of %s", pluralization, scrollTable[theItem->kind].name);
+				sprintf(root, "%s卷轴", scrollTable[theItem->kind].name);
 			} else if (scrollTable[theItem->kind].called) {
-				sprintf(root, "scroll%s called %s%s%s",
-						pluralization,
+				sprintf(root, "%s%s%s",
 						purpleEscapeSequence,
 						scrollTable[theItem->kind].callTitle,
 						baseEscapeSequence);
 			} else {
-				sprintf(root, "scroll%s entitled %s\"%s\"%s",
-						pluralization,
+				sprintf(root, "%s\"%s\"%s卷轴",
 						purpleEscapeSequence,
 						scrollTable[theItem->kind].flavor,
 						baseEscapeSequence);
@@ -1170,38 +1169,35 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 			break;
 		case POTION:
 			if (potionTable[theItem->kind].identified || rogue.playbackOmniscience) {
-				sprintf(root, "potion%s of %s", pluralization, potionTable[theItem->kind].name);
+				sprintf(root, "%s药剂", potionTable[theItem->kind].name);
 			} else if (potionTable[theItem->kind].called) {
-				sprintf(root, "potion%s called %s%s%s",
-						pluralization,
+				sprintf(root, "%s%s%s药剂",
 						purpleEscapeSequence,
 						potionTable[theItem->kind].callTitle,
 						baseEscapeSequence);
 			} else {
-				sprintf(root, "%s%s%s potion%s",
+				sprintf(root, "%s%s%s药剂",
 						purpleEscapeSequence,
 						potionTable[theItem->kind].flavor,
-						baseEscapeSequence,
-						pluralization);
+						baseEscapeSequence
+						);
 			}
 			break;
 		case WAND:
 			if (wandTable[theItem->kind].identified || rogue.playbackOmniscience) {
-				sprintf(root, "wand%s of %s",
-						pluralization,
+				sprintf(root, "%s魔棒",
 						wandTable[theItem->kind].name);
 			} else if (wandTable[theItem->kind].called) {
-				sprintf(root, "wand%s called %s%s%s",
-						pluralization,
+				sprintf(root, "%s%s%s魔棒",
 						purpleEscapeSequence,
 						wandTable[theItem->kind].callTitle,
 						baseEscapeSequence);
 			} else {
-				sprintf(root, "%s%s%s wand%s",
+				sprintf(root, "%s%s%s魔棒",
 						purpleEscapeSequence,
 						wandTable[theItem->kind].flavor,
-						baseEscapeSequence,
-						pluralization);
+						baseEscapeSequence
+						);
 			}
 			if (includeDetails) {
 				if (theItem->flags & (ITEM_IDENTIFIED | ITEM_MAX_CHARGES_KNOWN) || rogue.playbackOmniscience) {
@@ -1209,34 +1205,33 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 							root,
 							grayEscapeSequence,
 							theItem->charges);
-				} else if (theItem->enchant2 > 2) {
-					sprintf(root, "%s%s (used %i times)",
+				} else if (theItem->enchant2) {
+					sprintf(root, "%s%s (已使用%i次)",
 							root,
 							grayEscapeSequence,
 							theItem->enchant2);
-				} else if (theItem->enchant2) {
-					sprintf(root, "%s%s (used %s)",
-							root,
-							grayEscapeSequence,
-							(theItem->enchant2 == 2 ? "twice" : "once"));
+				// } else if (theItem->enchant2) {
+				// 	sprintf(root, "%s%s (已使用 %s)",
+				// 			root,
+				// 			grayEscapeSequence,
+				// 			(theItem->enchant2 == 2 ? "twice" : "once"));
 				}
 			}
 			break;
 		case STAFF:
 			if (staffTable[theItem->kind].identified || rogue.playbackOmniscience) {
-				sprintf(root, "staff%s of %s", pluralization, staffTable[theItem->kind].name);
+				sprintf(root, "%s法杖", staffTable[theItem->kind].name);
 			} else if (staffTable[theItem->kind].called) {
-				sprintf(root, "staff%s called %s%s%s",
-						pluralization,
+				sprintf(root, "%s%s%s法杖",
 						purpleEscapeSequence,
 						staffTable[theItem->kind].callTitle,
 						baseEscapeSequence);
 			} else {
-				sprintf(root, "%s%s%s staff%s",
+				sprintf(root, "%s%s%s法杖",
 						purpleEscapeSequence,
 						staffTable[theItem->kind].flavor,
-						baseEscapeSequence,
-						pluralization);
+						baseEscapeSequence
+						);
 			}
 			if (includeDetails) {
 				if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
@@ -1248,30 +1243,29 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 			break;
 		case RING:
 			if (ringTable[theItem->kind].identified || rogue.playbackOmniscience) {
-				sprintf(root, "ring%s of %s", pluralization, ringTable[theItem->kind].name);
+				sprintf(root, "%s指环", ringTable[theItem->kind].name);
 			} else if (ringTable[theItem->kind].called) {
-				sprintf(root, "ring%s called %s%s%s",
-						pluralization,
+				sprintf(root, "%s%s%s指环",
 						purpleEscapeSequence,
 						ringTable[theItem->kind].callTitle,
 						baseEscapeSequence);
 			} else {
-				sprintf(root, "%s%s%s ring%s",
+				sprintf(root, "%s%s%s指环",
 						purpleEscapeSequence,
 						ringTable[theItem->kind].flavor,
-						baseEscapeSequence,
-						pluralization);
+						baseEscapeSequence
+						);
 			}
 			if (includeDetails && ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience)) {
-				sprintf(buf, "%s%i %s", (theItem->enchant1 < 0 ? "" : "+"), theItem->enchant1, root);
+				sprintf(buf, " %s%i %s", (theItem->enchant1 < 0 ? "" : "+"), theItem->enchant1, root);
 				strcpy(root, buf);
 			}
 			break;
 		case CHARM:
-            sprintf(root, "%s charm%s", charmTable[theItem->kind].name, pluralization);
+            sprintf(root, "%s魔导器", charmTable[theItem->kind].name);
             
 			if (includeDetails) {
-				sprintf(buf, "%s%i %s", (theItem->enchant1 < 0 ? "" : "+"), theItem->enchant1, root);
+				sprintf(buf, " %s%i %s", (theItem->enchant1 < 0 ? "" : "+"), theItem->enchant1, root);
 				strcpy(root, buf);
                 
                 if (theItem->charges) {
@@ -1282,24 +1276,23 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
                     strcpy(root, buf);
                 } else {
                     strcat(root, grayEscapeSequence);
-                    strcat(root, " (ready)");
+                    strcat(root, " (可以使用)");
                 }
 			}
 			break;
 		case GOLD:
-			sprintf(root, "gold piece%s", pluralization);
+			sprintf(root, "金币");
 			break;
 		case AMULET:
 			sprintf(root, "%sAmulet%s of Yendor%s", yellowEscapeSequence, pluralization, baseEscapeSequence);
 			break;
 		case GEM:
-			sprintf(root, "%slumenstone%s%s", yellowEscapeSequence, pluralization, baseEscapeSequence);
+			sprintf(root, "%s宝石%s", yellowEscapeSequence, baseEscapeSequence);
 			break;
 		case KEY:
 			if (includeDetails && theItem->keyZ > 0 && theItem->keyZ != rogue.depthLevel) {
-				sprintf(root, "%s%s%s from depth %i",
+				sprintf(root, "%s%s(在第%i层捡到)",
 						keyTable[theItem->kind].name,
-						pluralization,
 						grayEscapeSequence,
 						theItem->keyZ);
 			} else {
@@ -1310,20 +1303,47 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 			}
 			break;
 		default:
-			sprintf(root, "unknown item%s", pluralization);
+			sprintf(root, "未知物品");
 			break;
 	}
 	
 	if (includeArticle) {
 		// prepend number if quantity is over 1
 		if (theItem->quantity > 1) {
-			sprintf(article, "%i ", theItem->quantity);
+			sprintf(article, "%i", theItem->quantity);
 		} else if (theItem->category & AMULET) {
-			sprintf(article, "the ");
+			sprintf(article, "");
 		} else if (!(theItem->category & ARMOR) && !(theItem->category & FOOD && theItem->kind == RATION)) {
 			// otherwise prepend a/an if the item is not armor and not a ration of food;
 			// armor gets no article, and "some food" was taken care of above.
-			sprintf(article, "a%s ", (isVowelish(root) ? "n" : ""));
+			sprintf(article, "一");
+		}
+		switch (theItem -> category)
+		{
+			case WEAPON:
+				strcat(article, "把"); break;
+			case SCROLL:
+				strcat(article, "张"); break;
+			case POTION:
+				strcat(article, "瓶"); break;
+			case WAND:
+				strcat(article, "只"); break;
+			case STAFF:
+				strcat(article, "把"); break;
+			case RING:
+				strcat(article, "只"); break;
+			case CHARM:
+				strcat(article, "件"); break;
+			case GOLD:
+				strcat(article, "个"); break;
+			case KEY:
+				strcat(article, "把"); break;
+			case AMULET:
+			case ARMOR:
+			case FOOD:
+			default:
+				// pass
+				break;
 		}
 	}
 	// strcat(buf, suffixID);
@@ -2341,7 +2361,7 @@ char displayInventory(unsigned short categoryMask,
 
 	if (packItems->nextItem == NULL) {
 		confirmMessages();
-		message("Your pack is empty!", false);
+		message("你目前没有任何物品！", false);
 		restoreRNG;
 		return 0;
 	}
@@ -2441,7 +2461,7 @@ char displayInventory(unsigned short categoryMask,
 					(buttons[i].flags & B_HOVER_ENABLED) ? whiteColorEscapeSequence : grayColorEscapeSequence,
 					buf,
 					grayColorEscapeSequence,
-					(theItem->flags & ITEM_EQUIPPED ? ((theItem->category & WEAPON) ? " (in hand) " : " (worn) ") : ""));
+					(theItem->flags & ITEM_EQUIPPED ? " (已装备) " : ""));
 			buttons[i].symbol[1] = theItem->displayChar;
 			buttons[i].symbol_flags[1] = PLOT_CHAR_TILE;
 		} else {
@@ -2453,7 +2473,7 @@ char displayInventory(unsigned short categoryMask,
 					(buttons[i].flags & B_HOVER_ENABLED) ? whiteColorEscapeSequence : grayColorEscapeSequence,
 					buf,
 					grayColorEscapeSequence,
-					(theItem->flags & ITEM_EQUIPPED ? ((theItem->category & WEAPON) ? " (in hand) " : " (worn) ") : ""));
+					(theItem->flags & ITEM_EQUIPPED ? " (已装备) " : ""));
 			buttons[i].symbol[0] = theItem->displayChar;
 			buttons[i].symbol_flags[0] = PLOT_CHAR_TILE;
 		}
@@ -2470,18 +2490,18 @@ char displayInventory(unsigned short categoryMask,
 		// Add the two extra lines as disabled buttons.
 		itemSpaceRemaining = MAX_PACK_ITEMS - numberOfItemsInPack();
 		if (itemSpaceRemaining) {
-			sprintf(buttons[itemNumber + extraLineCount].text, "%sYou have room for %i more item%s.",
+			sprintf(buttons[itemNumber + extraLineCount].text, "%s还装得下%i件物品。",
 					grayColorEscapeSequence,
-					itemSpaceRemaining,
-					(itemSpaceRemaining == 1 ? "" : "s"));
+					itemSpaceRemaining);
+					// (itemSpaceRemaining == 1 ? "" : "s"));
 		} else {
-			sprintf(buttons[itemNumber + extraLineCount].text, "%sYour pack is full.",
+			sprintf(buttons[itemNumber + extraLineCount].text, "%s已经没有地方放东西了。",
 					grayColorEscapeSequence);
 		}
 		buttons[itemNumber + extraLineCount].flags |= B_FORCE_CENTERED;
 		extraLineCount++;
 		
-		sprintf(buttons[itemNumber + extraLineCount].text, "%s -- press (a-z) for more info -- ",
+		sprintf(buttons[itemNumber + extraLineCount].text, "%s -- 按 (a-z) 键选择物品 -- ",
 				grayColorEscapeSequence);
 		buttons[itemNumber + extraLineCount].flags |= B_FORCE_CENTERED;
 		extraLineCount++;
