@@ -1512,17 +1512,17 @@ void itemDetails(char *buf, item *theItem) {
 	float enchant;
 	short nextLevelState = 0, new;
 	float accuracyChange, damageChange, current, currentDamage, newDamage;
-	const char weaponRunicEffectDescriptions[NUMBER_WEAPON_RUNIC_KINDS][DCOLS] = {
-		"time will stop while you take an extra turn",
-		"the enemy will die instantly",
-		"the enemy will be paralyzed",
-		"[multiplicity]", // never used
-		"the enemy will be slowed",
-		"the enemy will be confused",
-        "the enemy will be flung",
-		"[slaying]", // never used
-		"the enemy will be healed",
-		"the enemy will be cloned"
+	const char weaponRunicEffectDescriptions[NUMBER_WEAPON_RUNIC_KINDS][DCOLS*3] = {
+		"每回合可以进行两次攻击",
+		"敌人会被秒杀",
+		"敌人会被麻痹",
+		"[]", // never used
+		"敌人会被减速",
+		"敌人会被陷入混乱状态",
+        "敌人会被击飞",
+		"[]", // never used
+		"敌人会恢复体力",
+		"敌人会被复制"
 	};
     
     goodColorEscape[0] = badColorEscape[0] = whiteColorEscape[0] = '\0';
@@ -1555,7 +1555,7 @@ void itemDetails(char *buf, item *theItem) {
 		strcat(buf, tableForItemCategory(theItem->category)[theItem->kind].description);
         
         if (theItem->category == POTION && theItem->kind == POTION_LIFE) {
-            sprintf(buf2, "\n\nIt will increase your maximum health by %s%i%%%s.",
+            sprintf(buf2, "\n\n能够提高你%s%i%%%s的生命值上限。",
                     goodColorEscape,
                     (player.info.maxHP + 10) * 100 / player.info.maxHP - 100,
                     whiteColorEscape);
@@ -1564,57 +1564,49 @@ void itemDetails(char *buf, item *theItem) {
 	} else {
 		switch (theItem->category) {
 			case POTION:
-				sprintf(buf2, "%s flask%s contain%s a swirling %s liquid. \
-Who knows what %s will do when drunk or thrown?",
-						(singular ? "This" : "These"),
-						(singular ? "" : "s"),
-						(singular ? "s" : ""),
-						tableForItemCategory(theItem->category)[theItem->kind].flavor,
-						(singular ? "it" : "they"));
+				sprintf(buf2, "这种烧瓶里装着%s的液体。 \
+不知道喝下去或者投掷出去会有什么效果。",
+						tableForItemCategory(theItem->category)[theItem->kind].flavor
+						);
 				break;
 			case SCROLL:
-				sprintf(buf2, "%s parchment%s %s covered with indecipherable writing, and bear%s a title of \"%s.\" \
-Who knows what %s will do when read aloud?",
-						(singular ? "This" : "These"),
-						(singular ? "" : "s"),
-						(singular ? "is" : "are"),
-						(singular ? "s" : ""),
-						tableForItemCategory(theItem->category)[theItem->kind].flavor,
-						(singular ? "it" : "they"));
+				sprintf(buf2, "这种卷轴上写满了熟悉的文字，但却难以看懂是什么意思。卷轴抬头上写着\"%s.\" \
+不知道把这些文字大声读出来会有什么效果。",
+						tableForItemCategory(theItem->category)[theItem->kind].flavor
+						);
 				break;
 			case STAFF:
-				sprintf(buf2, "This gnarled %s staff is warm to the touch. \
-Who knows what it will do when used?",
+				sprintf(buf2, "由整根树干制成的%s法杖握在手里能感觉到微热\
+不知道使用后会有什么效果。",
 						tableForItemCategory(theItem->category)[theItem->kind].flavor);
 				break;
 			case WAND:
-				sprintf(buf2, "This thin %s wand is warm to the touch. \
-Who knows what it will do when used?",
+				sprintf(buf2, "这种细长的%s魔棒握在手里能感觉到微热\
+不知道使用后会有什么效果。",
 						tableForItemCategory(theItem->category)[theItem->kind].flavor);
 				break;
 			case RING:
-				sprintf(buf2, "This metal band is adorned with a large %s gem that glitters in the darkness. \
-Who knows what effect it has when worn? ",
+				sprintf(buf2, "这种指环上镶嵌一块%s，在黑暗都闪着微弱的光芒\
+不知道戴上后会有什么效果。",
 						tableForItemCategory(theItem->category)[theItem->kind].flavor);
 				break;
 			case CHARM: // Should never be displayed.
-				strcat(buf2, "What a perplexing charm!");
+				strcat(buf2, "一件神器的法器！");
 				break;
 			case AMULET:
-				strcpy(buf2, "Legends are told about this mysterious golden amulet, \
-and hundreds of adventurers have perished in its pursuit. Unfathomable power and riches await anyone with the skill and ambition \
-to carry it into the light of day.");
+				strcpy(buf2, "这就是传说中的护身符。\
+成千上万的冒险者为了需找它丢了性命，传说只要能把它带到地面上\
+就能享用无尽的荣华富贵。");
 				break;
 			case GEM:
-				sprintf(buf2, "Mysterious lights swirl and fluoresce beneath the stone%s surface. \
-Lumenstones are said to contain mysterious properties of untold power, but for you, they mean one thing: riches.",
-						(singular ? "'s" : "s'"));
+				sprintf(buf2, "半透明的宝石内不断闪动着神奇的光芒。\
+传说这种宝石内蕴藏着神奇的力量，但对你来说更大的意义是它能卖很多钱。");
 				break;
 			case KEY:
 				strcpy(buf2, keyTable[theItem->kind].description);
 				break;
 			case GOLD:
-				sprintf(buf2, "A pile of %i shining gold coins.", theItem->quantity);
+				sprintf(buf2, "%i个姗姗法功的金币，摞成了一堆。", theItem->quantity);
 				break;
 			default:
 				break;
@@ -1626,9 +1618,7 @@ Lumenstones are said to contain mysterious properties of untold power, but for y
 	switch (theItem->category) {
 			
 		case FOOD:
-			sprintf(buf2, "\n\nYou are %shungry enough to fully enjoy a %s.",
-					((STOMACH_SIZE - player.status[STATUS_NUTRITION]) >= foodTable[theItem->kind].strengthRequired ? "" : "not yet "),
-					foodTable[theItem->kind].name);
+			sprintf(buf2, "\n\n你还没有那么饿，现在吃掉它的话有些浪费了");
 			strcat(buf, buf2);
 			break;
 			
@@ -1637,51 +1627,49 @@ Lumenstones are said to contain mysterious properties of untold power, but for y
 			// enchanted? strength modifier?
 			if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
 				if (theItem->enchant1) {
-					sprintf(buf2, "\n\nThe %s bear%s an intrinsic %s%s%i%s",
+					sprintf(buf2, "\n\n这种%s带有%s%i点%s%s%s",
 							theName,
-							(singular ? "s" : ""),
-							(theItem->enchant1 > 0 ? "enchantment of +" : "penalty of "),
                             (theItem->enchant1 > 0 ? goodColorEscape : badColorEscape),
 							theItem->enchant1,
-                            whiteColorEscape);
+							whiteColorEscape,
+							(theItem->enchant1 > 0 ? "的增强效果" : "的负面效果")
+                            );
 				} else {
-					sprintf(buf2, "\n\nThe %s bear%s no intrinsic enchantment",
-							theName,
-							(singular ? "s" : ""));
+					sprintf(buf2, "\n\n这种%s没有附加效果",
+							theName);
 				}
 				strcat(buf, buf2);
 				if (strengthModifier(theItem)) {
-					sprintf(buf2, ", %s %s %s %s%s%.2f%s because of your %s strength. ",
-							(theItem->enchant1 ? "and" : "but"),
-							(singular ? "carries" : "carry"),
-							(theItem->enchant1 && (theItem->enchant1 > 0) == (strengthModifier(theItem) > 0) ? "an additional" : "a"),
-							(strengthModifier(theItem) > 0 ? "bonus of +" : "penalty of "),
+					sprintf(buf2, "，%s由于你的力量%s，其%s效果%s%s了%.2f%s。",
+							(theItem->enchant1 ? "而且" : "但是"),
+							(strengthModifier(theItem) > 0 ? "富余" : "不足"),
+							(theItem->category == WEAPON ? "攻击": "防御"),
                             (strengthModifier(theItem) > 0 ? goodColorEscape : badColorEscape),
+							(strengthModifier(theItem) > 0 ? "增加" : "减少"),
 							strengthModifier(theItem),
-                            whiteColorEscape,
-							(strengthModifier(theItem) > 0 ? "excess" : "inadequate"));
+                            whiteColorEscape
+							);
 					strcat(buf, buf2);
 				} else {
-					strcat(buf, ". ");
+					strcat(buf, "，");
 				}
 			} else {
 				if ((theItem->enchant1 > 0) && (theItem->flags & ITEM_MAGIC_DETECTED)) {
-					sprintf(buf2, "\n\nYou can feel an %saura of benevolent magic%s radiating from the %s. ",
+					sprintf(buf2, "\n\n你能感觉到一股%s神奇的力量%s不断从%s中涌出。",
                             goodColorEscape,
                             whiteColorEscape,
 							theName);
 					strcat(buf, buf2);
 				}
 				if (strengthModifier(theItem)) {
-					sprintf(buf2, "\n\nThe %s %s%s a %s%s%.2f%s because of your %s strength. ",
+					sprintf(buf2, "\n\n这件%s由于你的力量%s，其%s效果%s%s了%.2f%s。",
 							theName,
-							((theItem->enchant1 > 0) && (theItem->flags & ITEM_MAGIC_DETECTED) ? "also " : ""),
-							(singular ? "carries" : "carry"),
-							(strengthModifier(theItem) > 0 ? "bonus of +" : "penalty of "),
+							(strengthModifier(theItem) > 0 ? "富余" : "不足"),
+							(theItem->category == WEAPON ? "攻击": "防御"),
                             (strengthModifier(theItem) > 0 ? goodColorEscape : badColorEscape),
+							(strengthModifier(theItem) > 0 ? "增加" : "减少"),
 							strengthModifier(theItem),
-                            whiteColorEscape,
-							(strengthModifier(theItem) > 0 ? "excess" : "inadequate"));
+                            whiteColorEscape);
 					strcat(buf, buf2);
 				}
 				
