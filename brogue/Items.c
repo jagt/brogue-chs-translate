@@ -1998,13 +1998,13 @@ void itemDetails(char *buf, item *theItem) {
 			
 			// charges
 			if ((theItem->flags & ITEM_IDENTIFIED)  || rogue.playbackOmniscience) {
-				sprintf(buf2, "\n\nThe %s has %i charges remaining out of a maximum of %i charges, and like all staffs, recovers its charges gradually over time. ",
+				sprintf(buf2, "\n\n这件%s还剩下%i发的能量（最多能保存%i发）。所有法杖的能量都会随时间回复。",
 						theName,
 						theItem->charges,
 						theItem->enchant1);
 				strcat(buf, buf2);
 			} else if (theItem->flags & ITEM_MAX_CHARGES_KNOWN) {
-				sprintf(buf2, "\n\nThe %s has a maximum of %i charges, and like all staffs, recovers its charges gradually over time. ",
+				sprintf(buf2, "\n\n这件%s最多存有%i发的能量。所有法杖的能量都会随时间回复。",
 						theName,
 						theItem->enchant1);
 				strcat(buf, buf2);
@@ -2017,67 +2017,67 @@ void itemDetails(char *buf, item *theItem) {
 						// STAFF_LIGHTNING, STAFF_FIRE, STAFF_POISON, STAFF_TUNNELING, STAFF_BLINKING, STAFF_ENTRANCEMENT, STAFF_HEALING,
 						// STAFF_HASTE, STAFF_OBSTRUCTION, STAFF_DISCORD, STAFF_CONJURATION
 					case STAFF_LIGHTNING:
-						sprintf(buf2, "This staff deals damage to every creature in its line of fire; nothing is immune. (If the staff is enchanted, its average damage will increase by %i%%.)",
+						sprintf(buf2, "当使用时这件法杖会对其释放路线上的所有目标造成伤害。没有怪物能免疫闪电攻击。（如果这件法杖被增强，其伤害会被增强到%i%%。）。",
 								(int) (100 * (staffDamageLow(enchant + 1) + staffDamageHigh(enchant + 1)) / (staffDamageLow(enchant) + staffDamageHigh(enchant)) - 100));
 						break;
 					case STAFF_FIRE:
-						sprintf(buf2, "This staff deals damage to any creature that it hits, unless the creature is immune to fire. (If the staff is enchanted, its average damage will increase by %i%%.) It also sets creatures and flammable terrain on fire.",
+						sprintf(buf2, "当使用时这件法杖会对其释放路线上的所有目标造成伤害。如果怪物对火焰免疫则不会对其有伤害。（如果这件法杖被增强，其伤害会被增强到%i%%。）。",
 								(int) (100 * (staffDamageLow(enchant + 1) + staffDamageHigh(enchant + 1)) / (staffDamageLow(enchant) + staffDamageHigh(enchant)) - 100));
 						break;
 					case STAFF_POISON:
-						sprintf(buf2, "The bolt from this staff will poison any creature that it hits for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖能发出魔法的毒箭攻击目标，使其中毒%i回合。（如果这件法杖被增强，中毒效果会延长到%i回合）。",
 								staffPoison(enchant),
 								staffPoison(enchant + 1));
 						break;
 					case STAFF_TUNNELING:
-						sprintf(buf2, "The bolt from this staff will dissolve %i layers of obstruction. (If the staff is enchanted, this will increase to %i layers.)",
+						sprintf(buf2, "这件法杖能发出销毁墙壁的法球，造成目标方向的%i层墙壁被销毁。（如果这件法杖被增强，摧毁墙壁的层数会提高到%i）",
 								theItem->enchant1,
 								theItem->enchant1 + 1);
 						break;
 					case STAFF_BLINKING:
-						sprintf(buf2, "This staff enables you to teleport up to %i spaces. (If the staff is enchanted, this will increase to %i spaces.) It recharges half as quickly as most other kinds of staffs.",
+						sprintf(buf2, "这件法杖能使你最多向指向的方向闪烁最多%i格的距离。（如果这件法杖被增强，闪烁距离上限会提高到%i格）。闪烁法杖的充能速度只有常见法杖的一半。",
 								staffBlinkDistance(theItem->enchant1),
 								staffBlinkDistance(theItem->enchant1 + 1));
 						break;
 					case STAFF_ENTRANCEMENT:
-						sprintf(buf2, "This staff will compel its target to mirror your movements for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖会让目标模仿你的行动，效果持续%i回合。（如果这件法杖被增强，效果持续时间会延长到%i回合）。",
 								staffEntrancementDuration(theItem->enchant1),
 								staffEntrancementDuration(theItem->enchant1 + 1));
 						break;
 					case STAFF_HEALING:
 						if (enchant < 10) {
-							sprintf(buf2, "This staff will heal its target by %i%% of its maximum health. (If the staff is enchanted, this will increase to %i%%.)",
+							sprintf(buf2, "这件法杖会回复其目标最大生命值的%i%%。（如果这件法杖被增强，回复效果会提升到%i%%）",
 									theItem->enchant1 * 10,
 									(theItem->enchant1 + 1) * 10);
 						} else {
-							strcpy(buf2, "This staff will completely heal its target.");	
+							strcpy(buf2, "这件法杖能完全回复其目标的生命值。");	
 						}
 						break;
 					case STAFF_HASTE:
-						sprintf(buf2, "This staff will cause its target to move twice as fast for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖能使其目标移动速度翻倍，效果持续%i回合。（如果这件法杖被增强，加速效果会延长到%i回合）。",
 								staffHasteDuration(theItem->enchant1),
 								staffHasteDuration(theItem->enchant1 + 1));
 						break;
 					case STAFF_OBSTRUCTION:
-						strcpy(buf2, "This staff recharges half as quickly as most other kinds of staffs.");
+						strcpy(buf2, "这件法杖充能速度是一般法杖的一半。");
 						break;
 					case STAFF_DISCORD:
-						sprintf(buf2, "This staff will cause discord for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖会挑拨目标，使其攻击附近的其他敌人，同时敌人也会攻击它。效果持续%i回合。（如果这件法杖被增强，挑拨效果会延长到%i回合）。",
 								staffDiscordDuration(theItem->enchant1),
 								staffDiscordDuration(theItem->enchant1 + 1));
 						break;
 					case STAFF_CONJURATION:
-						sprintf(buf2, "%i phantom blades will be called into service. (If the staff is enchanted, this will increase to %i blades.)",
+						sprintf(buf2, "使用这件法杖能召唤出%i个奥术之剑来帮助你战斗。（如果这件法杖被增强，其数量会提升到%i）。",
 								staffBladeCount(theItem->enchant1),
 								staffBladeCount(theItem->enchant1 + 1));
 						break;
 					case STAFF_PROTECTION:
-						sprintf(buf2, "This staff will shield a creature for up to 20 turns against up to %i damage. (If the staff is enchanted, this will increase to %i damage.)",
+						sprintf(buf2, "这件法杖能对目标施加魔法盾，最多能吸收%i点伤害。魔法盾最多持续20回合。（如果这件法杖被增强，吸收伤害上限将提升到%i）。",
 								staffProtection(theItem->enchant1) / 10,
 								staffProtection(theItem->enchant1 + 1) / 10);
 						break;
 					default:
-						strcpy(buf2, "No one knows what this staff does.");
+						strcpy(buf2, "没有人知道这件法杖到底是用来干啥的。");
 						break;
 				}
 				strcat(buf, "\n\n");
@@ -2089,33 +2089,27 @@ void itemDetails(char *buf, item *theItem) {
 			strcat(buf, "\n\n");
 			if ((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAX_CHARGES_KNOWN)) || rogue.playbackOmniscience) {
 				if (theItem->charges) {
-					sprintf(buf2, "%i charge%s remain%s. A scroll of recharging will add 1 charge, and enchanting this wand will add %i charge%s.",
+					sprintf(buf2, "剩余%i发的能量。使用充能卷轴能回复一发的能量，使用强化卷轴能回复%i发的能量。",
 							theItem->charges,
-							(theItem->charges == 1 ? "" : "s"),
-							(theItem->charges == 1 ? "s" : ""),
-                            wandTable[theItem->kind].range.lowerBound,
-                            (wandTable[theItem->kind].range.lowerBound == 1 ? "" : "s"));
+                            wandTable[theItem->kind].range.lowerBound);
 				} else {
-					sprintf(buf2, "No charges remain.  A scroll of recharging will add 1 charge, and enchanting this wand will add %i charge%s.",
-                            wandTable[theItem->kind].range.lowerBound,
-                            (wandTable[theItem->kind].range.lowerBound == 1 ? "" : "s"));
+					sprintf(buf2, "已没有能量剩余。使用充能卷轴能回复一发的能量，使用强化卷轴能够回复%i发的能量。",
+                            wandTable[theItem->kind].range.lowerBound);
 				}
 			} else {
 				if (theItem->enchant2) {
-					sprintf(buf2, "You have used this wand %i time%s, but do not know how many charges, if any, remain.",
-							theItem->enchant2,
-							(theItem->enchant2 == 1 ? "" : "s"));
+					sprintf(buf2, "这根魔棒你已经使用了%i次，你也不知道还剩下多少能量。",
+							theItem->enchant2);
 				} else {
-					strcpy(buf2, "You have not yet used this wand.");
+					strcpy(buf2, "你还没有使用过这根魔棒。");
 				}
 				
 				if (wandTable[theItem->kind].identified) {
 					strcat(buf, buf2);
-					sprintf(buf2, " Wands of this type can be found with %i to %i charges. Enchanting this wand will add %i charge%s.",
+					sprintf(buf2, "这种类型的魔棒一般有%i到%i发的上限，使用强化卷轴能够回复其%i发的能量。",
 							wandTable[theItem->kind].range.lowerBound,
 							wandTable[theItem->kind].range.upperBound,
-                            wandTable[theItem->kind].range.lowerBound,
-                            (wandTable[theItem->kind].range.lowerBound == 1 ? "" : "s"));
+                            wandTable[theItem->kind].range.lowerBound);
 				}
 			}
 			strcat(buf, buf2);
@@ -2127,33 +2121,32 @@ void itemDetails(char *buf, item *theItem) {
                     switch (theItem->kind) {
                         case RING_CLAIRVOYANCE:
                             if (theItem->enchant1 > 0) {
-                                sprintf(buf2, "\n\nThis ring provides magical sight with a radius of %i. (If the ring is enchanted, this will increase to %i.)",
+                                sprintf(buf2, "\n\n这件指环能用魔法提供附近%i格内的视野。（如果这件指环被增强，范围会提升到%i）。",
                                         theItem->enchant1 + 1,
                                         theItem->enchant1 + 2);
                             } else {
-                                sprintf(buf2, "\n\nThis ring magically blinds you to a radius of %i. (If the ring is enchanted, this will decrease to %i.)",
+                                sprintf(buf2, "\n\n这件指环以魔法的力量使你的视野减少到%i格。（如果这件指环被增强，致盲范围会减少到%i）。",
                                         (theItem->enchant1 * -1) + 1,
                                         (theItem->enchant1 * -1));
                             }
                             strcat(buf, buf2);
                             break;
                         case RING_REGENERATION:
-                            sprintf(buf2, "\n\nWith this ring equipped, you will regenerate all of your health in %li turns (instead of %li). (If the ring is enchanted, this will decrease to %li turns.)",
+                            sprintf(buf2, "\n\n装备着这件指环你的生命力能在%li回合内回复（正常回复需要%li回合）。（如果这件指环被增强，完全恢复所需的回合数将下降到%li）",
                                     (long) (turnsForFullRegen(theItem->enchant1) / 1000),
                                     (long) TURNS_FOR_FULL_REGEN,
                                     (long) (turnsForFullRegen(theItem->enchant1 + 1) / 1000));
                             strcat(buf, buf2);
                             break;
                         case RING_TRANSFERENCE:
-                            sprintf(buf2, "\n\nEach blow you land will %s you by %i%% of the damage you inflict. (If the ring is enchanted, this will %s to %i%%.)",
-                                    (theItem->enchant1 > 0 ? "heal" : "harm"),
+                            sprintf(buf2, "\n\n这件指环会以你每次所造成伤害的%i%%%s你的生命值。（如果这件指环被增强，比例会将变为%i%%）。",
                                     abs(theItem->enchant1) * 10,
-                                    (theItem->enchant1 > 0 ? "increase" : "decrease"),
+                                    (theItem->enchant1 > 0 ? "增加" : "减少"),
                                     abs(theItem->enchant1 + 1) * 10);
                             strcat(buf, buf2);
                             break;
                         case RING_WISDOM:
-                            sprintf(buf2, "\n\nWhen worn, your staffs will recharge at %i%% of their normal rate. (If the ring is enchanted, the rate will increase to %i%% of the normal rate.)",
+                            sprintf(buf2, "\n\n装备着这件指环，你携带的法杖会以%i%%的速度充能。（如果这件指环被增强，比例会变为%i%%）。",
                                     (int) (100 * pow(1.3, min(27, theItem->enchant1)) + FLOAT_FUDGE),
                                     (int) (100 * pow(1.3, min(27, (theItem->enchant1 + 1))) + FLOAT_FUDGE));
                             strcat(buf, buf2);
@@ -2163,31 +2156,29 @@ void itemDetails(char *buf, item *theItem) {
                     }
                 }
 			} else {
-				sprintf(buf2, "\n\nIt will reveal its secrets to you if you wear it for %i%s turn%s",
-						theItem->charges,
-						(theItem->charges == RING_DELAY_TO_AUTO_ID ? "" : " more"),
-						(theItem->charges == 1 ? "" : "s"));
+				sprintf(buf2, "\n\n这件指环的隐藏属性将在装备%i回合后被发现。",
+						theItem->charges);
 				strcat(buf, buf2);
                 
                 if ((theItem->charges < RING_DELAY_TO_AUTO_ID || (theItem->flags & (ITEM_MAGIC_DETECTED | ITEM_IDENTIFIED)))
                     && theItem->enchant1 > 0) { // Mention the unknown-positive-ring footnote only if it's good magic and you know it.
                     
-                    sprintf(buf2, ", and until you understand its secrets, it will function as a +%i ring.", theItem->enchant2);
+                    sprintf(buf2, "，到此之前你可以把它当做一个普通的+%i指环。", theItem->enchant2);
                     strcat(buf, buf2);
                 } else {
-                    strcat(buf, ".");
+                    strcat(buf, "。");
                 }
 			}
 			
 			// equipped? cursed?
 			if (theItem->flags & ITEM_EQUIPPED) {
-				sprintf(buf2, "\n\nThe %s is on your finger%s. ",
+				sprintf(buf2, "\n\n你的手指上正带着%s。%s。",
 						theName,
-						((theItem->flags & ITEM_CURSED) ? ", and because it is cursed, you are powerless to remove it" : ""));
+						((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法将它取下来。" : ""));
 				strcat(buf, buf2);
 			} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 					   && (theItem->flags & ITEM_CURSED)) {
-				sprintf(buf2, "\n\n%sYou can feel a malevolent magic lurking within the %s.%s ",
+				sprintf(buf2, "\n\n%s你能感觉到这%s里有一股险恶的魔法能量。%s",
                         badColorEscape,
                         theName,
                         whiteColorEscape);
@@ -2198,56 +2189,56 @@ void itemDetails(char *buf, item *theItem) {
 			enchant = theItem->enchant1;
             switch (theItem->kind) {
                 case CHARM_HEALTH:
-                    sprintf(buf2, "\n\nWhen used, the charm will heal %i%% of your health and recharge in %i turns. (If the charm is enchanted, it will heal %i%% of your health and recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能在你%i%%的生命值，在%i回合后才能重新使用。（如果这件法器被增强，回复效果变为%i%%，冷却回合数将变为%i）。",
                             charmHealing(enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmHealing(enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_PROTECTION:
-                    sprintf(buf2, "\n\nWhen used, the charm will shield you for up to 20 turns against up to %i damage and recharge in %i turns. (If the charm is enchanted, this will change to %i damage and %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能对你释放最多持续20回合的魔法护盾，最多能吸收%i点伤害，在%i回合后才能重新使用。（如果这件法器被增强，吸收伤害提升到%i，冷却回合数将变为%i）。",
                             charmProtection(enchant) / 10,
                             charmRechargeDelay(theItem->kind, enchant),
                             charmProtection(enchant + 1) / 10,
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_HASTE:
-                    sprintf(buf2, "\n\nWhen used, the charm will haste you for %i turns and recharge in %i turns. (If the charm is enchanted, the haste will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能对你释放持续%i回合的加速法术，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_FIRE_IMMUNITY:
-                    sprintf(buf2, "\n\nWhen used, the charm will grant you immunity to fire for %i turns and recharge in %i turns. (If the charm is enchanted, the immunity will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内对火焰免疫，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_INVISIBILITY:
-                    sprintf(buf2, "\n\nWhen used, the charm will turn you invisible for %i turns and recharge in %i turns. While invisible, monsters more than two spaces away cannot track you. (If the charm is enchanted, the invisibility will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内维持隐身，期间在两格以外的怪物无法发现你的踪迹，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_TELEPATHY:
-                    sprintf(buf2, "\n\nWhen used, the charm will grant you telepathy for %i turns and recharge in %i turns. (If the charm is enchanted, the telepathy will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能让你在%i回合内保持心灵感应效果，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_LEVITATION:
-                    sprintf(buf2, "\n\nWhen used, the charm will lift you off the ground for %i turns and recharge in %i turns. (If the charm is enchanted, the levitation will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能让你悬浮在空中，效果持续%i回合，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_SHATTERING:
-                    sprintf(buf2, "\n\nWhen used, the charm will dissolve the nearby walls and recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它会将附近的墙壁溶解掉，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
@@ -2257,17 +2248,17 @@ void itemDetails(char *buf, item *theItem) {
 //                            charmRechargeDelay(theItem->kind, enchant + 1));
 //                    break;
                 case CHARM_TELEPORTATION:
-                    sprintf(buf2, "\n\nWhen used, the charm will teleport you elsewhere in the dungeon and recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它将把你传送到当前地牢的一个随机位置，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_RECHARGING:
-                    sprintf(buf2, "\n\nWhen used, the charm will recharge your staffs (though not your wands or charms), after which it will recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它将对你身上的法杖进行充能（不包括法器和魔棒），在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_NEGATION:
-                    sprintf(buf2, "\n\nWhen used, the charm will negate all magical effects on the creatures in your field of view and the items on the ground, and recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它将对你视野范围内的生物和地上的物品产生反魔法效果，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
