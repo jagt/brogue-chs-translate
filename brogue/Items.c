@@ -1513,16 +1513,16 @@ void itemDetails(char *buf, item *theItem) {
 	short nextLevelState = 0, new;
 	float accuracyChange, damageChange, current, currentDamage, newDamage;
 	const char weaponRunicEffectDescriptions[NUMBER_WEAPON_RUNIC_KINDS][DCOLS*3] = {
-		"每回合可以进行两次攻击",
-		"敌人会被秒杀",
-		"敌人会被麻痹",
+		"在一回合以进行两次攻击",
+		"秒杀目标",
+		"麻痹目标",
 		"[]", // never used
-		"敌人会被减速",
-		"敌人会被陷入混乱状态",
-        "敌人会被击飞",
+		"减速目标",
+		"使目标陷入混乱状态",
+        "击飞目标",
 		"[]", // never used
-		"敌人会恢复体力",
-		"敌人会被复制"
+		"使目标恢复体力",
+		"复制目标"
 	};
     
     goodColorEscape[0] = badColorEscape[0] = whiteColorEscape[0] = '\0';
@@ -1769,7 +1769,7 @@ void itemDetails(char *buf, item *theItem) {
 							strcat(buf, buf2);
 						} else if (theItem->enchant2 == W_MULTIPLICITY) {
 							if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
-								sprintf(buf2, "攻击敌人时你有%i%%的机会, 召唤出%i个%s的奥术幻想。它们带有与该武器相同的属性，在%i回合后会消失。（如果这把%s被增强了, 会以%i%%机会产生%i个额外的镜像，并持续%i回合。）",
+								sprintf(buf2, "攻击敌人时你有%i%%的机会, 召唤出%i个%s的奥术幻象。它们带有与该武器相同的属性，在%i回合后会消失。（如果这把%s被增强了, 会以%i%%机会产生%i个额外的镜像，并持续%i回合。）",
 										runicWeaponChance(theItem, false, 0),
 										weaponImageCount(enchant),
 										theName,
@@ -1779,7 +1779,7 @@ void itemDetails(char *buf, item *theItem) {
 										weaponImageCount((float) (enchant + enchantIncrement(theItem))),
 										weaponImageDuration((float) (enchant + enchantIncrement(theItem))));
 							} else {
-								sprintf(buf2, "Sometimes, when it hits an enemy, spectral %ss will spring into being with accuracy and attack power equal to your own, and will dissipate shortly thereafter.",
+								sprintf(buf2, "在攻击到敌人的时候, %s会召唤出有相同属性的奥术幻象武器来帮助你战斗，它们会在一小段时间后消失。",
 										theName);
 							}
 							strcat(buf, buf2);
@@ -1788,84 +1788,84 @@ void itemDetails(char *buf, item *theItem) {
                                 if (runicWeaponChance(theItem, false, 0) < 2
                                     && rogue.strength - player.weaknessAmount < theItem->strengthRequired) {
                                     
-                                    strcpy(buf2, "Its runic effect will almost never activate because of your inadequate strength, but sometimes, when");
+                                    strcpy(buf2, "由于你力量不足，这件武器的特殊效果几乎不会被触发。但在极少的情况下此武器能");
                                 } else {
-                                    sprintf(buf2, "%i%% of the time that",
+                                    sprintf(buf2, "这件武器能以%i%%的概率",
                                             runicWeaponChance(theItem, false, 0));
                                 }
 								strcat(buf, buf2);
 							} else {
-								strcat(buf, "Sometimes, when");
+								strcat(buf, "某些情况下这件武器");
 							}
-							sprintf(buf2, " it hits an enemy, %s",
+							sprintf(buf2, "能%s",
 									weaponRunicEffectDescriptions[theItem->enchant2]);
 							strcat(buf, buf2);
 							
 							if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
 								switch (theItem->enchant2) {
 									case W_SPEED:
-										strcat(buf, ". ");
+										strcat(buf, "。");
 										break;
 									case W_PARALYSIS:
-										sprintf(buf2, " for %i turns. ",
+										sprintf(buf2, "，效果持续%i个回合。",
 												(int) (weaponParalysisDuration(enchant)));
 										strcat(buf, buf2);
 										nextLevelState = (int) (weaponParalysisDuration((float) (enchant + enchantIncrement(theItem))) + FLOAT_FUDGE);
 										break;
 									case W_SLOWING:
-										sprintf(buf2, " for %i turns. ",
+										sprintf(buf2, "，效果持续%i个回合。",
 												weaponSlowDuration(enchant));
 										strcat(buf, buf2);
 										nextLevelState = weaponSlowDuration((float) (enchant + enchantIncrement(theItem)));
 										break;
 									case W_CONFUSION:
-										sprintf(buf2, " for %i turns. ",
+										sprintf(buf2, "，效果持续%i个回合。",
 												weaponConfusionDuration(enchant));
 										strcat(buf, buf2);
 										nextLevelState = weaponConfusionDuration((float) (enchant + enchantIncrement(theItem)));
 										break;
 									case W_FORCE:
-										sprintf(buf2, " up to %i spaces backward. If the enemy hits an obstruction, it will take damage in proportion to the distance it flew. ",
+										sprintf(buf2, "，使其后退最多%i格。如果敌人撞到了墙壁则会根据被击飞的距离受到伤害。",
 												weaponForceDistance(enchant));
 										strcat(buf, buf2);
 										nextLevelState = weaponForceDistance((float) (enchant + enchantIncrement(theItem)));
 										break;
 									case W_MERCY:
-										strcpy(buf2, " by 50% of its maximum health. ");
+										strcpy(buf2, "，最多回复其生命值上限的50%%。");
 										strcat(buf, buf2);
 										break;
 									default:
-										strcpy(buf2, ". ");
+										strcpy(buf2, "。");
 										strcat(buf, buf2);
 										break;
 								}
 								
 								if (((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience)
 									&& runicWeaponChance(theItem, false, 0) < runicWeaponChance(theItem, true, (float) (enchant + enchantIncrement(theItem)))){
-									sprintf(buf2, "(If the %s is enchanted, the chance will increase to %i%%",
+									sprintf(buf2, "（如果%s被增强，其特效触发几率将增加到%i%%，",
 											theName,
 											runicWeaponChance(theItem, true, (float) (enchant + enchantIncrement(theItem))));
 									strcat(buf, buf2);
 									if (nextLevelState) {
                                         if (theItem->enchant2 == W_FORCE) {
-                                            sprintf(buf2, " and the distance will increase to %i.)",
+                                            sprintf(buf2, "，击飞距离会被提升至%i。）",
                                                     nextLevelState);
                                         } else {
-                                            sprintf(buf2, " and the duration will increase to %i turns.)",
+                                            sprintf(buf2, "，效果持续时间会增加至%i回合。）",
                                                     nextLevelState);
                                         }
 									} else {
-										strcpy(buf2, ".)");
+										strcpy(buf2, "。）");
 									}
 									strcat(buf, buf2);
 								}
 							} else {
-								strcat(buf, ". ");
+								strcat(buf, "。");
 							}
 						}
 						
 					} else if (theItem->flags & ITEM_IDENTIFIED) {
-						sprintf(buf2, "\n\nGlowing runes of an indecipherable language run down the length of the %s. ",
+						sprintf(buf2, "\n\n某种神秘的符文刻满了%s。",
 								theName);
 						strcat(buf, buf2);
 					}
@@ -1873,13 +1873,13 @@ void itemDetails(char *buf, item *theItem) {
 				
 				// equipped? cursed?
 				if (theItem->flags & ITEM_EQUIPPED) {
-					sprintf(buf2, "\n\nYou hold the %s at the ready%s. ",
+					sprintf(buf2, "\n\n你正手握着这把%s。",
 							theName,
-							((theItem->flags & ITEM_CURSED) ? ", and because it is cursed, you are powerless to let go" : ""));
+							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法放开它" : ""));
 					strcat(buf, buf2);
 				} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 						   && (theItem->flags & ITEM_CURSED)) {
-					sprintf(buf2, "\n\n%sYou can feel a malevolent magic lurking within the %s.%s ",
+					sprintf(buf2, "\n\n%s你能感觉到这%s里有一股险恶的魔法能量。%s",
                             badColorEscape,
                             theName,
                             whiteColorEscape);
@@ -1891,7 +1891,7 @@ void itemDetails(char *buf, item *theItem) {
 				// runic?
 				if (theItem->flags & ITEM_RUNIC) {
 					if ((theItem->flags & ITEM_RUNIC_IDENTIFIED) || rogue.playbackOmniscience) {
-						sprintf(buf2, "\n\nGlowing runes of %s adorn the %s. ",
+						sprintf(buf2, "\n\n闪亮的%s符文覆盖着这件%s。",
 								armorRunicNames[theItem->enchant2],
 								theName);
 						strcat(buf, buf2);
@@ -1900,42 +1900,41 @@ void itemDetails(char *buf, item *theItem) {
 						enchant = netEnchant(theItem);
 						switch (theItem->enchant2) {
 							case A_MULTIPLICITY:
-								sprintf(buf2, "When worn, 33%% of the time that an enemy's attack connects, %i allied spectral duplicate%s of your attacker will appear for 3 turns. ",
-										armorImageCount(enchant),
-										(armorImageCount(enchant) == 1 ? "" : "s"));
+								sprintf(buf2, "这件护甲在被敌人攻击时能以33%%的几率召唤出%i个敌人的幻象来帮助你攻击。幻象持续3回合。",
+										armorImageCount(enchant));
 								if (armorImageCount((float) enchant + enchantIncrement(theItem)) > armorImageCount(enchant)) {
-									sprintf(buf3, "(If the %s is enchanted, the number of duplicates will increase to %i.) ",
+									sprintf(buf3, "（如果%s被增强了，幻象的数量会增加到%i。）",
 											theName,
 											(armorImageCount((float) enchant + enchantIncrement(theItem))));
 									strcat(buf2, buf3);
 								}
 								break;
 							case A_MUTUALITY:
-								strcpy(buf2, "When worn, the damage that you incur from physical attacks will be split evenly among yourself and all other adjacent enemies. ");
+								strcpy(buf2, "这件护甲能使你受到的物理伤害被溅射到附近的敌人。");
 								break;
 							case A_ABSORPTION:
-								sprintf(buf2, "It will reduce the damage of inbound attacks by a random amount between 0 and %i, which is %i%% of your current maximum health. (If the %s is enchanted, this maximum amount will %s %i.) ",
+								sprintf(buf2, "这件护甲能随机吸收0到%i的伤害，相当于你当前最大生命值的%i%%（如果这件%s被增强了，吸收伤害的最大值会%s%i。）",
 										(int) armorAbsorptionMax(enchant),
 										(int) (100 * armorAbsorptionMax(enchant) / player.info.maxHP),
 										theName,
-										(armorAbsorptionMax(enchant) == armorAbsorptionMax((float) (enchant + enchantIncrement(theItem))) ? "remain at" : "increase to"),
+										(armorAbsorptionMax(enchant) == armorAbsorptionMax((float) (enchant + enchantIncrement(theItem))) ? "维持在" : "增加到"),
 										(int) armorAbsorptionMax((float) (enchant + enchantIncrement(theItem))));
 								break;
 							case A_REPRISAL:
-								sprintf(buf2, "Any enemy that attacks you will itself be wounded by %i%% of the damage that it inflicts. (If the %s is enchanted, this percentage will increase to %i%%.) ",
+								sprintf(buf2, "任何用对你造成物理伤害的敌人都会被这件护甲反弹%i%%的伤害。（如果这件%s被增强了，反射的百分比会上升到%i%%。）",
 										armorReprisalPercent(enchant),
 										theName,
 										armorReprisalPercent((float) (enchant + enchantIncrement(theItem))));
 								break;
 							case A_IMMUNITY:
-								sprintf(buf2, "It offers complete protection from any attacking %s. ",
+								sprintf(buf2, "这件护甲能免疫来自%s的任何攻击。",
 										monsterCatalog[theItem->vorpalEnemy].monsterName);
 								break;
 							case A_REFLECTION:
 								if (theItem->enchant1 > 0) {
 									short reflectChance = reflectionChance(enchant);
 									short reflectChance2 = reflectionChance(enchant + enchantIncrement(theItem));
-									sprintf(buf2, "When worn, you will deflect %i%% of incoming spells -- including directly back at their source %i%% of the time. (If the armor is enchanted, these will increase to %i%% and %i%%.)",
+									sprintf(buf2, "这件护甲能阻挡%i%%指向你的法术，并能以%i%%的几率将法术反射回施法者。（如果这件%s被增强了，概率会分别上升到%i%%和%i%%）",
 											reflectChance,
 											reflectChance * reflectChance / 100,
 											reflectChance2,
@@ -1943,7 +1942,7 @@ void itemDetails(char *buf, item *theItem) {
 								} else if (theItem->enchant1 < 0) {
 									short reflectChance = reflectionChance(enchant);
 									short reflectChance2 = reflectionChance(enchant + enchantIncrement(theItem));
-									sprintf(buf2, "When worn, %i%% of your own spells will deflect from their target -- including directly back at you %i%% of the time. (If the armor is enchanted, these will decrease to %i%% and %i%%.)",
+									sprintf(buf2, "这件护甲会以%i%%的几率使你的施法失效，并会以%i%%的概率把你发出的法术反射回你自己（如果这件%s被增强了，概率会分别降低到%i%%和%i%%）",
 											reflectChance,
 											reflectChance * reflectChance / 100,
 											reflectChance2,
@@ -1951,26 +1950,26 @@ void itemDetails(char *buf, item *theItem) {
 								}
 								break;
                             case A_RESPIRATION:
-                                strcpy(buf2, "When worn, it will maintain a pocket of fresh air around you, rendering you immune to the effects of steam and all toxic gases.");
+                                strcpy(buf2, "穿上这件护甲后，它会释放一股新鲜空气包围在你周围，使你免疫于蒸汽和其他毒气。");
                                 break;
                             case A_DAMPENING:
-                                strcpy(buf2, "When worn, it will harmlessly absorb the concussive impact of any explosions (though you may still be burned).");
+                                strcpy(buf2, "这件护甲能吸吸收爆炸产生的伤害，但你仍然会被烧到。");
                                 break;
 							case A_BURDEN:
-								strcpy(buf2, "10% of the time it absorbs a blow, it will permanently become heavier. ");
+								strcpy(buf2, "每次你受到攻击这件护甲都会有10%%的概率变得更重。");
 								break;
 							case A_VULNERABILITY:
-								strcpy(buf2, "While it is worn, inbound attacks will inflict twice as much damage. ");
+								strcpy(buf2, "这件护甲会使你受到的伤害提高两倍。");
 								break;
                             case A_IMMOLATION:
-								strcpy(buf2, "10% of the time it absorbs a blow, it will explode in flames. ");
+								strcpy(buf2, "每次你受到伤害这件护甲都有10%%的概率产生爆炸。");
 								break;
 							default:
 								break;
 						}
 						strcat(buf, buf2);
 					} else if (theItem->flags & ITEM_IDENTIFIED) {
-						sprintf(buf2, "\n\nGlowing runes of an indecipherable language spiral around the %s. ",
+						sprintf(buf2, "\n\n某种神秘的符文刻满了%s。",
 								theName);
 						strcat(buf, buf2);
 					}
@@ -1978,13 +1977,13 @@ void itemDetails(char *buf, item *theItem) {
 				
 				// equipped? cursed?
 				if (theItem->flags & ITEM_EQUIPPED) {
-					sprintf(buf2, "\n\nYou are wearing the %s%s. ",
+					sprintf(buf2, "\n\n你正身着这件%s%s。",
 							theName,
-							((theItem->flags & ITEM_CURSED) ? ", and because it is cursed, you are powerless to remove it" : ""));
+							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法脱掉它。" : ""));
 					strcat(buf, buf2);
 				} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 						   && (theItem->flags & ITEM_CURSED)) {
-					sprintf(buf2, "\n\n%sYou can feel a malevolent magic lurking within the %s.%s ",
+					sprintf(buf2, "\n\n%s你能感觉到这%s里有一股险恶的魔法能量。%s",
                             badColorEscape,
                             theName,
                             whiteColorEscape);
