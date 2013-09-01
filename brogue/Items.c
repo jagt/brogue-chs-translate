@@ -1606,7 +1606,7 @@ void itemDetails(char *buf, item *theItem) {
 				strcpy(buf2, keyTable[theItem->kind].description);
 				break;
 			case GOLD:
-				sprintf(buf2, "%i个姗姗法功的金币，摞成了一堆。", theItem->quantity);
+				sprintf(buf2, "%i个闪闪发光的金币，摞成了一堆。", theItem->quantity);
 				break;
 			default:
 				break;
@@ -1674,15 +1674,11 @@ void itemDetails(char *buf, item *theItem) {
 				}
 				
 				if (theItem->category & WEAPON) {
-					sprintf(buf2, "It will reveal its secrets to you if you defeat %i%s %s with it. ",
-							theItem->charges,
-							(theItem->charges == WEAPON_KILLS_TO_AUTO_ID ? "" : " more"),
-							(theItem->charges == 1 ? "enemy" : "enemies"));
+					sprintf(buf2, "这件武器的真实力量在你用它杀死%i个敌人后会显现出来。",
+							theItem->charges);
 				} else {
-					sprintf(buf2, "It will reveal its secrets to you if you wear it for %i%s turn%s. ",
-							theItem->charges,
-							(theItem->charges == ARMOR_DELAY_TO_AUTO_ID ? "" : " more"),
-							(theItem->charges == 1 ? "" : "s"));
+					sprintf(buf2, "这件装备的真是力量在你穿着它%i回合后会显现出来。",
+							theItem->charges);
 				}
 				strcat(buf, buf2);
 			}
@@ -1715,14 +1711,14 @@ void itemDetails(char *buf, item *theItem) {
 					}
 					accuracyChange	= (new * 100 / current) - 100 + FLOAT_FUDGE;
 					damageChange	= (newDamage * 100 / currentDamage) - 100 + FLOAT_FUDGE;
-					sprintf(buf2, "Wielding the %s%s will %s your current accuracy by %s%i%%%s, and will %s your current damage by %s%i%%%s. ",
+					sprintf(buf2, "使用这件%s%s将%s你%s%i%%%s的命中率, 同时%s%s%i%%%s的攻击伤害。",
 							theName,
-							((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) ? "" : ", assuming it has no hidden properties,",
-							(((short) accuracyChange) < 0) ? "decrease" : "increase",
+							((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) ? "" : "（不考虑隐藏属性的影响）",
+							(((short) accuracyChange) < 0) ? "减少" : "增加",
                             (((short) accuracyChange) < 0) ? badColorEscape : (accuracyChange > 0 ? goodColorEscape : ""),
 							abs((short) accuracyChange),
                             whiteColorEscape,
-							(((short) damageChange) < 0) ? "decrease" : "increase",
+							(((short) damageChange) < 0) ? "减少" : "增加",
                             (((short) damageChange) < 0) ? badColorEscape : (damageChange > 0 ? goodColorEscape : ""),
 							abs((short) damageChange),
                             whiteColorEscape);
@@ -1735,9 +1731,9 @@ void itemDetails(char *buf, item *theItem) {
 					}
 					new = max(0, new);
                     new /= 10;
-					sprintf(buf2, "Wearing the %s%s will result in an armor rating of %s%i%s. ",
+					sprintf(buf2, "这件%s%s的护甲等级为%s%i%s。",
 							theName,
-							((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) ? "" : ", assuming it has no hidden properties,",
+							((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) ? "" : "（不考虑隐藏属性的影响）",
                             (new > displayedArmorValue() ? goodColorEscape : (new < displayedArmorValue() ? badColorEscape : whiteColorEscape)),
 							(int) (new + FLOAT_FUDGE),
                             whiteColorEscape);
@@ -1747,7 +1743,7 @@ void itemDetails(char *buf, item *theItem) {
 			
 			// protected?
 			if (theItem->flags & ITEM_PROTECTED) {
-				sprintf(buf2, "%sThe %s cannot be corroded by acid.%s",
+				sprintf(buf2, "%s这件%s不会被酸液腐蚀。%s",
                         goodColorEscape,
 						theName,
                         whiteColorEscape);
@@ -1759,7 +1755,7 @@ void itemDetails(char *buf, item *theItem) {
 				// runic?
 				if (theItem->flags & ITEM_RUNIC) {
 					if ((theItem->flags & ITEM_RUNIC_IDENTIFIED) || rogue.playbackOmniscience) {
-						sprintf(buf2, "\n\nGlowing runes of %s adorn the %s. ",
+						sprintf(buf2, "\n\n闪亮的%s符文覆盖着这件%s。",
 								weaponRunicNames[theItem->enchant2],
 								theName);
 						strcat(buf, buf2);
@@ -1768,22 +1764,19 @@ void itemDetails(char *buf, item *theItem) {
 						
 						enchant = netEnchant(theItem);
 						if (theItem->enchant2 == W_SLAYING) {
-							sprintf(buf2, "It will never fail to slay a%s %s in a single stroke. ",
-                                    (isVowelish(monsterCatalog[theItem->vorpalEnemy].monsterName) ? "n" : ""),
+							sprintf(buf2, "它只需要一击就能杀死%s。",
 									monsterCatalog[theItem->vorpalEnemy].monsterName);
 							strcat(buf, buf2);
 						} else if (theItem->enchant2 == W_MULTIPLICITY) {
 							if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
-								sprintf(buf2, "%i%% of the time that it hits an enemy, %i spectral %s%s will spring into being with accuracy and attack power equal to your own, and will dissipate %i turns later. (If the %s is enchanted, %i image%s will appear %i%% of the time, and will last %i turns.)",
+								sprintf(buf2, "攻击敌人时你有%i%%的机会, 召唤出%i个%s的奥术幻想。它们带有与该武器相同的属性，在%i回合后会消失。（如果这把%s被增强了, 会以%i%%机会产生%i个额外的镜像，并持续%i回合。）",
 										runicWeaponChance(theItem, false, 0),
 										weaponImageCount(enchant),
 										theName,
-										(weaponImageCount(enchant) > 1 ? "s" : ""),
 										weaponImageDuration(enchant),
 										theName,
-										weaponImageCount((float) (enchant + enchantIncrement(theItem))),
-										(weaponImageCount((float) (enchant + enchantIncrement(theItem))) > 1 ? "s" : ""),
 										runicWeaponChance(theItem, true, (float) (enchant + enchantIncrement(theItem))),
+										weaponImageCount((float) (enchant + enchantIncrement(theItem))),
 										weaponImageDuration((float) (enchant + enchantIncrement(theItem))));
 							} else {
 								sprintf(buf2, "Sometimes, when it hits an enemy, spectral %ss will spring into being with accuracy and attack power equal to your own, and will dissipate shortly thereafter.",

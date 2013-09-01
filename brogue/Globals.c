@@ -2075,31 +2075,31 @@ const itemTable armorTable[NUMBER_ARMOR_KINDS] = {
 	{"板甲",			"", "", 10, 1300,		19, {110,110,0},	true, false, "华丽而厚重的板甲，虽然很拉风但是其重量不是所有人都能承受的。"}
 };
 
-const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30] = {
-	"speed",
-	"quietus",
-	"paralysis",
-	"multiplicity",
-	"slowing",
-	"confusion",
-	"force",
-	"slaying",
-	"mercy",
-	"plenty"
+const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30*2] = {
+	"加速",
+	"偿还",
+	"麻痹",
+	"召唤",
+	"减速",
+	"混乱",
+	"巨力",
+	"屠戳",
+	"仁慈",
+	"复制"
 };
 
-const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30] = {
-	"multiplicity",
-	"mutuality",
-	"absorption",
-	"reprisal",
-	"immunity",
-	"reflection",
-	"respiration",
-	"dampening",
-	"burden",
-	"vulnerability",
-	"immolation",
+const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30*2] = {
+	"召唤",
+	"散射",
+	"保护",
+	"物理反射",
+	"免疫",
+	"魔法反射",
+	"呼吸",
+	"抑制",
+	"负担",
+	"脆弱",
+	"祭品",
 };
 
 itemTable scrollTable[NUMBER_SCROLL_KINDS] = {
