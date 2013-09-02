@@ -358,7 +358,7 @@ item *placeItem(item *theItem, short x, short y) {
 				refreshDungeonCell(x, y);
 			}
 			itemName(theItem, theItemName, false, false, NULL);
-			sprintf(buf, "a pressure plate clicks underneath the %s!", theItemName);
+			sprintf(buf, "%s压到了地面下的机关，发出了一声响声！", theItemName);
 			message(buf, true);
 		}
 		for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
@@ -919,7 +919,7 @@ boolean inscribeItem(item *theItem) {
 		confirmMessages();
 		itemName(theItem, nameOfItem, true, true, NULL);
 		nameOfItem[strlen(nameOfItem) - 1] = '\0';
-		sprintf(buf, "%s%s。\"", (theItem->quantity > 1 ? "这些现在叫做" : "它现在叫做"), nameOfItem);
+		sprintf(buf, "%s%s。\"", (theItem->quantity > 1 ? "这些现在被叫做" : "它现在被叫做"), nameOfItem);
 		messageWithColor(buf, &itemMessageColor, false);
 		return true;
 	} else {
@@ -965,7 +965,7 @@ void call(item *theItem) {
             }
         }
 		theItem = promptForItemOfType((WEAPON|ARMOR|SCROLL|RING|POTION|STAFF|WAND), ITEM_CAN_BE_IDENTIFIED, 0,
-									  "Call what? (a-z, shift for more info; or <esc> to cancel)", true);
+									  "选择你要命名的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
         updateIdentifiableItems(); // Reset the flags.
 	}
 	if (theItem == NULL) {
@@ -985,7 +985,7 @@ void call(item *theItem) {
 				recordKeystroke(RETURN_KEY, false, false);
 			}
 		} else {
-			message("you already know what that is.", false);
+			message("你已经知道了这种物品的真实功效。", false);
 		}
 		return;
 	}
@@ -998,7 +998,7 @@ void call(item *theItem) {
 				recordKeystrokeSequence(command);
 				recordKeystroke(RETURN_KEY, false, false);
 			}
-        } else if (confirm("Inscribe this particular item instead of all similar items?", true)) {
+        } else if (confirm("命名这单件物品，而不是所有类似的物品？", true)) {
 			command[c++] = 'y'; // y means yes, since the recording also needs to negotiate the above confirmation prompt.
 			if (inscribeItem(theItem)) {
 				command[c++] = '\0';
@@ -1014,7 +1014,7 @@ void call(item *theItem) {
 	
 	if (tableForItemCategory(theItem->category)
         && !(tableForItemCategory(theItem->category)[theItem->kind].identified)
-        && getInputTextString(itemText, "call them: \"", 29, "", "\"", TEXT_INPUT_NORMAL, false)) {
+        && getInputTextString(itemText, "把它们命名为： \"", 29, "", "\"", TEXT_INPUT_NORMAL, false)) {
         
 		command[c++] = '\0';
 		strcat((char *) command, itemText);
@@ -1031,7 +1031,7 @@ void call(item *theItem) {
 		itemName(theItem, buf, false, true, NULL);
 		messageWithColor(buf, &itemMessageColor, false);
 	} else {
-        message("you already know what that is.", false);
+        message("你已经知道了这种物品的真实功效。", false);
 	}
 }
 
@@ -2672,7 +2672,7 @@ short numberOfMatchingPackItems(unsigned short categoryMask,
 	if (packItems->nextItem == NULL) {
 		if (displayErrors) {
 			confirmMessages();
-			message("Your pack is empty!", false);
+			message("你身上还没有任何道具！", false);
 		}
 		return 0;
 	}
@@ -2690,7 +2690,7 @@ short numberOfMatchingPackItems(unsigned short categoryMask,
 	if (matchingItemCount == 0) {
 		if (displayErrors) {
 			confirmMessages();
-			message("You have nothing suitable.", false);
+			message("没有找到合适的物品。", false);
 		}
 		return 0;
 	}
@@ -2736,7 +2736,7 @@ void strengthCheck(item *theItem) {
 			strengthDeficiency = theItem->strengthRequired - max(0, rogue.strength - player.weaknessAmount);
 			strcpy(buf1, "");
 			itemName(theItem, buf1, false, false, NULL);
-			sprintf(buf2, "You can barely lift the %s; %i more strength would be ideal.", buf1, strengthDeficiency);
+			sprintf(buf2, "你几乎没办法把这件%s拿起来；需要额外%i点力量。", buf1, strengthDeficiency);
 			message(buf2, false);
 		}
 		
@@ -2744,7 +2744,7 @@ void strengthCheck(item *theItem) {
 			strengthDeficiency = theItem->strengthRequired - max(0, rogue.strength - player.weaknessAmount);
 			strcpy(buf1, "");
 			itemName(theItem, buf1, false, false, NULL);
-			sprintf(buf2, "You stagger under the weight of the %s; %i more strength would be ideal.",
+			sprintf(buf2, "你在%s的重量下感觉步履阑珊；需要额外%i点力量。",
 					buf1, strengthDeficiency);
 			message(buf2, false);
 		}
@@ -4891,8 +4891,7 @@ void autoIdentify(item *theItem) {
         theItem->quantity = 1;
         itemName(theItem, newName, false, true, NULL);
         theItem->quantity = quantityBackup;
-        sprintf(buf, "(It must %s %s.)",
-                ((theItem->category & (POTION | SCROLL)) ? "have been" : "be"),
+        sprintf(buf, "（你发现这是%s。）",
                 newName);
         messageWithColor(buf, &itemMessageColor, false);
     }
@@ -4904,7 +4903,7 @@ void autoIdentify(item *theItem) {
         itemName(theItem, oldName, false, false, NULL);
         theItem->flags |= ITEM_RUNIC_IDENTIFIED;
         itemName(theItem, newName, true, true, NULL);
-        sprintf(buf, "(Your %s must be %s.)", oldName, newName);
+        sprintf(buf, "（你发现这件%s其实是%s。）", oldName, newName);
         messageWithColor(buf, &itemMessageColor, false);
     }
 }
@@ -4961,13 +4960,13 @@ boolean hitMonsterWithProjectileWeapon(creature *thrower, creature *monst, item 
 		}
 		
 		if (inflictDamage(monst, damage, &red)) { // monster killed
-			sprintf(buf, "the %s %s %s.",
+			sprintf(buf, "%s%s%s。",
                     theItemName,
-                    (monst->info.flags & MONST_INANIMATE) ? "destroyed" : "killed",
+                    (monst->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了",
                     targetName);
 			messageWithColor(buf, messageColorFromVictim(monst), false);
 		} else {
-			sprintf(buf, "the %s hit %s.", theItemName, targetName);
+			sprintf(buf, "%s击中了%s。", theItemName, targetName);
 			if (theItem->flags & ITEM_RUNIC) {
 				magicWeaponHit(monst, theItem, false);
 			}
@@ -4981,7 +4980,7 @@ boolean hitMonsterWithProjectileWeapon(creature *thrower, creature *monst, item 
 		return true;
 	} else {
 		theItem->flags &= ~ITEM_PLAYER_AVOIDS; // Don't avoid thrown weapons that missed.
-		sprintf(buf, "the %s missed %s.", theItemName, targetName);
+		sprintf(buf, "%s没有击中%s。", theItemName, targetName);
 		message(buf, false);
 		return false;
 	}
@@ -5008,7 +5007,7 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 	if (thrower != &player && pmap[originLoc[0]][originLoc[1]].flags & IN_FIELD_OF_VIEW) {
 		monsterName(buf2, thrower, true);
 		itemName(theItem, buf3, false, true, NULL);
-		sprintf(buf, "%s hurls %s.", buf2, buf3);
+		sprintf(buf, "%s投出了%s。", buf2, buf3);
 		message(buf, false);
 	}
 	
@@ -5094,37 +5093,37 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 			|| theItem->kind == POTION_DESCENT) {
 			switch (theItem->kind) {
 				case POTION_POISON:
-					strcpy(buf, "the flask shatters and a deadly purple cloud billows out!");
+					strcpy(buf, "瓶子碎开了，一阵紫色的毒气飘散开来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_POISON_GAS_CLOUD_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_CONFUSION:
-					strcpy(buf, "the flask shatters and a multi-hued cloud billows out!");
+					strcpy(buf, "瓶子碎开了，一阵颜色奇怪的烟雾飘散开来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_CONFUSION_GAS_CLOUD_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_PARALYSIS:
-					strcpy(buf, "the flask shatters and a cloud of pink gas billows out!");
+					strcpy(buf, "瓶子碎开了，一阵粉红色的烟雾飘散开来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_PARALYSIS_GAS_CLOUD_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_INCINERATION:
-					strcpy(buf, "the flask shatters and its contents burst violently into flame!");
+					strcpy(buf, "瓶子碎开了，产生了一团火焰！");
 					message(buf, false);
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_INCINERATION_POTION], true, false);
 					break;
 				case POTION_DARKNESS:
-					strcpy(buf, "the flask shatters and the lights in the area start fading.");
+					strcpy(buf, "瓶子碎开了，附近的光开始变得暗淡下来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_DARKNESS_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_DESCENT:
-					strcpy(buf, "as the flask shatters, the ground vanishes!");
+					strcpy(buf, "瓶子碎开了，附近的地面正开始消失！");
 					message(buf, false);
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_HOLE_POTION], true, false);
 					break;
 				case POTION_LICHEN:
-					strcpy(buf, "the flask shatters and deadly spores spill out!");
+					strcpy(buf, "瓶子碎开了，致命的孢子在地面上扩散开来！");
 					message(buf, false);
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_LICHEN_PLANTED], true, false);
 					break;
@@ -5875,8 +5874,8 @@ void drinkPotion(item *theItem) {
 				updateMinersLightRadius();
 				updateVision(true);
 			}
-            sprintf(buf, "%syour maximum health increases by %i%%.",
-                    ((player.currentHP < player.info.maxHP) ? "you heal completely and " : ""),
+            sprintf(buf, "%s你的生命值上限提高了%i%%。",
+                    ((player.currentHP < player.info.maxHP) ? "你的生命力已完全恢复，同时" : ""),
                     (player.info.maxHP + 10) * 100 / player.info.maxHP - 100);
             
             player.info.maxHP += 10;
@@ -5886,11 +5885,11 @@ void drinkPotion(item *theItem) {
 			break;
 		case POTION_HALLUCINATION:
 			player.status[STATUS_HALLUCINATING] = player.maxStatus[STATUS_HALLUCINATING] = 300;
-			message("colors are everywhere! The walls are singing!", false);
+			message("你发现四周到处都是绚丽的彩色！墙壁在摇晃着唱着歌！", false);
 			break;
 		case POTION_INCINERATION:
 			colorFlash(&darkOrange, 0, IN_FIELD_OF_VIEW, 4, 4, player.xLoc, player.yLoc);
-			message("as you uncork the flask, it explodes in flame!", false);
+			message("你打开瓶盖，里面突然涌出一阵火焰！", false);
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_FLAMETHROWER], true, false);
 			exposeCreatureToFire(&player);
 			break;
@@ -5899,11 +5898,11 @@ void drinkPotion(item *theItem) {
 			player.maxStatus[STATUS_DARKNESS] = max(400, player.maxStatus[STATUS_DARKNESS]);
 			updateMinersLightRadius();
 			updateVision(true);
-			message("your vision flickers as a cloak of darkness settles around you!", false);
+			message("你的视野被一片突然而来的黑暗覆盖！", false);
 			break;
 		case POTION_DESCENT:
 			colorFlash(&darkBlue, 0, IN_FIELD_OF_VIEW, 3, 3, player.xLoc, player.yLoc);
-			message("vapor pours out of the flask and causes the floor to disappear!", false);
+			message("瓶中泻出的气体使得附近的地面开始消失！", false);
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_HOLE_POTION], true, false);
 			break;
 		case POTION_STRENGTH:
@@ -5912,16 +5911,16 @@ void drinkPotion(item *theItem) {
 				player.status[STATUS_WEAKENED] = 1;
 			}
 			updateEncumbrance();
-			messageWithColor("newfound strength surges through your body.", &advancementMessageColor, false);
+			messageWithColor("一股力量充满了你的身体。", &advancementMessageColor, false);
             createFlare(player.xLoc, player.yLoc, POTION_STRENGTH_LIGHT);
 			break;
 		case POTION_POISON:
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_POISON_GAS_CLOUD_POTION], true, false);
-			message("poisonous gas billows out of the open flask!", false);
+			message("剧毒的气体从瓶口处涌出！", false);
 			break;
 		case POTION_PARALYSIS:
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_PARALYSIS_GAS_CLOUD_POTION], true, false);
-			message("your muscles stiffen as a cloud of pink gas bursts from the open flask!", false);
+			message("瓶子中涌出的气体让你的肌肉突然紧绷起来，你感觉被麻痹了！", false);
 			break;
 		case POTION_TELEPATHY:
             makePlayerTelepathic(300);
@@ -5929,14 +5928,14 @@ void drinkPotion(item *theItem) {
 		case POTION_LEVITATION:
 			player.status[STATUS_LEVITATING] = player.maxStatus[STATUS_LEVITATING] = 100;
 			player.bookkeepingFlags &= ~MONST_SEIZED; // break free of holding monsters
-			message("you float into the air!", false);
+			message("你缓慢的悬浮到了空中！", false);
 			break;
 		case POTION_CONFUSION:
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_CONFUSION_GAS_CLOUD_POTION], true, false);
-			message("a shimmering cloud of rainbow-colored gas billows out of the open flask!", false);
+			message("一股彩虹色的闪亮气体充满空气中，你感觉有些不知道自己在哪里。", false);
 			break;
 		case POTION_LICHEN:
-			message("a handful of tiny spores burst out of the open flask!", false);
+			message("打开瓶子的一瞬间一些奇怪的孢子掉落在了地上。", false);
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_LICHEN_PLANTED], true, false);
 			break;
 		case POTION_DETECT_MAGIC:
@@ -5973,14 +5972,14 @@ void drinkPotion(item *theItem) {
 			}
 			if (hadEffect || hadEffect2) {
 				if (hadEffect && hadEffect2) {
-					message("you can somehow feel the presence of magic on the level and in your pack.", false);
+					message("不知怎么的你能感觉到来自附近的，以及你包裹中的魔法力量。", false);
 				} else if (hadEffect) {
-					message("you can somehow feel the presence of magic on the level.", false);
+					message("不知怎么的你能感觉到来自附近的魔法力量。", false);
 				} else {
-					message("you can somehow feel the presence of magic in your pack.", false);
+					message("不知怎么的你能感觉到来自你包裹中的魔法力量。", false);
 				}
 			} else {
-				message("you can somehow feel the absence of magic on the level and in your pack.", false);
+				message("不知怎么的你能感觉到你包裹里以及附近都没有什么魔法的痕迹。", false);
 			}
 			break;
 		case POTION_HASTE_SELF:
@@ -5991,14 +5990,14 @@ void drinkPotion(item *theItem) {
 			if (player.status[STATUS_BURNING]) {
 				extinguishFireOnCreature(&player);
 			}
-			message("a comforting breeze envelops you, and you no longer fear fire.", false);
+			message("你感觉到喝下去的药剂很冰爽，一段时间内对火焰免疫。", false);
 			break;
 		case POTION_INVISIBILITY:
 			player.status[STATUS_INVISIBLE] = player.maxStatus[STATUS_INVISIBLE] = 75;
-			message("you shiver as a chill runs up your spine.", false);
+			message("一阵冰凉的感觉从你的脊背窜下。", false);
 			break;
 		default:
-			message("you feel very strange, as though your body doesn't know how to react!", true);
+			message("你感觉到很奇怪，你的身体都不知道应该如何反应。", true);
 	}
 }
 
