@@ -668,7 +668,7 @@ void removeItemFrom(short x, short y) {
 // adds the item at (x,y) to the pack
 void pickUpItemAt(short x, short y) {
 	item *theItem;
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	
 	rogue.disturbed = true;
 	
@@ -699,7 +699,7 @@ void pickUpItemAt(short x, short y) {
 		
 		if (theItem->category & GOLD) {
 			rogue.gold += theItem->quantity; 
-			sprintf(buf, "you found %i pieces of gold.", theItem->quantity);
+			sprintf(buf, "你找到了%i个金币。", theItem->quantity);
 			messageWithColor(buf, &itemMessageColor, false);
 			deleteItem(theItem);
 			removeItemFrom(x, y); // triggers tiles with T_PROMOTES_ON_ITEM_PICKUP
@@ -707,7 +707,7 @@ void pickUpItemAt(short x, short y) {
 		}
 		
 		if ((theItem->category & AMULET) && numberOfMatchingPackItems(AMULET, 0, 0, false)) {
-			message("you already have the Amulet of Yendor.", false); 
+			message("你已经拿到了Amulet of Yendor。", false); 
 			deleteItem(theItem);
 			return;
 		}
@@ -716,14 +716,14 @@ void pickUpItemAt(short x, short y) {
 		
 		itemName(theItem, buf2, true, true, NULL); // include suffix, article
 		
-		sprintf(buf, "you now have %s (%c).", buf2, theItem->inventoryLetter);
+		sprintf(buf, "你获得了%s（%c）。", buf2, theItem->inventoryLetter);
 		messageWithColor(buf, &itemMessageColor, false);
 		
 		removeItemFrom(x, y); // triggers tiles with T_PROMOTES_ON_ITEM_PICKUP
 	} else {
 		theItem->flags |= ITEM_PLAYER_AVOIDS; // explore shouldn't try to pick it up more than once.
 		itemName(theItem, buf2, false, true, NULL); // include article
-		sprintf(buf, "Your pack is too full to pick up %s.", buf2);
+		sprintf(buf, "你的身上已没有位置来存放%s。", buf2);
 		message(buf, false);
 	}
 }
@@ -867,7 +867,7 @@ void updateFloorItems() {
             
             if (playerCanSeeOrSense(x, y)) {
                 itemName(theItem, buf, false, false, NULL);
-                sprintf(buf2, "The %s plunge%s out of sight!", buf, (theItem->quantity > 1 ? "" : "s"));
+                sprintf(buf2, "这件%s被冲到了你视野之外！", buf);
                 messageWithColor(buf2, &itemMessageColor, false);
             }
             theItem->flags |= ITEM_PREPLACED;
@@ -906,20 +906,20 @@ void updateFloorItems() {
 }
 
 boolean inscribeItem(item *theItem) {
-	char itemText[30], buf[COLS], nameOfItem[COLS], oldInscription[COLS];
+	char itemText[30*3], buf[COLS*3], nameOfItem[COLS*3], oldInscription[COLS*3];
 	
 	strcpy(oldInscription, theItem->inscription);
 	theItem->inscription[0] = '\0';
 	itemName(theItem, nameOfItem, true, true, NULL);
 	strcpy(theItem->inscription, oldInscription);
 	
-	sprintf(buf, "inscribe: %s \"", nameOfItem);
+	sprintf(buf, "命名: %s \"", nameOfItem);
 	if (getInputTextString(itemText, buf, min(29, DCOLS - strLenWithoutEscapes(buf) - 1), "", "\"", TEXT_INPUT_NORMAL, false)) {
 		strcpy(theItem->inscription, itemText);
 		confirmMessages();
 		itemName(theItem, nameOfItem, true, true, NULL);
 		nameOfItem[strlen(nameOfItem) - 1] = '\0';
-		sprintf(buf, "%s %s.\"", (theItem->quantity > 1 ? "they're" : "it's"), nameOfItem);
+		sprintf(buf, "%s%s。\"", (theItem->quantity > 1 ? "这些现在叫做" : "它现在叫做"), nameOfItem);
 		messageWithColor(buf, &itemMessageColor, false);
 		return true;
 	} else {
@@ -1042,7 +1042,7 @@ void call(item *theItem) {
 //	a "sandalwood" staff, a "ruby" ring) will be in dark purple, and the Amulet of Yendor and lumenstones will be in yellow.
 //  BaseColor itself will be the color that the name reverts to outside of these colored portions.
 void itemName(item *theItem, char *root, boolean includeDetails, boolean includeArticle, color *baseColor) {
-	char buf[DCOLS*3], pluralization[10], article[10] = "",
+	char buf[DCOLS*3], pluralization[10], article[10*3] = "",
 	grayEscapeSequence[5], purpleEscapeSequence[5], yellowEscapeSequence[5], baseEscapeSequence[5];
 	color tempColor;
 	
@@ -1618,7 +1618,7 @@ void itemDetails(char *buf, item *theItem) {
 	switch (theItem->category) {
 			
 		case FOOD:
-			sprintf(buf2, "\n\n你还没有那么饿，现在吃掉它的话有些浪费了");
+			sprintf(buf2, "\n\n你还没有那么饿，现在吃掉它的话有些浪费了。");
 			strcat(buf, buf2);
 			break;
 			
