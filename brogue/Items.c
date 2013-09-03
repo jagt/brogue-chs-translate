@@ -2774,7 +2774,7 @@ boolean canEquip(item *theItem) {
 // Player's failure to select an item will result in failure.
 // Failure does not record input.
 void equip(item *theItem) {
-	char buf1[COLS], buf2[COLS];
+	char buf1[COLS*3], buf2[COLS*3];
 	unsigned char command[10];
 	short c = 0;
 	item *theItem2;
@@ -2794,21 +2794,21 @@ void equip(item *theItem) {
 		if (theItem->category & RING) {
 			if (theItem->flags & ITEM_EQUIPPED) {
 				confirmMessages();
-				message("you are already wearing that ring.", false);
+				message("你已经戴着这件戒指了。", false);
 				return;
 			} else if (rogue.ringLeft && rogue.ringRight) {
 				confirmMessages();
 				theItem2 = promptForItemOfType((RING), ITEM_EQUIPPED, 0,
-											   "You are already wearing two rings; remove which first?", true);
+											   "你已经装备了两个戒指，必须先取下来一个：", true);
 				if (!theItem2 || theItem2->category != RING || !(theItem2->flags & ITEM_EQUIPPED)) {
 					if (theItem2) { // No message if canceled or did an inventory action instead.
-						message("Invalid entry.", false);
+						message("无效的输入。", false);
 					}
 					return;
 				} else {
 					if (theItem2->flags & ITEM_CURSED) {
 						itemName(theItem2, buf1, false, false, NULL);
-						sprintf(buf2, "You can't remove your %s: it appears to be cursed.", buf1);
+						sprintf(buf2, "你发现自己没法取下来这件%s：它好像是被诅咒的。", buf1);
 						confirmMessages();
 						messageWithColor(buf2, &itemMessageColor, false);
 						return;
@@ -2821,7 +2821,7 @@ void equip(item *theItem) {
 		
 		if (theItem->flags & ITEM_EQUIPPED) {
 			confirmMessages();
-			message("already equipped.", false);
+			message("已经装备上了这件物品。", false);
 			return;
 		}
 		
@@ -2832,9 +2832,9 @@ void equip(item *theItem) {
 			} else if (theItem->category & ARMOR) {
 				itemName(rogue.armor, buf1, false, false, NULL);
 			} else {
-				sprintf(buf1, "one");
+				sprintf(buf1, "物品");
 			}
-			sprintf(buf2, "You can't; the %s you are using appears to be cursed.", buf1);
+			sprintf(buf2, "你无法完成这个动作；你已经装备的%s似乎是被诅咒的。", buf1);
 			confirmMessages();
 			messageWithColor(buf2, &itemMessageColor, false);
 			return;
@@ -2845,7 +2845,7 @@ void equip(item *theItem) {
 		equipItem(theItem, false);
 		
 		itemName(theItem, buf2, true, true, NULL);
-		sprintf(buf1, "Now %s %s.", (theItem->category & WEAPON ? "wielding" : "wearing"), buf2);
+		sprintf(buf1, "你%s%s。", (theItem->category & WEAPON ? "装备上了" : "穿上了"), buf2);
 		confirmMessages();
 		messageWithColor(buf1, &itemMessageColor, false);
 		
@@ -2855,16 +2855,16 @@ void equip(item *theItem) {
 			itemName(theItem, buf2, false, false, NULL);
 			switch(theItem->category) {
 				case WEAPON:
-					sprintf(buf1, "you wince as your grip involuntarily tightens around your %s.", buf2);
+					sprintf(buf1, "你无法控制的紧紧的握住了这把%s。", buf2);
 					break;
 				case ARMOR:
-					sprintf(buf1, "your %s constricts around you painfully.", buf2);
+					sprintf(buf1, "这件%s紧紧的裹住了你，让你感觉很难受。", buf2);
 					break;
 				case RING:
-					sprintf(buf1, "your %s tightens around your finger painfully.", buf2);
+					sprintf(buf1, "这件%s紧紧的楛住了你的手指，让你感觉很难受。", buf2);
 					break;
 				default:
-					sprintf(buf1, "your %s seizes you with a malevolent force.", buf2);
+					sprintf(buf1, "这件%s紧紧的黏住了你，怎么弄也弄不掉。", buf2);
 					break;
 			}
 			messageWithColor(buf1, &itemMessageColor, false);
@@ -2872,7 +2872,7 @@ void equip(item *theItem) {
 		playerTurnEnded();
 	} else {
 		confirmMessages();
-		message("You can't equip that.", false);
+		message("无法装备此道具。", false);
 	}
 }
 
@@ -3135,11 +3135,11 @@ void negate(creature *monst) {
 		char buf[DCOLS * 3], monstName[DCOLS];
 		monsterName(monstName, monst, true);
 		if (monst->status[STATUS_LEVITATING]) {
-			sprintf(buf, "%s dissipates into thin air", monstName);
+			sprintf(buf, "%s瞬间化为粉末，消散在空中。", monstName);
 		} else if (monst->info.flags & MONST_INANIMATE) {
-            sprintf(buf, "%s shatters into tiny pieces", monstName);
+            sprintf(buf, "%s瞬间粉碎了，小块的岩石散落一地。", monstName);
         } else {
-			sprintf(buf, "%s falls to the ground, lifeless", monstName);
+			sprintf(buf, "%s突然掉落在了地面上，似乎从来就不会动一样。", monstName);
 		}
 		killCreature(monst, false);
 		combatMessage(buf, messageColorFromVictim(monst));
@@ -3209,7 +3209,7 @@ void weaken(creature *monst, short maxDuration) {
 	monst->status[STATUS_WEAKENED] = max(monst->status[STATUS_WEAKENED], maxDuration);
 	monst->maxStatus[STATUS_WEAKENED] = max(monst->maxStatus[STATUS_WEAKENED], maxDuration);
 	if (monst == &player) {
-        messageWithColor("your muscles weaken as an enervating toxin fills your veins.", &badMessageColor, false);
+        messageWithColor("在毒气的影响下你感觉自己变的很虚弱。", &badMessageColor, false);
 		strengthCheck(rogue.weapon);
 		strengthCheck(rogue.armor);
 	}
@@ -3289,7 +3289,7 @@ void slow(creature *monst, short turns) {
 		monst->status[STATUS_HASTED] = 0;
 		if (monst == &player) {
 			updateEncumbrance();
-			message("you feel yourself slow down.", false);
+			message("你感觉自己的移动速度变慢了。", false);
 		} else {
 			monst->movementSpeed = monst->info.movementSpeed * 2;
 			monst->attackSpeed = monst->info.attackSpeed * 2;
@@ -3303,7 +3303,7 @@ void haste(creature *monst, short turns) {
 		monst->status[STATUS_HASTED] = monst->maxStatus[STATUS_HASTED] = turns;
 		if (monst == &player) {
 			updateEncumbrance();
-			message("you feel yourself speed up.", false);
+			message("你感觉自己的移动速度变快了。", false);
 		} else {
 			monst->movementSpeed = monst->info.movementSpeed / 2;
 			monst->attackSpeed = monst->info.attackSpeed / 2;
@@ -3316,7 +3316,7 @@ void heal(creature *monst, short percent) {
 	monst->currentHP = min(monst->info.maxHP, monst->currentHP + percent * monst->info.maxHP / 100);
 	if (canDirectlySeeMonster(monst) && monst != &player) {
 		monsterName(monstName, monst, true);
-		sprintf(buf, "%s looks healthier", monstName);
+		sprintf(buf, "%s看起来更健康了。", monstName);
 		combatMessage(buf, NULL);
 	}
 }
@@ -3329,9 +3329,9 @@ void makePlayerTelepathic(short duration) {
         refreshDungeonCell(monst->xLoc, monst->yLoc);
     }
     if (monsters->nextCreature == NULL) {
-        message("you can somehow tell that you are alone on this depth at the moment.", false);
+        message("不知怎么的你突然很确定附近什么生物都没有。", false);
     } else {
-        message("you can somehow feel the presence of other creatures' minds!", false);
+        message("不知怎么的你突然能感觉到附近其他生物的存在！", false);
     }
 }
 
@@ -3361,32 +3361,32 @@ void rechargeItems(unsigned long categories) {
     
     if (categoryCount) {
         i = 0;
-        strcpy(buf, "a surge of energy courses through your pack, recharging your ");
+        strcpy(buf, "一股强力的能量流向你的背包里，将能量充入了你的");
         if (x) {
             i++;
-            strcat(buf, x == 1 ? "staff" : "staffs");
+            strcat(buf, "法杖");
             if (i == categoryCount - 1) {
-                strcat(buf, " and ");
+                strcat(buf, "和");
             } else if (i <= categoryCount - 2) {
-                strcat(buf, ", ");
+                strcat(buf, "，");
             }
         }
         if (y) {
             i++;
-            strcat(buf, y == 1 ? "wand" : "wands");
+            strcat(buf, "魔棒");
             if (i == categoryCount - 1) {
-                strcat(buf, " and ");
+                strcat(buf, "和");
             } else if (i <= categoryCount - 2) {
-                strcat(buf, ", ");
+                strcat(buf, "，");
             }
         }
         if (z) {
-            strcat(buf, z == 1 ? "charm" : "charms");
+            strcat(buf, "法器");
         }
-        strcat(buf, ".");
+        strcat(buf, "。");
         message(buf, false);
     } else {
-        message("a surge of energy courses through your pack, but nothing happens.", false);
+        message("一股强力的能量流向你的背包里，但什么都没有发生。", false);
     }
 }
 
@@ -3422,9 +3422,9 @@ void rechargeItems(unsigned long categories) {
 void negationBlast(const char *emitterName) {
     creature *monst, *nextMonst;
     item *theItem;
-    char buf[DCOLS];
+    char buf[DCOLS*3];
     
-    sprintf(buf, "%s emits a numbing torrent of anti-magic!", emitterName);
+    sprintf(buf, "%s释放出一股强大的反魔法能流！", emitterName);
     messageWithColor(buf, &itemMessageColor, false);
     colorFlash(&pink, 0, IN_FIELD_OF_VIEW, 15, DCOLS, player.xLoc, player.yLoc);
     negate(&player);
@@ -3641,7 +3641,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 	LIGHTING_STATE *lights;
 	short poisonDamage;
 	creature *monst = NULL, *shootingMonst, *newMonst;
-	char buf[COLS], monstName[COLS];
+	char buf[COLS*3], monstName[COLS*3];
 	boolean autoID = false;
 	boolean fastForward = false;
 	boolean beckonedMonster = false;
@@ -3774,7 +3774,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 			
 			if (boltInView) {
 				monsterName(monstName, monst, true);
-				sprintf(buf, "%s deflect%s the bolt", monstName, (monst == &player ? "" : "s"));
+				sprintf(buf, "%s反射了魔法效果", monstName);
 				combatMessage(buf, 0);
 				
 				if (monst == &player
@@ -3825,18 +3825,18 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				// killed monster
 				if (player.currentHP <= 0) {
 					if (shootingMonst == &player) {
-						gameOver("Killed by a reflected lightning bolt", true);
+						gameOver("被反弹的闪电魔法杀死。", true);
 					}
 					return false;
 				}
 				if (boltInView || canSeeMonster(monst)) {
-					sprintf(buf, "%s lightning bolt %s %s",
-							canSeeMonster(shootingMonst) ? "the" : "a",
-							((monst->info.flags & MONST_INANIMATE) ? "destroys" : "kills"),
+					sprintf(buf, "%s闪电%s%s",
+							canSeeMonster(shootingMonst) ? "" : "一道",
+							((monst->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
 							monstName);
 					combatMessage(buf, messageColorFromVictim(monst));
 				} else {
-					sprintf(buf, "you hear %s %s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "get destroyed" : "die"));
+					sprintf(buf, "你听到%s%s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "被摧毁了" : "死掉了"));
 					combatMessage(buf, messageColorFromVictim(monst));
 				}
 			} else {
@@ -3849,8 +3849,8 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					monst->status[STATUS_MAGICAL_FEAR] = 0;
 				}
 				if (boltInView) {
-					sprintf(buf, "%s lightning bolt hits %s",
-							canSeeMonster(shootingMonst) ? "the" : "a",
+					sprintf(buf, "%s闪电击中了%s",
+							canSeeMonster(shootingMonst) ? "" : "一道",
 							monstName);
 					combatMessage(buf, messageColorFromVictim(monst));
 				}
@@ -3909,7 +3909,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				|| (bolt == BOLT_TUNNELING && (pmap[listOfCoordinates[i+1][0]][listOfCoordinates[i+1][1]].flags & IMPREGNABLE)))
 			&& i < DCOLS*2) {
 			
-			sprintf(buf, "the bolt reflects off of %s", tileText(listOfCoordinates[i+1][0], listOfCoordinates[i+1][1]));
+			sprintf(buf, "%s将魔法效果弹开了", tileText(listOfCoordinates[i+1][0], listOfCoordinates[i+1][1]));
 			
 			if (projectileReflects(shootingMonst, NULL)) { // if it scores another reflection roll, reflect at caster
 				numCells = reflectBolt(originLoc[0], originLoc[1], listOfCoordinates, i, !alreadyReflected);
@@ -4038,13 +4038,13 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					refreshDungeonCell(monst->xLoc, monst->yLoc);
 					if (canSeeMonster(monst)) {
 						autoID = true;
-						sprintf(buf, "%s is bound to your will!", monstName);
+						sprintf(buf, "你支配了%s的意识！", monstName);
 						message(buf, false);
 						flashMonster(monst, boltColors[BOLT_DOMINATION], 100);
 					}
 				} else if (canSeeMonster(monst)) {
 					autoID = true;
-					sprintf(buf, "%s resists the bolt of domination.", monstName);
+					sprintf(buf, "%s抵抗了支配魔法。", monstName);
 					message(buf, false);
 				}
 			}
@@ -4069,10 +4069,10 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					flashMonster(monst, boltColors[BOLT_POISON], 100);
 					autoID = true;
 					if (monst != &player) {
-						sprintf(buf, "%s %s %s sick",
+						sprintf(buf, "%s%s%s",
 								monstName,
-								(monst == &player ? "feel" : "looks"),
-								(monst->status[STATUS_POISONED] > monst->currentHP && !player.status[STATUS_HALLUCINATING] ? "fatally" : "very"));
+								(monst == &player ? "感觉自己" : "看起来"),
+								(monst->status[STATUS_POISONED] > monst->currentHP && !player.status[STATUS_HALLUCINATING] ? "中了致命的毒" : "中毒了"));
 						combatMessage(buf, messageColorFromVictim(monst));
 					}
 				}
@@ -4084,10 +4084,9 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				
 				if (monst->status[STATUS_IMMUNE_TO_FIRE] > 0) {
 					if (canSeeMonster(monst)) {
-						sprintf(buf, "%s ignore%s %s firebolt",
+						sprintf(buf, "%s完全无视了%s火球",
 								monstName,
-								(monst == &player ? "" : "s"),
-								canSeeMonster(shootingMonst) ? "the" : "a");
+								canSeeMonster(shootingMonst) ? "这个" : "");
 						combatMessage(buf, 0);
 					}
 				} else if (inflictDamage(monst, staffDamage(boltLevel), &orange)) {
@@ -4095,19 +4094,19 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					
 					if (player.currentHP <= 0) {
 						if (shootingMonst == &player) {
-							gameOver("Killed by a reflected firebolt", true);
+							gameOver("被反弹的火球杀死。", true);
 						}
 						return false;
 					}
 					
 					if (boltInView || canSeeMonster(monst)) {
-						sprintf(buf, "%s firebolt %s %s",
-								canSeeMonster(shootingMonst) ? "the" : "a",
-								((monst->info.flags & MONST_INANIMATE) ? "destroys" : "kills"),
+						sprintf(buf, "%s火球%s%s",
+								canSeeMonster(shootingMonst) ? "" : "一个",
+								((monst->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
 								monstName);
 						combatMessage(buf, messageColorFromVictim(monst));
 					} else {
-						sprintf(buf, "you hear %s %s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "get destroyed" : "die"));
+						sprintf(buf, "你听到%s%s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "被摧毁了" : "死掉了"));
 						combatMessage(buf, messageColorFromVictim(monst));
 					}
 
@@ -4120,8 +4119,8 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 						monst->creatureState = MONSTER_TRACKING_SCENT;
 					}
 					if (boltInView) {
-						sprintf(buf, "%s firebolt hits %s",
-								canSeeMonster(shootingMonst) ? "the" : "a",
+						sprintf(buf, "%s火球击中了%s",
+								canSeeMonster(shootingMonst) ? "" : "一个",
 								monstName);
 						combatMessage(buf, messageColorFromVictim(monst));
 					}
@@ -4150,7 +4149,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				monst->status[STATUS_CONFUSED] = staffEntrancementDuration(boltLevel);
 				monst->maxStatus[STATUS_CONFUSED] = max(monst->status[STATUS_CONFUSED], monst->maxStatus[STATUS_CONFUSED]);
 				//refreshSideBar(-1, -1, false);
-				message("the bolt hits you and you suddently feel disoriented.", true);
+				message("法术击中了你，你突然感觉失去了方向。", true);
 				autoID = true;
 			} else if (monst && !(monst->info.flags & MONST_INANIMATE)) {
 				monst->status[STATUS_ENTRANCED] = monst->maxStatus[STATUS_ENTRANCED] = staffEntrancementDuration(boltLevel);
@@ -4159,7 +4158,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				if (canSeeMonster(monst)) {
 					flashMonster(monst, boltColors[BOLT_ENTRANCEMENT], 100);
 					autoID = true;
-					sprintf(buf, "%s is entranced!", monstName);
+					sprintf(buf, "%s被法术迷惑了！", monstName);
 					message(buf, false);
 				}
 			}
@@ -4990,7 +4989,7 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 	short listOfCoordinates[MAX_BOLT_LENGTH][2], originLoc[2];
 	short i, x, y, numCells;
 	creature *monst = NULL;
-	char buf[COLS*3], buf2[COLS], buf3[COLS];
+	char buf[COLS*3], buf2[COLS*3], buf3[COLS*3];
 	short dropLoc[2];
 	boolean hitSomethingSolid = false, fastForward = false;
     enum dungeonLayers layer;
@@ -5138,15 +5137,15 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 			//	applyInstantTileEffectsToCreature(monst);
 			//}
 		} else {
-			if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
-				strcpy(buf2, "against");
-			} else if (tileCatalog[pmap[x][y].layers[highestPriorityLayer(x, y, false)]].mechFlags & TM_STAND_IN_TILE) {
-				strcpy(buf2, "into");
-			} else {
-				strcpy(buf2, "on");
-			}
-			sprintf(buf, "the flask shatters and %s liquid splashes harmlessly %s %s.",
-					potionTable[theItem->kind].flavor, buf2, tileText(x, y));
+			// if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
+			// 	strcpy(buf2, "against");
+			// } else if (tileCatalog[pmap[x][y].layers[highestPriorityLayer(x, y, false)]].mechFlags & TM_STAND_IN_TILE) {
+			// 	strcpy(buf2, "into");
+			// } else {
+			// 	strcpy(buf2, "on");
+			// }
+			sprintf(buf, "瓶子碎开了，里面%s的液体溅了开来。",
+					potionTable[theItem->kind].flavor);
 			message(buf, false);
 			if (theItem->kind == POTION_HALLUCINATION && (theItem->flags & ITEM_MAGIC_DETECTED)) {
 				autoIdentify(theItem);
@@ -5168,14 +5167,14 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 
 void throwCommand(item *theItem) {
 	item *thrownItem;
-	char buf[COLS], theName[COLS];
+	char buf[COLS*3], theName[COLS*3];
 	unsigned char command[10];
 	short maxDistance, zapTarget[2], quantity;
 	boolean autoTarget;
 	
 	command[0] = THROW_KEY;
 	if (theItem == NULL) {
-		theItem = promptForItemOfType((ALL_ITEMS), 0, 0, "Throw what? (a-z, shift for more info; or <esc> to cancel)", true);
+		theItem = promptForItemOfType((ALL_ITEMS), 0, 0, "选择投掷的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
 	}
 	if (theItem == NULL) {
 		return;
@@ -5190,19 +5189,18 @@ void throwCommand(item *theItem) {
 	confirmMessages();
 	
 	if ((theItem->flags & ITEM_EQUIPPED) && theItem->quantity <= 1) {
-		sprintf(buf, "Are you sure you want to throw your %s?", theName);
+		sprintf(buf, "确定要投掷这件%s吗？", theName);
 		if (!confirm(buf, false)) {
 			return;
 		}
         if (theItem->flags & ITEM_CURSED) {
-            sprintf(buf, "You cannot unequip your %s; it appears to be cursed.", theName);
+            sprintf(buf, "你无法取下这件%s；它似乎是被诅咒的。", theName);
             messageWithColor(buf, &itemMessageColor, false);
             return;
         }
 	}
 	
-	sprintf(buf, "Throw %s %s where? (<hjklyubn>, mouse, or <tab>)",
-			(theItem->quantity > 1 ? "a" : "your"),
+	sprintf(buf, "把%s投掷到哪里？（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标）",
 			theName);
 	temporaryMessage(buf, false);
 	maxDistance = (12 + 2 * max(rogue.strength - player.weaknessAmount - 12, 2));
@@ -5240,7 +5238,7 @@ void throwCommand(item *theItem) {
 }
 
 boolean useStaffOrWand(item *theItem, boolean *commandsRecorded) {
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	unsigned char command[10];
 	short zapTarget[2], originLoc[2], maxDistance, c;
 	boolean autoTarget, targetAllies, autoID, passThroughCreatures;
@@ -5251,11 +5249,11 @@ boolean useStaffOrWand(item *theItem, boolean *commandsRecorded) {
     
     if (theItem->charges <= 0 && (theItem->flags & ITEM_IDENTIFIED)) {
         itemName(theItem, buf2, false, false, NULL);
-        sprintf(buf, "Your %s has no charges.", buf2);
+        sprintf(buf, "%s没有能量了。", buf2);
         messageWithColor(buf, &itemMessageColor, false);
         return false;
     }
-    temporaryMessage("Direction? (<hjklyubn>, mouse, or <tab>; <return> to confirm)", false);
+    temporaryMessage("选择施法方向：（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标，回车键确认）", false);
     itemName(theItem, buf2, false, false, NULL);
 
     if ((theItem->category & STAFF) && theItem->kind == STAFF_BLINKING
