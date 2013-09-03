@@ -2077,8 +2077,8 @@ boolean getInputTextString(char *inputText,
 	// x and y mark the origin for text entry.
 	if (useDialogBox) {
 		int width = maxLength + 4;
-		if (strlen(prompt) + 4 > width) {
-			width = strlen(prompt) + 4;
+		if (u8_strlen(prompt) + 4 > width) {
+			width = u8_strlen(prompt) + 4;
 		}
 		
 		window = BrogueWindow_open(
@@ -2129,9 +2129,10 @@ boolean getInputTextString(char *inputText,
 
 		pos = 0;
 		if (!useDialogBox) {
-			for (i = 0; prompt[i]; i++) {
-				str[pos++] = prompt[i];
-			}
+			// for (i = 0; prompt[i]; i++) {
+			// 	str[pos++] = prompt[i];
+			// }
+			pos = T_unpack(prompt, str, u8_strlen(prompt));
 		}
 		for (i = 0; inputText[i]; i++) {
 			str[pos++] = inputText[i];
@@ -4260,8 +4261,8 @@ char* T(const wchar_t *ws) {
 }
 
 
-void T_unpack(const char* s, wchar_t *ws, int ws_size) {
-	u8_toucs(ws, ws_size, s, strlen(s)+1);
+int T_unpack(const char* s, wchar_t *ws, int ws_size) {
+	return u8_toucs(ws, ws_size, s, strlen(s)+1);
 }
 
 void T_free() {

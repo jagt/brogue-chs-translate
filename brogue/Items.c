@@ -358,7 +358,7 @@ item *placeItem(item *theItem, short x, short y) {
 				refreshDungeonCell(x, y);
 			}
 			itemName(theItem, theItemName, false, false, NULL);
-			sprintf(buf, "a pressure plate clicks underneath the %s!", theItemName);
+			sprintf(buf, "%s压到了地面下的机关，发出了一声响声！", theItemName);
 			message(buf, true);
 		}
 		for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
@@ -668,7 +668,7 @@ void removeItemFrom(short x, short y) {
 // adds the item at (x,y) to the pack
 void pickUpItemAt(short x, short y) {
 	item *theItem;
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	
 	rogue.disturbed = true;
 	
@@ -699,7 +699,7 @@ void pickUpItemAt(short x, short y) {
 		
 		if (theItem->category & GOLD) {
 			rogue.gold += theItem->quantity; 
-			sprintf(buf, "you found %i pieces of gold.", theItem->quantity);
+			sprintf(buf, "你找到了%i个金币。", theItem->quantity);
 			messageWithColor(buf, &itemMessageColor, false);
 			deleteItem(theItem);
 			removeItemFrom(x, y); // triggers tiles with T_PROMOTES_ON_ITEM_PICKUP
@@ -707,7 +707,7 @@ void pickUpItemAt(short x, short y) {
 		}
 		
 		if ((theItem->category & AMULET) && numberOfMatchingPackItems(AMULET, 0, 0, false)) {
-			message("you already have the Amulet of Yendor.", false); 
+			message("你已经拿到了Amulet of Yendor。", false); 
 			deleteItem(theItem);
 			return;
 		}
@@ -716,14 +716,14 @@ void pickUpItemAt(short x, short y) {
 		
 		itemName(theItem, buf2, true, true, NULL); // include suffix, article
 		
-		sprintf(buf, "you now have %s (%c).", buf2, theItem->inventoryLetter);
+		sprintf(buf, "你获得了%s（%c）。", buf2, theItem->inventoryLetter);
 		messageWithColor(buf, &itemMessageColor, false);
 		
 		removeItemFrom(x, y); // triggers tiles with T_PROMOTES_ON_ITEM_PICKUP
 	} else {
 		theItem->flags |= ITEM_PLAYER_AVOIDS; // explore shouldn't try to pick it up more than once.
 		itemName(theItem, buf2, false, true, NULL); // include article
-		sprintf(buf, "Your pack is too full to pick up %s.", buf2);
+		sprintf(buf, "你的身上已没有位置来存放%s。", buf2);
 		message(buf, false);
 	}
 }
@@ -867,7 +867,7 @@ void updateFloorItems() {
             
             if (playerCanSeeOrSense(x, y)) {
                 itemName(theItem, buf, false, false, NULL);
-                sprintf(buf2, "The %s plunge%s out of sight!", buf, (theItem->quantity > 1 ? "" : "s"));
+                sprintf(buf2, "这件%s被冲到了你视野之外！", buf);
                 messageWithColor(buf2, &itemMessageColor, false);
             }
             theItem->flags |= ITEM_PREPLACED;
@@ -906,20 +906,20 @@ void updateFloorItems() {
 }
 
 boolean inscribeItem(item *theItem) {
-	char itemText[30], buf[COLS], nameOfItem[COLS], oldInscription[COLS];
+	char itemText[30*3], buf[COLS*3], nameOfItem[COLS*3], oldInscription[COLS*3];
 	
 	strcpy(oldInscription, theItem->inscription);
 	theItem->inscription[0] = '\0';
 	itemName(theItem, nameOfItem, true, true, NULL);
 	strcpy(theItem->inscription, oldInscription);
 	
-	sprintf(buf, "inscribe: %s \"", nameOfItem);
+	sprintf(buf, "命名: %s \"", nameOfItem);
 	if (getInputTextString(itemText, buf, min(29, DCOLS - strLenWithoutEscapes(buf) - 1), "", "\"", TEXT_INPUT_NORMAL, false)) {
 		strcpy(theItem->inscription, itemText);
 		confirmMessages();
 		itemName(theItem, nameOfItem, true, true, NULL);
 		nameOfItem[strlen(nameOfItem) - 1] = '\0';
-		sprintf(buf, "%s %s.\"", (theItem->quantity > 1 ? "they're" : "it's"), nameOfItem);
+		sprintf(buf, "%s%s。\"", (theItem->quantity > 1 ? "这些现在被叫做" : "它现在被叫做"), nameOfItem);
 		messageWithColor(buf, &itemMessageColor, false);
 		return true;
 	} else {
@@ -965,7 +965,7 @@ void call(item *theItem) {
             }
         }
 		theItem = promptForItemOfType((WEAPON|ARMOR|SCROLL|RING|POTION|STAFF|WAND), ITEM_CAN_BE_IDENTIFIED, 0,
-									  "Call what? (a-z, shift for more info; or <esc> to cancel)", true);
+									  "选择你要命名的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
         updateIdentifiableItems(); // Reset the flags.
 	}
 	if (theItem == NULL) {
@@ -985,7 +985,7 @@ void call(item *theItem) {
 				recordKeystroke(RETURN_KEY, false, false);
 			}
 		} else {
-			message("you already know what that is.", false);
+			message("你已经知道了这种物品的真实功效。", false);
 		}
 		return;
 	}
@@ -998,7 +998,7 @@ void call(item *theItem) {
 				recordKeystrokeSequence(command);
 				recordKeystroke(RETURN_KEY, false, false);
 			}
-        } else if (confirm("Inscribe this particular item instead of all similar items?", true)) {
+        } else if (confirm("命名这单件物品，而不是所有类似的物品？", true)) {
 			command[c++] = 'y'; // y means yes, since the recording also needs to negotiate the above confirmation prompt.
 			if (inscribeItem(theItem)) {
 				command[c++] = '\0';
@@ -1014,7 +1014,7 @@ void call(item *theItem) {
 	
 	if (tableForItemCategory(theItem->category)
         && !(tableForItemCategory(theItem->category)[theItem->kind].identified)
-        && getInputTextString(itemText, "call them: \"", 29, "", "\"", TEXT_INPUT_NORMAL, false)) {
+        && getInputTextString(itemText, "把它们命名为： \"", 29, "", "\"", TEXT_INPUT_NORMAL, false)) {
         
 		command[c++] = '\0';
 		strcat((char *) command, itemText);
@@ -1031,7 +1031,7 @@ void call(item *theItem) {
 		itemName(theItem, buf, false, true, NULL);
 		messageWithColor(buf, &itemMessageColor, false);
 	} else {
-        message("you already know what that is.", false);
+        message("你已经知道了这种物品的真实功效。", false);
 	}
 }
 
@@ -1042,7 +1042,7 @@ void call(item *theItem) {
 //	a "sandalwood" staff, a "ruby" ring) will be in dark purple, and the Amulet of Yendor and lumenstones will be in yellow.
 //  BaseColor itself will be the color that the name reverts to outside of these colored portions.
 void itemName(item *theItem, char *root, boolean includeDetails, boolean includeArticle, color *baseColor) {
-	char buf[DCOLS*3], pluralization[10], article[10] = "",
+	char buf[DCOLS*3], pluralization[10], article[10*3] = "",
 	grayEscapeSequence[5], purpleEscapeSequence[5], yellowEscapeSequence[5], baseEscapeSequence[5];
 	color tempColor;
 	
@@ -1513,16 +1513,16 @@ void itemDetails(char *buf, item *theItem) {
 	short nextLevelState = 0, new;
 	float accuracyChange, damageChange, current, currentDamage, newDamage;
 	const char weaponRunicEffectDescriptions[NUMBER_WEAPON_RUNIC_KINDS][DCOLS*3] = {
-		"每回合可以进行两次攻击",
-		"敌人会被秒杀",
-		"敌人会被麻痹",
+		"在一回合以进行两次攻击",
+		"秒杀目标",
+		"麻痹目标",
 		"[]", // never used
-		"敌人会被减速",
-		"敌人会被陷入混乱状态",
-        "敌人会被击飞",
+		"减速目标",
+		"使目标陷入混乱状态",
+        "击飞目标",
 		"[]", // never used
-		"敌人会恢复体力",
-		"敌人会被复制"
+		"使目标恢复体力",
+		"复制目标"
 	};
     
     goodColorEscape[0] = badColorEscape[0] = whiteColorEscape[0] = '\0';
@@ -1618,7 +1618,7 @@ void itemDetails(char *buf, item *theItem) {
 	switch (theItem->category) {
 			
 		case FOOD:
-			sprintf(buf2, "\n\n你还没有那么饿，现在吃掉它的话有些浪费了");
+			sprintf(buf2, "\n\n你还没有那么饿，现在吃掉它的话有些浪费了。");
 			strcat(buf, buf2);
 			break;
 			
@@ -1769,7 +1769,7 @@ void itemDetails(char *buf, item *theItem) {
 							strcat(buf, buf2);
 						} else if (theItem->enchant2 == W_MULTIPLICITY) {
 							if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
-								sprintf(buf2, "攻击敌人时你有%i%%的机会, 召唤出%i个%s的奥术幻想。它们带有与该武器相同的属性，在%i回合后会消失。（如果这把%s被增强了, 会以%i%%机会产生%i个额外的镜像，并持续%i回合。）",
+								sprintf(buf2, "攻击敌人时你有%i%%的机会, 召唤出%i个%s的奥术幻象。它们带有与该武器相同的属性，在%i回合后会消失。（如果这把%s被增强了, 会以%i%%机会产生%i个额外的镜像，并持续%i回合。）",
 										runicWeaponChance(theItem, false, 0),
 										weaponImageCount(enchant),
 										theName,
@@ -1779,7 +1779,7 @@ void itemDetails(char *buf, item *theItem) {
 										weaponImageCount((float) (enchant + enchantIncrement(theItem))),
 										weaponImageDuration((float) (enchant + enchantIncrement(theItem))));
 							} else {
-								sprintf(buf2, "Sometimes, when it hits an enemy, spectral %ss will spring into being with accuracy and attack power equal to your own, and will dissipate shortly thereafter.",
+								sprintf(buf2, "在攻击到敌人的时候, %s会召唤出有相同属性的奥术幻象武器来帮助你战斗，它们会在一小段时间后消失。",
 										theName);
 							}
 							strcat(buf, buf2);
@@ -1788,84 +1788,84 @@ void itemDetails(char *buf, item *theItem) {
                                 if (runicWeaponChance(theItem, false, 0) < 2
                                     && rogue.strength - player.weaknessAmount < theItem->strengthRequired) {
                                     
-                                    strcpy(buf2, "Its runic effect will almost never activate because of your inadequate strength, but sometimes, when");
+                                    strcpy(buf2, "由于你力量不足，这件武器的特殊效果几乎不会被触发。但在极少的情况下此武器能");
                                 } else {
-                                    sprintf(buf2, "%i%% of the time that",
+                                    sprintf(buf2, "这件武器能以%i%%的概率",
                                             runicWeaponChance(theItem, false, 0));
                                 }
 								strcat(buf, buf2);
 							} else {
-								strcat(buf, "Sometimes, when");
+								strcat(buf, "某些情况下这件武器");
 							}
-							sprintf(buf2, " it hits an enemy, %s",
+							sprintf(buf2, "能%s",
 									weaponRunicEffectDescriptions[theItem->enchant2]);
 							strcat(buf, buf2);
 							
 							if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
 								switch (theItem->enchant2) {
 									case W_SPEED:
-										strcat(buf, ". ");
+										strcat(buf, "。");
 										break;
 									case W_PARALYSIS:
-										sprintf(buf2, " for %i turns. ",
+										sprintf(buf2, "，效果持续%i个回合。",
 												(int) (weaponParalysisDuration(enchant)));
 										strcat(buf, buf2);
 										nextLevelState = (int) (weaponParalysisDuration((float) (enchant + enchantIncrement(theItem))) + FLOAT_FUDGE);
 										break;
 									case W_SLOWING:
-										sprintf(buf2, " for %i turns. ",
+										sprintf(buf2, "，效果持续%i个回合。",
 												weaponSlowDuration(enchant));
 										strcat(buf, buf2);
 										nextLevelState = weaponSlowDuration((float) (enchant + enchantIncrement(theItem)));
 										break;
 									case W_CONFUSION:
-										sprintf(buf2, " for %i turns. ",
+										sprintf(buf2, "，效果持续%i个回合。",
 												weaponConfusionDuration(enchant));
 										strcat(buf, buf2);
 										nextLevelState = weaponConfusionDuration((float) (enchant + enchantIncrement(theItem)));
 										break;
 									case W_FORCE:
-										sprintf(buf2, " up to %i spaces backward. If the enemy hits an obstruction, it will take damage in proportion to the distance it flew. ",
+										sprintf(buf2, "，使其后退最多%i格。如果敌人撞到了墙壁则会根据被击飞的距离受到伤害。",
 												weaponForceDistance(enchant));
 										strcat(buf, buf2);
 										nextLevelState = weaponForceDistance((float) (enchant + enchantIncrement(theItem)));
 										break;
 									case W_MERCY:
-										strcpy(buf2, " by 50% of its maximum health. ");
+										strcpy(buf2, "，最多回复其生命值上限的50%%。");
 										strcat(buf, buf2);
 										break;
 									default:
-										strcpy(buf2, ". ");
+										strcpy(buf2, "。");
 										strcat(buf, buf2);
 										break;
 								}
 								
 								if (((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience)
 									&& runicWeaponChance(theItem, false, 0) < runicWeaponChance(theItem, true, (float) (enchant + enchantIncrement(theItem)))){
-									sprintf(buf2, "(If the %s is enchanted, the chance will increase to %i%%",
+									sprintf(buf2, "（如果%s被增强，其特效触发几率将增加到%i%%，",
 											theName,
 											runicWeaponChance(theItem, true, (float) (enchant + enchantIncrement(theItem))));
 									strcat(buf, buf2);
 									if (nextLevelState) {
                                         if (theItem->enchant2 == W_FORCE) {
-                                            sprintf(buf2, " and the distance will increase to %i.)",
+                                            sprintf(buf2, "，击飞距离会被提升至%i。）",
                                                     nextLevelState);
                                         } else {
-                                            sprintf(buf2, " and the duration will increase to %i turns.)",
+                                            sprintf(buf2, "，效果持续时间会增加至%i回合。）",
                                                     nextLevelState);
                                         }
 									} else {
-										strcpy(buf2, ".)");
+										strcpy(buf2, "。）");
 									}
 									strcat(buf, buf2);
 								}
 							} else {
-								strcat(buf, ". ");
+								strcat(buf, "。");
 							}
 						}
 						
 					} else if (theItem->flags & ITEM_IDENTIFIED) {
-						sprintf(buf2, "\n\nGlowing runes of an indecipherable language run down the length of the %s. ",
+						sprintf(buf2, "\n\n某种神秘的符文刻满了%s。",
 								theName);
 						strcat(buf, buf2);
 					}
@@ -1873,13 +1873,13 @@ void itemDetails(char *buf, item *theItem) {
 				
 				// equipped? cursed?
 				if (theItem->flags & ITEM_EQUIPPED) {
-					sprintf(buf2, "\n\nYou hold the %s at the ready%s. ",
+					sprintf(buf2, "\n\n你正手握着这把%s。",
 							theName,
-							((theItem->flags & ITEM_CURSED) ? ", and because it is cursed, you are powerless to let go" : ""));
+							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法放开它" : ""));
 					strcat(buf, buf2);
 				} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 						   && (theItem->flags & ITEM_CURSED)) {
-					sprintf(buf2, "\n\n%sYou can feel a malevolent magic lurking within the %s.%s ",
+					sprintf(buf2, "\n\n%s你能感觉到这%s里有一股险恶的魔法能量。%s",
                             badColorEscape,
                             theName,
                             whiteColorEscape);
@@ -1891,7 +1891,7 @@ void itemDetails(char *buf, item *theItem) {
 				// runic?
 				if (theItem->flags & ITEM_RUNIC) {
 					if ((theItem->flags & ITEM_RUNIC_IDENTIFIED) || rogue.playbackOmniscience) {
-						sprintf(buf2, "\n\nGlowing runes of %s adorn the %s. ",
+						sprintf(buf2, "\n\n闪亮的%s符文覆盖着这件%s。",
 								armorRunicNames[theItem->enchant2],
 								theName);
 						strcat(buf, buf2);
@@ -1900,42 +1900,41 @@ void itemDetails(char *buf, item *theItem) {
 						enchant = netEnchant(theItem);
 						switch (theItem->enchant2) {
 							case A_MULTIPLICITY:
-								sprintf(buf2, "When worn, 33%% of the time that an enemy's attack connects, %i allied spectral duplicate%s of your attacker will appear for 3 turns. ",
-										armorImageCount(enchant),
-										(armorImageCount(enchant) == 1 ? "" : "s"));
+								sprintf(buf2, "这件护甲在被敌人攻击时能以33%%的几率召唤出%i个敌人的幻象来帮助你攻击。幻象持续3回合。",
+										armorImageCount(enchant));
 								if (armorImageCount((float) enchant + enchantIncrement(theItem)) > armorImageCount(enchant)) {
-									sprintf(buf3, "(If the %s is enchanted, the number of duplicates will increase to %i.) ",
+									sprintf(buf3, "（如果%s被增强了，幻象的数量会增加到%i。）",
 											theName,
 											(armorImageCount((float) enchant + enchantIncrement(theItem))));
 									strcat(buf2, buf3);
 								}
 								break;
 							case A_MUTUALITY:
-								strcpy(buf2, "When worn, the damage that you incur from physical attacks will be split evenly among yourself and all other adjacent enemies. ");
+								strcpy(buf2, "这件护甲能使你受到的物理伤害被溅射到附近的敌人。");
 								break;
 							case A_ABSORPTION:
-								sprintf(buf2, "It will reduce the damage of inbound attacks by a random amount between 0 and %i, which is %i%% of your current maximum health. (If the %s is enchanted, this maximum amount will %s %i.) ",
+								sprintf(buf2, "这件护甲能随机吸收0到%i的伤害，相当于你当前最大生命值的%i%%（如果这件%s被增强了，吸收伤害的最大值会%s%i。）",
 										(int) armorAbsorptionMax(enchant),
 										(int) (100 * armorAbsorptionMax(enchant) / player.info.maxHP),
 										theName,
-										(armorAbsorptionMax(enchant) == armorAbsorptionMax((float) (enchant + enchantIncrement(theItem))) ? "remain at" : "increase to"),
+										(armorAbsorptionMax(enchant) == armorAbsorptionMax((float) (enchant + enchantIncrement(theItem))) ? "维持在" : "增加到"),
 										(int) armorAbsorptionMax((float) (enchant + enchantIncrement(theItem))));
 								break;
 							case A_REPRISAL:
-								sprintf(buf2, "Any enemy that attacks you will itself be wounded by %i%% of the damage that it inflicts. (If the %s is enchanted, this percentage will increase to %i%%.) ",
+								sprintf(buf2, "任何用对你造成物理伤害的敌人都会被这件护甲反弹%i%%的伤害。（如果这件%s被增强了，反射的百分比会上升到%i%%。）",
 										armorReprisalPercent(enchant),
 										theName,
 										armorReprisalPercent((float) (enchant + enchantIncrement(theItem))));
 								break;
 							case A_IMMUNITY:
-								sprintf(buf2, "It offers complete protection from any attacking %s. ",
+								sprintf(buf2, "这件护甲能免疫来自%s的任何攻击。",
 										monsterCatalog[theItem->vorpalEnemy].monsterName);
 								break;
 							case A_REFLECTION:
 								if (theItem->enchant1 > 0) {
 									short reflectChance = reflectionChance(enchant);
 									short reflectChance2 = reflectionChance(enchant + enchantIncrement(theItem));
-									sprintf(buf2, "When worn, you will deflect %i%% of incoming spells -- including directly back at their source %i%% of the time. (If the armor is enchanted, these will increase to %i%% and %i%%.)",
+									sprintf(buf2, "这件护甲能阻挡%i%%指向你的法术，并能以%i%%的几率将法术反射回施法者。（如果这件%s被增强了，概率会分别上升到%i%%和%i%%）",
 											reflectChance,
 											reflectChance * reflectChance / 100,
 											reflectChance2,
@@ -1943,7 +1942,7 @@ void itemDetails(char *buf, item *theItem) {
 								} else if (theItem->enchant1 < 0) {
 									short reflectChance = reflectionChance(enchant);
 									short reflectChance2 = reflectionChance(enchant + enchantIncrement(theItem));
-									sprintf(buf2, "When worn, %i%% of your own spells will deflect from their target -- including directly back at you %i%% of the time. (If the armor is enchanted, these will decrease to %i%% and %i%%.)",
+									sprintf(buf2, "这件护甲会以%i%%的几率使你的施法失效，并会以%i%%的概率把你发出的法术反射回你自己（如果这件%s被增强了，概率会分别降低到%i%%和%i%%）",
 											reflectChance,
 											reflectChance * reflectChance / 100,
 											reflectChance2,
@@ -1951,26 +1950,26 @@ void itemDetails(char *buf, item *theItem) {
 								}
 								break;
                             case A_RESPIRATION:
-                                strcpy(buf2, "When worn, it will maintain a pocket of fresh air around you, rendering you immune to the effects of steam and all toxic gases.");
+                                strcpy(buf2, "穿上这件护甲后，它会释放一股新鲜空气包围在你周围，使你免疫于蒸汽和其他毒气。");
                                 break;
                             case A_DAMPENING:
-                                strcpy(buf2, "When worn, it will harmlessly absorb the concussive impact of any explosions (though you may still be burned).");
+                                strcpy(buf2, "这件护甲能吸吸收爆炸产生的伤害，但你仍然会被烧到。");
                                 break;
 							case A_BURDEN:
-								strcpy(buf2, "10% of the time it absorbs a blow, it will permanently become heavier. ");
+								strcpy(buf2, "每次你受到攻击这件护甲都会有10%%的概率变得更重。");
 								break;
 							case A_VULNERABILITY:
-								strcpy(buf2, "While it is worn, inbound attacks will inflict twice as much damage. ");
+								strcpy(buf2, "这件护甲会使你受到的伤害提高两倍。");
 								break;
                             case A_IMMOLATION:
-								strcpy(buf2, "10% of the time it absorbs a blow, it will explode in flames. ");
+								strcpy(buf2, "每次你受到伤害这件护甲都有10%%的概率产生爆炸。");
 								break;
 							default:
 								break;
 						}
 						strcat(buf, buf2);
 					} else if (theItem->flags & ITEM_IDENTIFIED) {
-						sprintf(buf2, "\n\nGlowing runes of an indecipherable language spiral around the %s. ",
+						sprintf(buf2, "\n\n某种神秘的符文刻满了%s。",
 								theName);
 						strcat(buf, buf2);
 					}
@@ -1978,13 +1977,13 @@ void itemDetails(char *buf, item *theItem) {
 				
 				// equipped? cursed?
 				if (theItem->flags & ITEM_EQUIPPED) {
-					sprintf(buf2, "\n\nYou are wearing the %s%s. ",
+					sprintf(buf2, "\n\n你正身着这件%s%s。",
 							theName,
-							((theItem->flags & ITEM_CURSED) ? ", and because it is cursed, you are powerless to remove it" : ""));
+							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法脱掉它。" : ""));
 					strcat(buf, buf2);
 				} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 						   && (theItem->flags & ITEM_CURSED)) {
-					sprintf(buf2, "\n\n%sYou can feel a malevolent magic lurking within the %s.%s ",
+					sprintf(buf2, "\n\n%s你能感觉到这%s里有一股险恶的魔法能量。%s",
                             badColorEscape,
                             theName,
                             whiteColorEscape);
@@ -1999,13 +1998,13 @@ void itemDetails(char *buf, item *theItem) {
 			
 			// charges
 			if ((theItem->flags & ITEM_IDENTIFIED)  || rogue.playbackOmniscience) {
-				sprintf(buf2, "\n\nThe %s has %i charges remaining out of a maximum of %i charges, and like all staffs, recovers its charges gradually over time. ",
+				sprintf(buf2, "\n\n这件%s还剩下%i发的能量（最多能保存%i发）。所有法杖的能量都会随时间回复。",
 						theName,
 						theItem->charges,
 						theItem->enchant1);
 				strcat(buf, buf2);
 			} else if (theItem->flags & ITEM_MAX_CHARGES_KNOWN) {
-				sprintf(buf2, "\n\nThe %s has a maximum of %i charges, and like all staffs, recovers its charges gradually over time. ",
+				sprintf(buf2, "\n\n这件%s最多存有%i发的能量。所有法杖的能量都会随时间回复。",
 						theName,
 						theItem->enchant1);
 				strcat(buf, buf2);
@@ -2018,67 +2017,67 @@ void itemDetails(char *buf, item *theItem) {
 						// STAFF_LIGHTNING, STAFF_FIRE, STAFF_POISON, STAFF_TUNNELING, STAFF_BLINKING, STAFF_ENTRANCEMENT, STAFF_HEALING,
 						// STAFF_HASTE, STAFF_OBSTRUCTION, STAFF_DISCORD, STAFF_CONJURATION
 					case STAFF_LIGHTNING:
-						sprintf(buf2, "This staff deals damage to every creature in its line of fire; nothing is immune. (If the staff is enchanted, its average damage will increase by %i%%.)",
+						sprintf(buf2, "当使用时这件法杖会对其释放路线上的所有目标造成伤害。没有怪物能免疫闪电攻击。（如果这件法杖被增强，其伤害会被增强到%i%%。）。",
 								(int) (100 * (staffDamageLow(enchant + 1) + staffDamageHigh(enchant + 1)) / (staffDamageLow(enchant) + staffDamageHigh(enchant)) - 100));
 						break;
 					case STAFF_FIRE:
-						sprintf(buf2, "This staff deals damage to any creature that it hits, unless the creature is immune to fire. (If the staff is enchanted, its average damage will increase by %i%%.) It also sets creatures and flammable terrain on fire.",
+						sprintf(buf2, "当使用时这件法杖会对其释放路线上的所有目标造成伤害。如果怪物对火焰免疫则不会对其有伤害。（如果这件法杖被增强，其伤害会被增强到%i%%。）。",
 								(int) (100 * (staffDamageLow(enchant + 1) + staffDamageHigh(enchant + 1)) / (staffDamageLow(enchant) + staffDamageHigh(enchant)) - 100));
 						break;
 					case STAFF_POISON:
-						sprintf(buf2, "The bolt from this staff will poison any creature that it hits for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖能发出魔法的毒箭攻击目标，使其中毒%i回合。（如果这件法杖被增强，中毒效果会延长到%i回合）。",
 								staffPoison(enchant),
 								staffPoison(enchant + 1));
 						break;
 					case STAFF_TUNNELING:
-						sprintf(buf2, "The bolt from this staff will dissolve %i layers of obstruction. (If the staff is enchanted, this will increase to %i layers.)",
+						sprintf(buf2, "这件法杖能发出销毁墙壁的法球，造成目标方向的%i层墙壁被销毁。（如果这件法杖被增强，摧毁墙壁的层数会提高到%i）",
 								theItem->enchant1,
 								theItem->enchant1 + 1);
 						break;
 					case STAFF_BLINKING:
-						sprintf(buf2, "This staff enables you to teleport up to %i spaces. (If the staff is enchanted, this will increase to %i spaces.) It recharges half as quickly as most other kinds of staffs.",
+						sprintf(buf2, "这件法杖能使你最多向指向的方向闪烁最多%i格的距离。（如果这件法杖被增强，闪烁距离上限会提高到%i格）。闪烁法杖的充能速度只有常见法杖的一半。",
 								staffBlinkDistance(theItem->enchant1),
 								staffBlinkDistance(theItem->enchant1 + 1));
 						break;
 					case STAFF_ENTRANCEMENT:
-						sprintf(buf2, "This staff will compel its target to mirror your movements for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖会让目标模仿你的行动，效果持续%i回合。（如果这件法杖被增强，效果持续时间会延长到%i回合）。",
 								staffEntrancementDuration(theItem->enchant1),
 								staffEntrancementDuration(theItem->enchant1 + 1));
 						break;
 					case STAFF_HEALING:
 						if (enchant < 10) {
-							sprintf(buf2, "This staff will heal its target by %i%% of its maximum health. (If the staff is enchanted, this will increase to %i%%.)",
+							sprintf(buf2, "这件法杖会回复其目标最大生命值的%i%%。（如果这件法杖被增强，回复效果会提升到%i%%）",
 									theItem->enchant1 * 10,
 									(theItem->enchant1 + 1) * 10);
 						} else {
-							strcpy(buf2, "This staff will completely heal its target.");	
+							strcpy(buf2, "这件法杖能完全回复其目标的生命值。");	
 						}
 						break;
 					case STAFF_HASTE:
-						sprintf(buf2, "This staff will cause its target to move twice as fast for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖能使其目标移动速度翻倍，效果持续%i回合。（如果这件法杖被增强，加速效果会延长到%i回合）。",
 								staffHasteDuration(theItem->enchant1),
 								staffHasteDuration(theItem->enchant1 + 1));
 						break;
 					case STAFF_OBSTRUCTION:
-						strcpy(buf2, "This staff recharges half as quickly as most other kinds of staffs.");
+						strcpy(buf2, "这件法杖充能速度是一般法杖的一半。");
 						break;
 					case STAFF_DISCORD:
-						sprintf(buf2, "This staff will cause discord for %i turns. (If the staff is enchanted, this will increase to %i turns.)",
+						sprintf(buf2, "这件法杖会挑拨目标，使其攻击附近的其他敌人，同时敌人也会攻击它。效果持续%i回合。（如果这件法杖被增强，挑拨效果会延长到%i回合）。",
 								staffDiscordDuration(theItem->enchant1),
 								staffDiscordDuration(theItem->enchant1 + 1));
 						break;
 					case STAFF_CONJURATION:
-						sprintf(buf2, "%i phantom blades will be called into service. (If the staff is enchanted, this will increase to %i blades.)",
+						sprintf(buf2, "使用这件法杖能召唤出%i个奥术之剑来帮助你战斗。（如果这件法杖被增强，其数量会提升到%i）。",
 								staffBladeCount(theItem->enchant1),
 								staffBladeCount(theItem->enchant1 + 1));
 						break;
 					case STAFF_PROTECTION:
-						sprintf(buf2, "This staff will shield a creature for up to 20 turns against up to %i damage. (If the staff is enchanted, this will increase to %i damage.)",
+						sprintf(buf2, "这件法杖能对目标施加魔法盾，最多能吸收%i点伤害。魔法盾最多持续20回合。（如果这件法杖被增强，吸收伤害上限将提升到%i）。",
 								staffProtection(theItem->enchant1) / 10,
 								staffProtection(theItem->enchant1 + 1) / 10);
 						break;
 					default:
-						strcpy(buf2, "No one knows what this staff does.");
+						strcpy(buf2, "没有人知道这件法杖到底是用来干啥的。");
 						break;
 				}
 				strcat(buf, "\n\n");
@@ -2090,33 +2089,27 @@ void itemDetails(char *buf, item *theItem) {
 			strcat(buf, "\n\n");
 			if ((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAX_CHARGES_KNOWN)) || rogue.playbackOmniscience) {
 				if (theItem->charges) {
-					sprintf(buf2, "%i charge%s remain%s. A scroll of recharging will add 1 charge, and enchanting this wand will add %i charge%s.",
+					sprintf(buf2, "剩余%i发的能量。使用充能卷轴能回复一发的能量，使用强化卷轴能回复%i发的能量。",
 							theItem->charges,
-							(theItem->charges == 1 ? "" : "s"),
-							(theItem->charges == 1 ? "s" : ""),
-                            wandTable[theItem->kind].range.lowerBound,
-                            (wandTable[theItem->kind].range.lowerBound == 1 ? "" : "s"));
+                            wandTable[theItem->kind].range.lowerBound);
 				} else {
-					sprintf(buf2, "No charges remain.  A scroll of recharging will add 1 charge, and enchanting this wand will add %i charge%s.",
-                            wandTable[theItem->kind].range.lowerBound,
-                            (wandTable[theItem->kind].range.lowerBound == 1 ? "" : "s"));
+					sprintf(buf2, "已没有能量剩余。使用充能卷轴能回复一发的能量，使用强化卷轴能够回复%i发的能量。",
+                            wandTable[theItem->kind].range.lowerBound);
 				}
 			} else {
 				if (theItem->enchant2) {
-					sprintf(buf2, "You have used this wand %i time%s, but do not know how many charges, if any, remain.",
-							theItem->enchant2,
-							(theItem->enchant2 == 1 ? "" : "s"));
+					sprintf(buf2, "这根魔棒你已经使用了%i次，你也不知道还剩下多少能量。",
+							theItem->enchant2);
 				} else {
-					strcpy(buf2, "You have not yet used this wand.");
+					strcpy(buf2, "你还没有使用过这根魔棒。");
 				}
 				
 				if (wandTable[theItem->kind].identified) {
 					strcat(buf, buf2);
-					sprintf(buf2, " Wands of this type can be found with %i to %i charges. Enchanting this wand will add %i charge%s.",
+					sprintf(buf2, "这种类型的魔棒一般有%i到%i发的上限，使用强化卷轴能够回复其%i发的能量。",
 							wandTable[theItem->kind].range.lowerBound,
 							wandTable[theItem->kind].range.upperBound,
-                            wandTable[theItem->kind].range.lowerBound,
-                            (wandTable[theItem->kind].range.lowerBound == 1 ? "" : "s"));
+                            wandTable[theItem->kind].range.lowerBound);
 				}
 			}
 			strcat(buf, buf2);
@@ -2128,33 +2121,32 @@ void itemDetails(char *buf, item *theItem) {
                     switch (theItem->kind) {
                         case RING_CLAIRVOYANCE:
                             if (theItem->enchant1 > 0) {
-                                sprintf(buf2, "\n\nThis ring provides magical sight with a radius of %i. (If the ring is enchanted, this will increase to %i.)",
+                                sprintf(buf2, "\n\n这件指环能用魔法提供附近%i格内的视野。（如果这件指环被增强，范围会提升到%i）。",
                                         theItem->enchant1 + 1,
                                         theItem->enchant1 + 2);
                             } else {
-                                sprintf(buf2, "\n\nThis ring magically blinds you to a radius of %i. (If the ring is enchanted, this will decrease to %i.)",
+                                sprintf(buf2, "\n\n这件指环以魔法的力量使你的视野减少到%i格。（如果这件指环被增强，致盲范围会减少到%i）。",
                                         (theItem->enchant1 * -1) + 1,
                                         (theItem->enchant1 * -1));
                             }
                             strcat(buf, buf2);
                             break;
                         case RING_REGENERATION:
-                            sprintf(buf2, "\n\nWith this ring equipped, you will regenerate all of your health in %li turns (instead of %li). (If the ring is enchanted, this will decrease to %li turns.)",
+                            sprintf(buf2, "\n\n装备着这件指环你的生命力能在%li回合内回复（正常回复需要%li回合）。（如果这件指环被增强，完全恢复所需的回合数将下降到%li）",
                                     (long) (turnsForFullRegen(theItem->enchant1) / 1000),
                                     (long) TURNS_FOR_FULL_REGEN,
                                     (long) (turnsForFullRegen(theItem->enchant1 + 1) / 1000));
                             strcat(buf, buf2);
                             break;
                         case RING_TRANSFERENCE:
-                            sprintf(buf2, "\n\nEach blow you land will %s you by %i%% of the damage you inflict. (If the ring is enchanted, this will %s to %i%%.)",
-                                    (theItem->enchant1 > 0 ? "heal" : "harm"),
+                            sprintf(buf2, "\n\n这件指环会以你每次所造成伤害的%i%%%s你的生命值。（如果这件指环被增强，比例会将变为%i%%）。",
                                     abs(theItem->enchant1) * 10,
-                                    (theItem->enchant1 > 0 ? "increase" : "decrease"),
+                                    (theItem->enchant1 > 0 ? "增加" : "减少"),
                                     abs(theItem->enchant1 + 1) * 10);
                             strcat(buf, buf2);
                             break;
                         case RING_WISDOM:
-                            sprintf(buf2, "\n\nWhen worn, your staffs will recharge at %i%% of their normal rate. (If the ring is enchanted, the rate will increase to %i%% of the normal rate.)",
+                            sprintf(buf2, "\n\n装备着这件指环，你携带的法杖会以%i%%的速度充能。（如果这件指环被增强，比例会变为%i%%）。",
                                     (int) (100 * pow(1.3, min(27, theItem->enchant1)) + FLOAT_FUDGE),
                                     (int) (100 * pow(1.3, min(27, (theItem->enchant1 + 1))) + FLOAT_FUDGE));
                             strcat(buf, buf2);
@@ -2164,31 +2156,29 @@ void itemDetails(char *buf, item *theItem) {
                     }
                 }
 			} else {
-				sprintf(buf2, "\n\nIt will reveal its secrets to you if you wear it for %i%s turn%s",
-						theItem->charges,
-						(theItem->charges == RING_DELAY_TO_AUTO_ID ? "" : " more"),
-						(theItem->charges == 1 ? "" : "s"));
+				sprintf(buf2, "\n\n这件指环的隐藏属性将在装备%i回合后被发现。",
+						theItem->charges);
 				strcat(buf, buf2);
                 
                 if ((theItem->charges < RING_DELAY_TO_AUTO_ID || (theItem->flags & (ITEM_MAGIC_DETECTED | ITEM_IDENTIFIED)))
                     && theItem->enchant1 > 0) { // Mention the unknown-positive-ring footnote only if it's good magic and you know it.
                     
-                    sprintf(buf2, ", and until you understand its secrets, it will function as a +%i ring.", theItem->enchant2);
+                    sprintf(buf2, "，到此之前你可以把它当做一个普通的+%i指环。", theItem->enchant2);
                     strcat(buf, buf2);
                 } else {
-                    strcat(buf, ".");
+                    strcat(buf, "。");
                 }
 			}
 			
 			// equipped? cursed?
 			if (theItem->flags & ITEM_EQUIPPED) {
-				sprintf(buf2, "\n\nThe %s is on your finger%s. ",
+				sprintf(buf2, "\n\n你的手指上正带着%s。%s。",
 						theName,
-						((theItem->flags & ITEM_CURSED) ? ", and because it is cursed, you are powerless to remove it" : ""));
+						((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法将它取下来。" : ""));
 				strcat(buf, buf2);
 			} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 					   && (theItem->flags & ITEM_CURSED)) {
-				sprintf(buf2, "\n\n%sYou can feel a malevolent magic lurking within the %s.%s ",
+				sprintf(buf2, "\n\n%s你能感觉到这%s里有一股险恶的魔法能量。%s",
                         badColorEscape,
                         theName,
                         whiteColorEscape);
@@ -2199,56 +2189,56 @@ void itemDetails(char *buf, item *theItem) {
 			enchant = theItem->enchant1;
             switch (theItem->kind) {
                 case CHARM_HEALTH:
-                    sprintf(buf2, "\n\nWhen used, the charm will heal %i%% of your health and recharge in %i turns. (If the charm is enchanted, it will heal %i%% of your health and recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能在你%i%%的生命值，在%i回合后才能重新使用。（如果这件法器被增强，回复效果变为%i%%，冷却回合数将变为%i）。",
                             charmHealing(enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmHealing(enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_PROTECTION:
-                    sprintf(buf2, "\n\nWhen used, the charm will shield you for up to 20 turns against up to %i damage and recharge in %i turns. (If the charm is enchanted, this will change to %i damage and %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能对你释放最多持续20回合的魔法护盾，最多能吸收%i点伤害，在%i回合后才能重新使用。（如果这件法器被增强，吸收伤害提升到%i，冷却回合数将变为%i）。",
                             charmProtection(enchant) / 10,
                             charmRechargeDelay(theItem->kind, enchant),
                             charmProtection(enchant + 1) / 10,
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_HASTE:
-                    sprintf(buf2, "\n\nWhen used, the charm will haste you for %i turns and recharge in %i turns. (If the charm is enchanted, the haste will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能对你释放持续%i回合的加速法术，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_FIRE_IMMUNITY:
-                    sprintf(buf2, "\n\nWhen used, the charm will grant you immunity to fire for %i turns and recharge in %i turns. (If the charm is enchanted, the immunity will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内对火焰免疫，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_INVISIBILITY:
-                    sprintf(buf2, "\n\nWhen used, the charm will turn you invisible for %i turns and recharge in %i turns. While invisible, monsters more than two spaces away cannot track you. (If the charm is enchanted, the invisibility will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内维持隐身，期间在两格以外的怪物无法发现你的踪迹，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_TELEPATHY:
-                    sprintf(buf2, "\n\nWhen used, the charm will grant you telepathy for %i turns and recharge in %i turns. (If the charm is enchanted, the telepathy will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能让你在%i回合内保持心灵感应效果，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_LEVITATION:
-                    sprintf(buf2, "\n\nWhen used, the charm will lift you off the ground for %i turns and recharge in %i turns. (If the charm is enchanted, the levitation will last %i turns and it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它能让你悬浮在空中，效果持续%i回合，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_SHATTERING:
-                    sprintf(buf2, "\n\nWhen used, the charm will dissolve the nearby walls and recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它会将附近的墙壁溶解掉，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
@@ -2258,17 +2248,17 @@ void itemDetails(char *buf, item *theItem) {
 //                            charmRechargeDelay(theItem->kind, enchant + 1));
 //                    break;
                 case CHARM_TELEPORTATION:
-                    sprintf(buf2, "\n\nWhen used, the charm will teleport you elsewhere in the dungeon and recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它将把你传送到当前地牢的一个随机位置，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_RECHARGING:
-                    sprintf(buf2, "\n\nWhen used, the charm will recharge your staffs (though not your wands or charms), after which it will recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它将对你身上的法杖进行充能（不包括法器和魔棒），在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_NEGATION:
-                    sprintf(buf2, "\n\nWhen used, the charm will negate all magical effects on the creatures in your field of view and the items on the ground, and recharge in %i turns. (If the charm is enchanted, it will recharge in %i turns.)",
+                    sprintf(buf2, "\n\n使用后，它将对你视野范围内的生物和地上的物品产生反魔法效果，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
@@ -2682,7 +2672,7 @@ short numberOfMatchingPackItems(unsigned short categoryMask,
 	if (packItems->nextItem == NULL) {
 		if (displayErrors) {
 			confirmMessages();
-			message("Your pack is empty!", false);
+			message("你身上还没有任何道具！", false);
 		}
 		return 0;
 	}
@@ -2700,7 +2690,7 @@ short numberOfMatchingPackItems(unsigned short categoryMask,
 	if (matchingItemCount == 0) {
 		if (displayErrors) {
 			confirmMessages();
-			message("You have nothing suitable.", false);
+			message("没有找到合适的物品。", false);
 		}
 		return 0;
 	}
@@ -2746,7 +2736,7 @@ void strengthCheck(item *theItem) {
 			strengthDeficiency = theItem->strengthRequired - max(0, rogue.strength - player.weaknessAmount);
 			strcpy(buf1, "");
 			itemName(theItem, buf1, false, false, NULL);
-			sprintf(buf2, "You can barely lift the %s; %i more strength would be ideal.", buf1, strengthDeficiency);
+			sprintf(buf2, "你几乎没办法把这件%s拿起来；需要额外%i点力量。", buf1, strengthDeficiency);
 			message(buf2, false);
 		}
 		
@@ -2754,7 +2744,7 @@ void strengthCheck(item *theItem) {
 			strengthDeficiency = theItem->strengthRequired - max(0, rogue.strength - player.weaknessAmount);
 			strcpy(buf1, "");
 			itemName(theItem, buf1, false, false, NULL);
-			sprintf(buf2, "You stagger under the weight of the %s; %i more strength would be ideal.",
+			sprintf(buf2, "你在%s的重量下感觉步履阑珊；需要额外%i点力量。",
 					buf1, strengthDeficiency);
 			message(buf2, false);
 		}
@@ -2784,7 +2774,7 @@ boolean canEquip(item *theItem) {
 // Player's failure to select an item will result in failure.
 // Failure does not record input.
 void equip(item *theItem) {
-	char buf1[COLS], buf2[COLS];
+	char buf1[COLS*3], buf2[COLS*3];
 	unsigned char command[10];
 	short c = 0;
 	item *theItem2;
@@ -2804,21 +2794,21 @@ void equip(item *theItem) {
 		if (theItem->category & RING) {
 			if (theItem->flags & ITEM_EQUIPPED) {
 				confirmMessages();
-				message("you are already wearing that ring.", false);
+				message("你已经戴着这件戒指了。", false);
 				return;
 			} else if (rogue.ringLeft && rogue.ringRight) {
 				confirmMessages();
 				theItem2 = promptForItemOfType((RING), ITEM_EQUIPPED, 0,
-											   "You are already wearing two rings; remove which first?", true);
+											   "你已经装备了两个戒指，必须先取下来一个：", true);
 				if (!theItem2 || theItem2->category != RING || !(theItem2->flags & ITEM_EQUIPPED)) {
 					if (theItem2) { // No message if canceled or did an inventory action instead.
-						message("Invalid entry.", false);
+						message("无效的输入。", false);
 					}
 					return;
 				} else {
 					if (theItem2->flags & ITEM_CURSED) {
 						itemName(theItem2, buf1, false, false, NULL);
-						sprintf(buf2, "You can't remove your %s: it appears to be cursed.", buf1);
+						sprintf(buf2, "你发现自己没法取下来这件%s：它好像是被诅咒的。", buf1);
 						confirmMessages();
 						messageWithColor(buf2, &itemMessageColor, false);
 						return;
@@ -2831,7 +2821,7 @@ void equip(item *theItem) {
 		
 		if (theItem->flags & ITEM_EQUIPPED) {
 			confirmMessages();
-			message("already equipped.", false);
+			message("已经装备上了这件物品。", false);
 			return;
 		}
 		
@@ -2842,9 +2832,9 @@ void equip(item *theItem) {
 			} else if (theItem->category & ARMOR) {
 				itemName(rogue.armor, buf1, false, false, NULL);
 			} else {
-				sprintf(buf1, "one");
+				sprintf(buf1, "物品");
 			}
-			sprintf(buf2, "You can't; the %s you are using appears to be cursed.", buf1);
+			sprintf(buf2, "你无法完成这个动作；你已经装备的%s似乎是被诅咒的。", buf1);
 			confirmMessages();
 			messageWithColor(buf2, &itemMessageColor, false);
 			return;
@@ -2855,7 +2845,7 @@ void equip(item *theItem) {
 		equipItem(theItem, false);
 		
 		itemName(theItem, buf2, true, true, NULL);
-		sprintf(buf1, "Now %s %s.", (theItem->category & WEAPON ? "wielding" : "wearing"), buf2);
+		sprintf(buf1, "你%s%s。", (theItem->category & WEAPON ? "装备上了" : "穿上了"), buf2);
 		confirmMessages();
 		messageWithColor(buf1, &itemMessageColor, false);
 		
@@ -2865,16 +2855,16 @@ void equip(item *theItem) {
 			itemName(theItem, buf2, false, false, NULL);
 			switch(theItem->category) {
 				case WEAPON:
-					sprintf(buf1, "you wince as your grip involuntarily tightens around your %s.", buf2);
+					sprintf(buf1, "你无法控制的紧紧的握住了这把%s。", buf2);
 					break;
 				case ARMOR:
-					sprintf(buf1, "your %s constricts around you painfully.", buf2);
+					sprintf(buf1, "这件%s紧紧的裹住了你，让你感觉很难受。", buf2);
 					break;
 				case RING:
-					sprintf(buf1, "your %s tightens around your finger painfully.", buf2);
+					sprintf(buf1, "这件%s紧紧的楛住了你的手指，让你感觉很难受。", buf2);
 					break;
 				default:
-					sprintf(buf1, "your %s seizes you with a malevolent force.", buf2);
+					sprintf(buf1, "这件%s紧紧的黏住了你，怎么弄也弄不掉。", buf2);
 					break;
 			}
 			messageWithColor(buf1, &itemMessageColor, false);
@@ -2882,7 +2872,7 @@ void equip(item *theItem) {
 		playerTurnEnded();
 	} else {
 		confirmMessages();
-		message("You can't equip that.", false);
+		message("无法装备此道具。", false);
 	}
 }
 
@@ -3145,11 +3135,11 @@ void negate(creature *monst) {
 		char buf[DCOLS * 3], monstName[DCOLS];
 		monsterName(monstName, monst, true);
 		if (monst->status[STATUS_LEVITATING]) {
-			sprintf(buf, "%s dissipates into thin air", monstName);
+			sprintf(buf, "%s瞬间化为粉末，消散在空中。", monstName);
 		} else if (monst->info.flags & MONST_INANIMATE) {
-            sprintf(buf, "%s shatters into tiny pieces", monstName);
+            sprintf(buf, "%s瞬间粉碎了，小块的岩石散落一地。", monstName);
         } else {
-			sprintf(buf, "%s falls to the ground, lifeless", monstName);
+			sprintf(buf, "%s突然掉落在了地面上，似乎从来就不会动一样。", monstName);
 		}
 		killCreature(monst, false);
 		combatMessage(buf, messageColorFromVictim(monst));
@@ -3219,7 +3209,7 @@ void weaken(creature *monst, short maxDuration) {
 	monst->status[STATUS_WEAKENED] = max(monst->status[STATUS_WEAKENED], maxDuration);
 	monst->maxStatus[STATUS_WEAKENED] = max(monst->maxStatus[STATUS_WEAKENED], maxDuration);
 	if (monst == &player) {
-        messageWithColor("your muscles weaken as an enervating toxin fills your veins.", &badMessageColor, false);
+        messageWithColor("在毒气的影响下你感觉自己变的很虚弱。", &badMessageColor, false);
 		strengthCheck(rogue.weapon);
 		strengthCheck(rogue.armor);
 	}
@@ -3299,7 +3289,7 @@ void slow(creature *monst, short turns) {
 		monst->status[STATUS_HASTED] = 0;
 		if (monst == &player) {
 			updateEncumbrance();
-			message("you feel yourself slow down.", false);
+			message("你感觉自己的移动速度变慢了。", false);
 		} else {
 			monst->movementSpeed = monst->info.movementSpeed * 2;
 			monst->attackSpeed = monst->info.attackSpeed * 2;
@@ -3313,7 +3303,7 @@ void haste(creature *monst, short turns) {
 		monst->status[STATUS_HASTED] = monst->maxStatus[STATUS_HASTED] = turns;
 		if (monst == &player) {
 			updateEncumbrance();
-			message("you feel yourself speed up.", false);
+			message("你感觉自己的移动速度变快了。", false);
 		} else {
 			monst->movementSpeed = monst->info.movementSpeed / 2;
 			monst->attackSpeed = monst->info.attackSpeed / 2;
@@ -3326,7 +3316,7 @@ void heal(creature *monst, short percent) {
 	monst->currentHP = min(monst->info.maxHP, monst->currentHP + percent * monst->info.maxHP / 100);
 	if (canDirectlySeeMonster(monst) && monst != &player) {
 		monsterName(monstName, monst, true);
-		sprintf(buf, "%s looks healthier", monstName);
+		sprintf(buf, "%s看起来更健康了。", monstName);
 		combatMessage(buf, NULL);
 	}
 }
@@ -3339,9 +3329,9 @@ void makePlayerTelepathic(short duration) {
         refreshDungeonCell(monst->xLoc, monst->yLoc);
     }
     if (monsters->nextCreature == NULL) {
-        message("you can somehow tell that you are alone on this depth at the moment.", false);
+        message("不知怎么的你突然很确定附近什么生物都没有。", false);
     } else {
-        message("you can somehow feel the presence of other creatures' minds!", false);
+        message("不知怎么的你突然能感觉到附近其他生物的存在！", false);
     }
 }
 
@@ -3371,32 +3361,32 @@ void rechargeItems(unsigned long categories) {
     
     if (categoryCount) {
         i = 0;
-        strcpy(buf, "a surge of energy courses through your pack, recharging your ");
+        strcpy(buf, "一股强力的能量流向你的背包里，将能量充入了你的");
         if (x) {
             i++;
-            strcat(buf, x == 1 ? "staff" : "staffs");
+            strcat(buf, "法杖");
             if (i == categoryCount - 1) {
-                strcat(buf, " and ");
+                strcat(buf, "和");
             } else if (i <= categoryCount - 2) {
-                strcat(buf, ", ");
+                strcat(buf, "，");
             }
         }
         if (y) {
             i++;
-            strcat(buf, y == 1 ? "wand" : "wands");
+            strcat(buf, "魔棒");
             if (i == categoryCount - 1) {
-                strcat(buf, " and ");
+                strcat(buf, "和");
             } else if (i <= categoryCount - 2) {
-                strcat(buf, ", ");
+                strcat(buf, "，");
             }
         }
         if (z) {
-            strcat(buf, z == 1 ? "charm" : "charms");
+            strcat(buf, "法器");
         }
-        strcat(buf, ".");
+        strcat(buf, "。");
         message(buf, false);
     } else {
-        message("a surge of energy courses through your pack, but nothing happens.", false);
+        message("一股强力的能量流向你的背包里，但什么都没有发生。", false);
     }
 }
 
@@ -3432,9 +3422,9 @@ void rechargeItems(unsigned long categories) {
 void negationBlast(const char *emitterName) {
     creature *monst, *nextMonst;
     item *theItem;
-    char buf[DCOLS];
+    char buf[DCOLS*3];
     
-    sprintf(buf, "%s emits a numbing torrent of anti-magic!", emitterName);
+    sprintf(buf, "%s释放出一股强大的反魔法能流！", emitterName);
     messageWithColor(buf, &itemMessageColor, false);
     colorFlash(&pink, 0, IN_FIELD_OF_VIEW, 15, DCOLS, player.xLoc, player.yLoc);
     negate(&player);
@@ -3651,7 +3641,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 	LIGHTING_STATE *lights;
 	short poisonDamage;
 	creature *monst = NULL, *shootingMonst, *newMonst;
-	char buf[COLS], monstName[COLS];
+	char buf[COLS*3], monstName[COLS*3];
 	boolean autoID = false;
 	boolean fastForward = false;
 	boolean beckonedMonster = false;
@@ -3784,7 +3774,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 			
 			if (boltInView) {
 				monsterName(monstName, monst, true);
-				sprintf(buf, "%s deflect%s the bolt", monstName, (monst == &player ? "" : "s"));
+				sprintf(buf, "%s反射了魔法效果", monstName);
 				combatMessage(buf, 0);
 				
 				if (monst == &player
@@ -3835,18 +3825,18 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				// killed monster
 				if (player.currentHP <= 0) {
 					if (shootingMonst == &player) {
-						gameOver("Killed by a reflected lightning bolt", true);
+						gameOver("被反弹的闪电魔法杀死。", true);
 					}
 					return false;
 				}
 				if (boltInView || canSeeMonster(monst)) {
-					sprintf(buf, "%s lightning bolt %s %s",
-							canSeeMonster(shootingMonst) ? "the" : "a",
-							((monst->info.flags & MONST_INANIMATE) ? "destroys" : "kills"),
+					sprintf(buf, "%s闪电%s%s",
+							canSeeMonster(shootingMonst) ? "" : "一道",
+							((monst->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
 							monstName);
 					combatMessage(buf, messageColorFromVictim(monst));
 				} else {
-					sprintf(buf, "you hear %s %s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "get destroyed" : "die"));
+					sprintf(buf, "你听到%s%s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "被摧毁了" : "死掉了"));
 					combatMessage(buf, messageColorFromVictim(monst));
 				}
 			} else {
@@ -3859,8 +3849,8 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					monst->status[STATUS_MAGICAL_FEAR] = 0;
 				}
 				if (boltInView) {
-					sprintf(buf, "%s lightning bolt hits %s",
-							canSeeMonster(shootingMonst) ? "the" : "a",
+					sprintf(buf, "%s闪电击中了%s",
+							canSeeMonster(shootingMonst) ? "" : "一道",
 							monstName);
 					combatMessage(buf, messageColorFromVictim(monst));
 				}
@@ -3919,7 +3909,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				|| (bolt == BOLT_TUNNELING && (pmap[listOfCoordinates[i+1][0]][listOfCoordinates[i+1][1]].flags & IMPREGNABLE)))
 			&& i < DCOLS*2) {
 			
-			sprintf(buf, "the bolt reflects off of %s", tileText(listOfCoordinates[i+1][0], listOfCoordinates[i+1][1]));
+			sprintf(buf, "%s将魔法效果弹开了", tileText(listOfCoordinates[i+1][0], listOfCoordinates[i+1][1]));
 			
 			if (projectileReflects(shootingMonst, NULL)) { // if it scores another reflection roll, reflect at caster
 				numCells = reflectBolt(originLoc[0], originLoc[1], listOfCoordinates, i, !alreadyReflected);
@@ -4048,13 +4038,13 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					refreshDungeonCell(monst->xLoc, monst->yLoc);
 					if (canSeeMonster(monst)) {
 						autoID = true;
-						sprintf(buf, "%s is bound to your will!", monstName);
+						sprintf(buf, "你支配了%s的意识！", monstName);
 						message(buf, false);
 						flashMonster(monst, boltColors[BOLT_DOMINATION], 100);
 					}
 				} else if (canSeeMonster(monst)) {
 					autoID = true;
-					sprintf(buf, "%s resists the bolt of domination.", monstName);
+					sprintf(buf, "%s抵抗了支配魔法。", monstName);
 					message(buf, false);
 				}
 			}
@@ -4079,10 +4069,10 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					flashMonster(monst, boltColors[BOLT_POISON], 100);
 					autoID = true;
 					if (monst != &player) {
-						sprintf(buf, "%s %s %s sick",
+						sprintf(buf, "%s%s%s",
 								monstName,
-								(monst == &player ? "feel" : "looks"),
-								(monst->status[STATUS_POISONED] > monst->currentHP && !player.status[STATUS_HALLUCINATING] ? "fatally" : "very"));
+								(monst == &player ? "感觉自己" : "看起来"),
+								(monst->status[STATUS_POISONED] > monst->currentHP && !player.status[STATUS_HALLUCINATING] ? "中了致命的毒" : "中毒了"));
 						combatMessage(buf, messageColorFromVictim(monst));
 					}
 				}
@@ -4094,10 +4084,9 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				
 				if (monst->status[STATUS_IMMUNE_TO_FIRE] > 0) {
 					if (canSeeMonster(monst)) {
-						sprintf(buf, "%s ignore%s %s firebolt",
+						sprintf(buf, "%s完全无视了%s火球",
 								monstName,
-								(monst == &player ? "" : "s"),
-								canSeeMonster(shootingMonst) ? "the" : "a");
+								canSeeMonster(shootingMonst) ? "这个" : "");
 						combatMessage(buf, 0);
 					}
 				} else if (inflictDamage(monst, staffDamage(boltLevel), &orange)) {
@@ -4105,19 +4094,19 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 					
 					if (player.currentHP <= 0) {
 						if (shootingMonst == &player) {
-							gameOver("Killed by a reflected firebolt", true);
+							gameOver("被反弹的火球杀死。", true);
 						}
 						return false;
 					}
 					
 					if (boltInView || canSeeMonster(monst)) {
-						sprintf(buf, "%s firebolt %s %s",
-								canSeeMonster(shootingMonst) ? "the" : "a",
-								((monst->info.flags & MONST_INANIMATE) ? "destroys" : "kills"),
+						sprintf(buf, "%s火球%s%s",
+								canSeeMonster(shootingMonst) ? "" : "一个",
+								((monst->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
 								monstName);
 						combatMessage(buf, messageColorFromVictim(monst));
 					} else {
-						sprintf(buf, "you hear %s %s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "get destroyed" : "die"));
+						sprintf(buf, "你听到%s%s", monstName, ((monst->info.flags & MONST_INANIMATE) ? "被摧毁了" : "死掉了"));
 						combatMessage(buf, messageColorFromVictim(monst));
 					}
 
@@ -4130,8 +4119,8 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 						monst->creatureState = MONSTER_TRACKING_SCENT;
 					}
 					if (boltInView) {
-						sprintf(buf, "%s firebolt hits %s",
-								canSeeMonster(shootingMonst) ? "the" : "a",
+						sprintf(buf, "%s火球击中了%s",
+								canSeeMonster(shootingMonst) ? "" : "一个",
 								monstName);
 						combatMessage(buf, messageColorFromVictim(monst));
 					}
@@ -4160,7 +4149,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				monst->status[STATUS_CONFUSED] = staffEntrancementDuration(boltLevel);
 				monst->maxStatus[STATUS_CONFUSED] = max(monst->status[STATUS_CONFUSED], monst->maxStatus[STATUS_CONFUSED]);
 				//refreshSideBar(-1, -1, false);
-				message("the bolt hits you and you suddently feel disoriented.", true);
+				message("法术击中了你，你突然感觉失去了方向。", true);
 				autoID = true;
 			} else if (monst && !(monst->info.flags & MONST_INANIMATE)) {
 				monst->status[STATUS_ENTRANCED] = monst->maxStatus[STATUS_ENTRANCED] = staffEntrancementDuration(boltLevel);
@@ -4169,7 +4158,7 @@ boolean zap(short originLoc[2], short targetLoc[2], enum boltType bolt, short bo
 				if (canSeeMonster(monst)) {
 					flashMonster(monst, boltColors[BOLT_ENTRANCEMENT], 100);
 					autoID = true;
-					sprintf(buf, "%s is entranced!", monstName);
+					sprintf(buf, "%s被法术迷惑了！", monstName);
 					message(buf, false);
 				}
 			}
@@ -4901,8 +4890,7 @@ void autoIdentify(item *theItem) {
         theItem->quantity = 1;
         itemName(theItem, newName, false, true, NULL);
         theItem->quantity = quantityBackup;
-        sprintf(buf, "(It must %s %s.)",
-                ((theItem->category & (POTION | SCROLL)) ? "have been" : "be"),
+        sprintf(buf, "（你发现这是%s。）",
                 newName);
         messageWithColor(buf, &itemMessageColor, false);
     }
@@ -4914,7 +4902,7 @@ void autoIdentify(item *theItem) {
         itemName(theItem, oldName, false, false, NULL);
         theItem->flags |= ITEM_RUNIC_IDENTIFIED;
         itemName(theItem, newName, true, true, NULL);
-        sprintf(buf, "(Your %s must be %s.)", oldName, newName);
+        sprintf(buf, "（你发现这件%s其实是%s。）", oldName, newName);
         messageWithColor(buf, &itemMessageColor, false);
     }
 }
@@ -4971,13 +4959,13 @@ boolean hitMonsterWithProjectileWeapon(creature *thrower, creature *monst, item 
 		}
 		
 		if (inflictDamage(monst, damage, &red)) { // monster killed
-			sprintf(buf, "the %s %s %s.",
+			sprintf(buf, "%s%s%s。",
                     theItemName,
-                    (monst->info.flags & MONST_INANIMATE) ? "destroyed" : "killed",
+                    (monst->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了",
                     targetName);
 			messageWithColor(buf, messageColorFromVictim(monst), false);
 		} else {
-			sprintf(buf, "the %s hit %s.", theItemName, targetName);
+			sprintf(buf, "%s击中了%s。", theItemName, targetName);
 			if (theItem->flags & ITEM_RUNIC) {
 				magicWeaponHit(monst, theItem, false);
 			}
@@ -4991,7 +4979,7 @@ boolean hitMonsterWithProjectileWeapon(creature *thrower, creature *monst, item 
 		return true;
 	} else {
 		theItem->flags &= ~ITEM_PLAYER_AVOIDS; // Don't avoid thrown weapons that missed.
-		sprintf(buf, "the %s missed %s.", theItemName, targetName);
+		sprintf(buf, "%s没有击中%s。", theItemName, targetName);
 		message(buf, false);
 		return false;
 	}
@@ -5001,7 +4989,7 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 	short listOfCoordinates[MAX_BOLT_LENGTH][2], originLoc[2];
 	short i, x, y, numCells;
 	creature *monst = NULL;
-	char buf[COLS*3], buf2[COLS], buf3[COLS];
+	char buf[COLS*3], buf2[COLS*3], buf3[COLS*3];
 	short dropLoc[2];
 	boolean hitSomethingSolid = false, fastForward = false;
     enum dungeonLayers layer;
@@ -5018,7 +5006,7 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 	if (thrower != &player && pmap[originLoc[0]][originLoc[1]].flags & IN_FIELD_OF_VIEW) {
 		monsterName(buf2, thrower, true);
 		itemName(theItem, buf3, false, true, NULL);
-		sprintf(buf, "%s hurls %s.", buf2, buf3);
+		sprintf(buf, "%s投出了%s。", buf2, buf3);
 		message(buf, false);
 	}
 	
@@ -5104,37 +5092,37 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 			|| theItem->kind == POTION_DESCENT) {
 			switch (theItem->kind) {
 				case POTION_POISON:
-					strcpy(buf, "the flask shatters and a deadly purple cloud billows out!");
+					strcpy(buf, "瓶子碎开了，一阵紫色的毒气飘散开来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_POISON_GAS_CLOUD_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_CONFUSION:
-					strcpy(buf, "the flask shatters and a multi-hued cloud billows out!");
+					strcpy(buf, "瓶子碎开了，一阵颜色奇怪的烟雾飘散开来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_CONFUSION_GAS_CLOUD_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_PARALYSIS:
-					strcpy(buf, "the flask shatters and a cloud of pink gas billows out!");
+					strcpy(buf, "瓶子碎开了，一阵粉红色的烟雾飘散开来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_PARALYSIS_GAS_CLOUD_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_INCINERATION:
-					strcpy(buf, "the flask shatters and its contents burst violently into flame!");
+					strcpy(buf, "瓶子碎开了，产生了一团火焰！");
 					message(buf, false);
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_INCINERATION_POTION], true, false);
 					break;
 				case POTION_DARKNESS:
-					strcpy(buf, "the flask shatters and the lights in the area start fading.");
+					strcpy(buf, "瓶子碎开了，附近的光开始变得暗淡下来！");
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_DARKNESS_POTION], true, false);
 					message(buf, false);
 					break;
 				case POTION_DESCENT:
-					strcpy(buf, "as the flask shatters, the ground vanishes!");
+					strcpy(buf, "瓶子碎开了，附近的地面正开始消失！");
 					message(buf, false);
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_HOLE_POTION], true, false);
 					break;
 				case POTION_LICHEN:
-					strcpy(buf, "the flask shatters and deadly spores spill out!");
+					strcpy(buf, "瓶子碎开了，致命的孢子在地面上扩散开来！");
 					message(buf, false);
 					spawnDungeonFeature(x, y, &dungeonFeatureCatalog[DF_LICHEN_PLANTED], true, false);
 					break;
@@ -5149,15 +5137,15 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 			//	applyInstantTileEffectsToCreature(monst);
 			//}
 		} else {
-			if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
-				strcpy(buf2, "against");
-			} else if (tileCatalog[pmap[x][y].layers[highestPriorityLayer(x, y, false)]].mechFlags & TM_STAND_IN_TILE) {
-				strcpy(buf2, "into");
-			} else {
-				strcpy(buf2, "on");
-			}
-			sprintf(buf, "the flask shatters and %s liquid splashes harmlessly %s %s.",
-					potionTable[theItem->kind].flavor, buf2, tileText(x, y));
+			// if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
+			// 	strcpy(buf2, "against");
+			// } else if (tileCatalog[pmap[x][y].layers[highestPriorityLayer(x, y, false)]].mechFlags & TM_STAND_IN_TILE) {
+			// 	strcpy(buf2, "into");
+			// } else {
+			// 	strcpy(buf2, "on");
+			// }
+			sprintf(buf, "瓶子碎开了，里面%s的液体溅了开来。",
+					potionTable[theItem->kind].flavor);
 			message(buf, false);
 			if (theItem->kind == POTION_HALLUCINATION && (theItem->flags & ITEM_MAGIC_DETECTED)) {
 				autoIdentify(theItem);
@@ -5179,14 +5167,14 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
 
 void throwCommand(item *theItem) {
 	item *thrownItem;
-	char buf[COLS], theName[COLS];
+	char buf[COLS*3], theName[COLS*3];
 	unsigned char command[10];
 	short maxDistance, zapTarget[2], quantity;
 	boolean autoTarget;
 	
 	command[0] = THROW_KEY;
 	if (theItem == NULL) {
-		theItem = promptForItemOfType((ALL_ITEMS), 0, 0, "Throw what? (a-z, shift for more info; or <esc> to cancel)", true);
+		theItem = promptForItemOfType((ALL_ITEMS), 0, 0, "选择投掷的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
 	}
 	if (theItem == NULL) {
 		return;
@@ -5201,19 +5189,18 @@ void throwCommand(item *theItem) {
 	confirmMessages();
 	
 	if ((theItem->flags & ITEM_EQUIPPED) && theItem->quantity <= 1) {
-		sprintf(buf, "Are you sure you want to throw your %s?", theName);
+		sprintf(buf, "确定要投掷这件%s吗？", theName);
 		if (!confirm(buf, false)) {
 			return;
 		}
         if (theItem->flags & ITEM_CURSED) {
-            sprintf(buf, "You cannot unequip your %s; it appears to be cursed.", theName);
+            sprintf(buf, "你无法取下这件%s；它似乎是被诅咒的。", theName);
             messageWithColor(buf, &itemMessageColor, false);
             return;
         }
 	}
 	
-	sprintf(buf, "Throw %s %s where? (<hjklyubn>, mouse, or <tab>)",
-			(theItem->quantity > 1 ? "a" : "your"),
+	sprintf(buf, "把%s投掷到哪里？（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标）",
 			theName);
 	temporaryMessage(buf, false);
 	maxDistance = (12 + 2 * max(rogue.strength - player.weaknessAmount - 12, 2));
@@ -5251,7 +5238,7 @@ void throwCommand(item *theItem) {
 }
 
 boolean useStaffOrWand(item *theItem, boolean *commandsRecorded) {
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	unsigned char command[10];
 	short zapTarget[2], originLoc[2], maxDistance, c;
 	boolean autoTarget, targetAllies, autoID, passThroughCreatures;
@@ -5262,11 +5249,11 @@ boolean useStaffOrWand(item *theItem, boolean *commandsRecorded) {
     
     if (theItem->charges <= 0 && (theItem->flags & ITEM_IDENTIFIED)) {
         itemName(theItem, buf2, false, false, NULL);
-        sprintf(buf, "Your %s has no charges.", buf2);
+        sprintf(buf, "%s没有能量了。", buf2);
         messageWithColor(buf, &itemMessageColor, false);
         return false;
     }
-    temporaryMessage("Direction? (<hjklyubn>, mouse, or <tab>; <return> to confirm)", false);
+    temporaryMessage("选择施法方向：（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标，回车键确认）", false);
     itemName(theItem, buf2, false, false, NULL);
 
     if ((theItem->category & STAFF) && theItem->kind == STAFF_BLINKING
@@ -5885,8 +5872,8 @@ void drinkPotion(item *theItem) {
 				updateMinersLightRadius();
 				updateVision(true);
 			}
-            sprintf(buf, "%syour maximum health increases by %i%%.",
-                    ((player.currentHP < player.info.maxHP) ? "you heal completely and " : ""),
+            sprintf(buf, "%s你的生命值上限提高了%i%%。",
+                    ((player.currentHP < player.info.maxHP) ? "你的生命力已完全恢复，同时" : ""),
                     (player.info.maxHP + 10) * 100 / player.info.maxHP - 100);
             
             player.info.maxHP += 10;
@@ -5896,11 +5883,11 @@ void drinkPotion(item *theItem) {
 			break;
 		case POTION_HALLUCINATION:
 			player.status[STATUS_HALLUCINATING] = player.maxStatus[STATUS_HALLUCINATING] = 300;
-			message("colors are everywhere! The walls are singing!", false);
+			message("你发现四周到处都是绚丽的彩色！墙壁在摇晃着唱着歌！", false);
 			break;
 		case POTION_INCINERATION:
 			colorFlash(&darkOrange, 0, IN_FIELD_OF_VIEW, 4, 4, player.xLoc, player.yLoc);
-			message("as you uncork the flask, it explodes in flame!", false);
+			message("你打开瓶盖，里面突然涌出一阵火焰！", false);
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_FLAMETHROWER], true, false);
 			exposeCreatureToFire(&player);
 			break;
@@ -5909,11 +5896,11 @@ void drinkPotion(item *theItem) {
 			player.maxStatus[STATUS_DARKNESS] = max(400, player.maxStatus[STATUS_DARKNESS]);
 			updateMinersLightRadius();
 			updateVision(true);
-			message("your vision flickers as a cloak of darkness settles around you!", false);
+			message("你的视野被一片突然而来的黑暗覆盖！", false);
 			break;
 		case POTION_DESCENT:
 			colorFlash(&darkBlue, 0, IN_FIELD_OF_VIEW, 3, 3, player.xLoc, player.yLoc);
-			message("vapor pours out of the flask and causes the floor to disappear!", false);
+			message("瓶中泻出的气体使得附近的地面开始消失！", false);
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_HOLE_POTION], true, false);
 			break;
 		case POTION_STRENGTH:
@@ -5922,16 +5909,16 @@ void drinkPotion(item *theItem) {
 				player.status[STATUS_WEAKENED] = 1;
 			}
 			updateEncumbrance();
-			messageWithColor("newfound strength surges through your body.", &advancementMessageColor, false);
+			messageWithColor("一股力量充满了你的身体。", &advancementMessageColor, false);
             createFlare(player.xLoc, player.yLoc, POTION_STRENGTH_LIGHT);
 			break;
 		case POTION_POISON:
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_POISON_GAS_CLOUD_POTION], true, false);
-			message("poisonous gas billows out of the open flask!", false);
+			message("剧毒的气体从瓶口处涌出！", false);
 			break;
 		case POTION_PARALYSIS:
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_PARALYSIS_GAS_CLOUD_POTION], true, false);
-			message("your muscles stiffen as a cloud of pink gas bursts from the open flask!", false);
+			message("瓶子中涌出的气体让你的肌肉突然紧绷起来，你感觉被麻痹了！", false);
 			break;
 		case POTION_TELEPATHY:
             makePlayerTelepathic(300);
@@ -5939,14 +5926,14 @@ void drinkPotion(item *theItem) {
 		case POTION_LEVITATION:
 			player.status[STATUS_LEVITATING] = player.maxStatus[STATUS_LEVITATING] = 100;
 			player.bookkeepingFlags &= ~MONST_SEIZED; // break free of holding monsters
-			message("you float into the air!", false);
+			message("你缓慢的悬浮到了空中！", false);
 			break;
 		case POTION_CONFUSION:
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_CONFUSION_GAS_CLOUD_POTION], true, false);
-			message("a shimmering cloud of rainbow-colored gas billows out of the open flask!", false);
+			message("一股彩虹色的闪亮气体充满空气中，你感觉有些不知道自己在哪里。", false);
 			break;
 		case POTION_LICHEN:
-			message("a handful of tiny spores burst out of the open flask!", false);
+			message("打开瓶子的一瞬间一些奇怪的孢子掉落在了地上。", false);
 			spawnDungeonFeature(player.xLoc, player.yLoc, &dungeonFeatureCatalog[DF_LICHEN_PLANTED], true, false);
 			break;
 		case POTION_DETECT_MAGIC:
@@ -5983,14 +5970,14 @@ void drinkPotion(item *theItem) {
 			}
 			if (hadEffect || hadEffect2) {
 				if (hadEffect && hadEffect2) {
-					message("you can somehow feel the presence of magic on the level and in your pack.", false);
+					message("不知怎么的你能感觉到来自附近的，以及你包裹中的魔法力量。", false);
 				} else if (hadEffect) {
-					message("you can somehow feel the presence of magic on the level.", false);
+					message("不知怎么的你能感觉到来自附近的魔法力量。", false);
 				} else {
-					message("you can somehow feel the presence of magic in your pack.", false);
+					message("不知怎么的你能感觉到来自你包裹中的魔法力量。", false);
 				}
 			} else {
-				message("you can somehow feel the absence of magic on the level and in your pack.", false);
+				message("不知怎么的你能感觉到你包裹里以及附近都没有什么魔法的痕迹。", false);
 			}
 			break;
 		case POTION_HASTE_SELF:
@@ -6001,14 +5988,14 @@ void drinkPotion(item *theItem) {
 			if (player.status[STATUS_BURNING]) {
 				extinguishFireOnCreature(&player);
 			}
-			message("a comforting breeze envelops you, and you no longer fear fire.", false);
+			message("你感觉到喝下去的药剂很冰爽，一段时间内对火焰免疫。", false);
 			break;
 		case POTION_INVISIBILITY:
 			player.status[STATUS_INVISIBLE] = player.maxStatus[STATUS_INVISIBLE] = 75;
-			message("you shiver as a chill runs up your spine.", false);
+			message("一阵冰凉的感觉从你的脊背窜下。", false);
 			break;
 		default:
-			message("you feel very strange, as though your body doesn't know how to react!", true);
+			message("你感觉到很奇怪，你的身体都不知道应该如何反应。", true);
 	}
 }
 

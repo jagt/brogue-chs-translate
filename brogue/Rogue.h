@@ -2857,7 +2857,7 @@ extern "C" {
 	BROGUE_DRAW_COLOR colorForDisplay(color c);
 	
 	char* T(const wchar_t *ws);
-	void T_unpack(const char* s, wchar_t *ws, int ws_size);
+	int T_unpack(const char* s, wchar_t *ws, int ws_size);
 
 	/* is c the start of a utf8 sequence? */
 #define isutf(c) (((c)&0xC0)!=0x80)
