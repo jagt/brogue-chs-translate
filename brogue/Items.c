@@ -965,7 +965,7 @@ void call(item *theItem) {
             }
         }
 		theItem = promptForItemOfType((WEAPON|ARMOR|SCROLL|RING|POTION|STAFF|WAND), ITEM_CAN_BE_IDENTIFIED, 0,
-									  "选择你要命名的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
+									  "选择要命名的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
         updateIdentifiableItems(); // Reset the flags.
 	}
 	if (theItem == NULL) {
@@ -5306,9 +5306,9 @@ boolean useStaffOrWand(item *theItem, boolean *commandsRecorded) {
         } else {
             itemName(theItem, buf2, false, false, NULL);
             if (theItem->category == STAFF) {
-                sprintf(buf, "Your %s fizzles; it must be out of charges for now.", buf2);
+                sprintf(buf, "%s发出了嘶嘶的声音；看起来它现在没有能量了，需要过一段时间才能使用。", buf2);
             } else {
-                sprintf(buf, "Your %s fizzles; it must be depleted.", buf2);
+                sprintf(buf, "%s发出了嘶嘶的声音；看起来里面的能量已经用完了。", buf2);
             }
             messageWithColor(buf, &itemMessageColor, false);
             theItem->flags |= ITEM_MAX_CHARGES_KNOWN;
@@ -5325,7 +5325,7 @@ void useCharm(item *theItem) {
     switch (theItem->kind) {
         case CHARM_HEALTH:
             heal(&player, charmHealing(theItem->enchant1));
-            message("You feel much healthier.", false);
+            message("你感觉自己更健康了。", false);
             break;
         case CHARM_PROTECTION:
             if (charmProtection(theItem->enchant1) > player.status[STATUS_SHIELDED]) {
@@ -5333,7 +5333,7 @@ void useCharm(item *theItem) {
             }
             player.maxStatus[STATUS_SHIELDED] = player.status[STATUS_SHIELDED];
             flashMonster(&player, boltColors[BOLT_SHIELDING], 100);
-            message("A shimmering shield coalesces around you.", false);
+            message("一个发亮的魔法护盾笼罩了你。", false);
             break;
         case CHARM_HASTE:
             haste(&player, charmEffectDuration(theItem->kind, theItem->enchant1));
@@ -5343,11 +5343,11 @@ void useCharm(item *theItem) {
             if (player.status[STATUS_BURNING]) {
                 extinguishFireOnCreature(&player);
             }
-            message("you no longer fear fire.", false);
+            message("你不再惧怕火焰。", false);
             break;
         case CHARM_INVISIBILITY:
             imbueInvisibility(&player, charmEffectDuration(theItem->kind, theItem->enchant1), false);
-            message("You shiver as a chill runs up your spine.", false);
+            message("你打了个哆嗦，发现自己都看不见自己的手了。", false);
             break;
         case CHARM_TELEPATHY:
             makePlayerTelepathic(charmEffectDuration(theItem->kind, theItem->enchant1));
@@ -5355,10 +5355,10 @@ void useCharm(item *theItem) {
         case CHARM_LEVITATION:
             player.status[STATUS_LEVITATING] = player.maxStatus[STATUS_LEVITATING] = charmEffectDuration(theItem->kind, theItem->enchant1);
             player.bookkeepingFlags &= ~MONST_SEIZED; // break free of holding monsters
-            message("you float into the air!", false);
+            message("你突然飘起来，悬浮在了半空中！", false);
             break;
         case CHARM_SHATTERING:
-            messageWithColor("your charm emits a wave of turquoise light that pierces the nearby walls!", &itemMessageColor, false);
+            messageWithColor("这件法器突然发出一阵蓝色的光，击穿了附近的墙壁！", &itemMessageColor, false);
             crystalize(charmShattering(theItem->enchant1));
             break;
 //        case CHARM_CAUSE_FEAR:
@@ -5371,7 +5371,7 @@ void useCharm(item *theItem) {
             rechargeItems(STAFF);
             break;
         case CHARM_NEGATION:
-            negationBlast("your charm");
+            negationBlast("这件法器");
             break;
         default:
             break;
@@ -5379,7 +5379,7 @@ void useCharm(item *theItem) {
 }
 
 void apply(item *theItem, boolean recordCommands) {
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	boolean commandsRecorded, revealItemType;
 	unsigned char command[10];
 	short c;
@@ -5392,7 +5392,7 @@ void apply(item *theItem, boolean recordCommands) {
 	
 	if (!theItem) {
 		theItem = promptForItemOfType((SCROLL|FOOD|POTION|STAFF|WAND|CHARM), 0, 0,
-									  "Apply what? (a-z, shift for more info; or <esc> to cancel)", true);
+									  "选择要使用的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
 	}
 	
 	if (theItem == NULL) {
@@ -5405,15 +5405,15 @@ void apply(item *theItem, boolean recordCommands) {
         
         if (tableForItemCategory(theItem->category)[theItem->kind].identified) {
             sprintf(buf,
-                    "Really %s a %s of %s?",
-                    theItem->category == SCROLL ? "read" : "drink",
-                    theItem->category == SCROLL ? "scroll" : "potion",
-                    tableForItemCategory(theItem->category)[theItem->kind].name);
+                    "确认要%s%s%s吗？",
+                    theItem->category == SCROLL ? "使用这件" : "喝下这瓶",
+                    tableForItemCategory(theItem->category)[theItem->kind].name,
+                    theItem->category == SCROLL ? "卷轴" : "药剂");
         } else {
             sprintf(buf,
-                    "Really %s a cursed %s?",
-                    theItem->category == SCROLL ? "read" : "drink",
-                    theItem->category == SCROLL ? "scroll" : "potion");
+                    "确认要%s被诅咒的%s吗？",
+                    theItem->category == SCROLL ? "使用这件" : "喝下这瓶",
+                    theItem->category == SCROLL ? "卷轴" : "药剂");
         }
         if (!confirm(buf, false)) {
             return;
@@ -5425,17 +5425,17 @@ void apply(item *theItem, boolean recordCommands) {
 	switch (theItem->category) {
 		case FOOD:
 			if (STOMACH_SIZE - player.status[STATUS_NUTRITION] < foodTable[theItem->kind].strengthRequired) { // Not hungry enough.
-				sprintf(buf, "You're not hungry enough to fully enjoy the %s. Eat it anyway?",
-						(theItem->kind == RATION ? "food" : "mango"));
+				sprintf(buf, "你还没有那么饿，现在吃掉%s有些浪费了。还是要吃掉它么？",
+						(theItem->kind == RATION ? "这份粮食" : "这个芒果"));
 				if (!confirm(buf, false)) {
 					return;
 				}
 			}
 			player.status[STATUS_NUTRITION] = min(foodTable[theItem->kind].strengthRequired + player.status[STATUS_NUTRITION], STOMACH_SIZE);
 			if (theItem->kind == RATION) {
-				messageWithColor("That food tasted delicious!", &itemMessageColor, false);
+				messageWithColor("嗯味道很不错。", &itemMessageColor, false);
 			} else {
-				messageWithColor("My, what a yummy mango!", &itemMessageColor, false);
+				messageWithColor("这个芒果相当美味！", &itemMessageColor, false);
 			}
 			break;
 		case POTION:
@@ -5468,7 +5468,7 @@ void apply(item *theItem, boolean recordCommands) {
         case CHARM:
 			if (theItem->charges > 0) {
 				itemName(theItem, buf2, false, false, NULL);
-				sprintf(buf, "Your %s hasn't finished recharging.", buf2);
+				sprintf(buf, "你的%s还没有完成充能。", buf2);
 				messageWithColor(buf, &itemMessageColor, false);
 				return;
 			}
@@ -5479,7 +5479,7 @@ void apply(item *theItem, boolean recordCommands) {
             break;
 		default:
 			itemName(theItem, buf2, false, true, NULL);
-			sprintf(buf, "you can't apply %s.", buf2);
+			sprintf(buf, "你没法使用%s。", buf2);
 			message(buf, false);
 			return;
 	}
@@ -5600,27 +5600,27 @@ void readScroll(item *theItem) {
 	item *tempItem;
 	creature *monst;
 	boolean hadEffect = false;
-	char buf[2*COLS], buf2[COLS];
+	char buf[2*COLS*3], buf2[COLS*3];
 	
 	switch (theItem->kind) {
 		case SCROLL_IDENTIFY:
 			identify(theItem);
 			updateIdentifiableItems();
-			messageWithColor("this is a scroll of identify.", &itemMessageColor, true);
+			messageWithColor("这是一张鉴定卷轴。", &itemMessageColor, true);
 			if (numberOfMatchingPackItems(ALL_ITEMS, ITEM_CAN_BE_IDENTIFIED, 0, false) == 0) {
-				message("everything in your pack is already identified.", false);
+				message("你身上的所有东西都已经被鉴定过了。", false);
 				break;
 			}
 			do {
 				theItem = promptForItemOfType((ALL_ITEMS), ITEM_CAN_BE_IDENTIFIED, 0,
-											  "Identify what? (a-z; shift for more info)", false);
+											  "选择要鉴定的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", false);
 				if (rogue.gameHasEnded) {
 					return;
 				}
 				if (theItem && !(theItem->flags & ITEM_CAN_BE_IDENTIFIED)) {
 					confirmMessages();
 					itemName(theItem, buf2, true, true, NULL);
-					sprintf(buf, "you already know %s %s.", (theItem->quantity > 1 ? "they're" : "it's"), buf2);
+					sprintf(buf, "你早已知道%s%s。", (theItem->quantity > 1 ? "它们是" : "这是"), buf2);
 					messageWithColor(buf, &itemMessageColor, false);
 				}
 			} while (theItem == NULL || !(theItem->flags & ITEM_CAN_BE_IDENTIFIED));
@@ -5628,7 +5628,7 @@ void readScroll(item *theItem) {
 			confirmMessages();
 			identify(theItem);
 			itemName(theItem, buf, true, true, NULL);
-			sprintf(buf2, "%s %s.", (theItem->quantity == 1 ? "this is" : "these are"), buf);
+			sprintf(buf2, "%s%s.", (theItem->quantity == 1 ? "这是一件" : "这些是"), buf);
 			messageWithColor(buf2, &itemMessageColor, false);
 			break;
 		case SCROLL_TELEPORT:
@@ -5642,25 +5642,25 @@ void readScroll(item *theItem) {
 				}
 			}
 			if (hadEffect) {
-				message("your pack glows with a cleansing light, and a malevolent energy disperses.", false);
+				message("你的背包里闪出一阵光，你能感觉到险恶的能量被驱散了开来。你当前身上的物品都不再是被诅咒的了。", false);
 			} else {
-				message("your pack glows with a cleansing light, but nothing happens.", false);
+				message("你的背包里闪出一阵光，但什么都没有发生。", false);
 			}
 			break;
 		case SCROLL_ENCHANTING:
 			identify(theItem);
-			messageWithColor("this is a scroll of enchantment.", &itemMessageColor, true);
+			messageWithColor("这是一件增强卷轴。", &itemMessageColor, true);
 			if (!numberOfMatchingPackItems((WEAPON | ARMOR | RING | STAFF | WAND | CHARM), 0, 0, false)) {
 				confirmMessages();
-				message("you have nothing that can be enchanted.", false);
+				message("目前身上没有可以增强的物品。", false);
 				break;
 			}
 			do {
 				theItem = promptForItemOfType((WEAPON | ARMOR | RING | STAFF | WAND | CHARM), 0, 0,
-											  "Enchant what? (a-z; shift for more info)", false);
+											  "选择要增强的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", false);
 				confirmMessages();
 				if (theItem == NULL || !(theItem->category & (WEAPON | ARMOR | RING | STAFF | WAND | CHARM))) {
-					message("Can't enchant that.", true);
+					message("没有办法对这件物品进行增强。", true);
 				}
 				if (rogue.gameHasEnded) {
 					return;
@@ -5715,10 +5715,10 @@ void readScroll(item *theItem) {
 				equipItem(theItem, true);
 			}
 			itemName(theItem, buf, false, false, NULL);
-			sprintf(buf2, "your %s shine%s in the darkness.", buf, (theItem->quantity == 1 ? "s" : ""));
+			sprintf(buf2, "你的%s发出一阵金色的闪光。", buf);
 			messageWithColor(buf2, &itemMessageColor, false);
 			if (theItem->flags & ITEM_CURSED) {
-				sprintf(buf2, "a malevolent force leaves your %s.", buf);
+				sprintf(buf2, "一阵险恶的能量离开了这件%s。它不再是被诅咒的了。", buf);
 				messageWithColor(buf2, &itemMessageColor, false);
 				theItem->flags &= ~ITEM_CURSED;
 			}
@@ -5732,15 +5732,15 @@ void readScroll(item *theItem) {
 				tempItem = rogue.armor;
 				tempItem->flags |= ITEM_PROTECTED;
 				itemName(tempItem, buf2, false, false, NULL);
-				sprintf(buf, "a protective golden light covers your %s.", buf2);
+				sprintf(buf, "一道金色的光亮覆盖了你的%s。", buf2);
 				messageWithColor(buf, &itemMessageColor, false);
 				if (tempItem->flags & ITEM_CURSED) {
-					sprintf(buf, "a malevolent force leaves your %s.", buf2);
+					sprintf(buf, "一阵险恶的能流离开了这件%s。它不再是被诅咒的了。", buf2);
 					messageWithColor(buf, &itemMessageColor, false);
 					tempItem->flags &= ~ITEM_CURSED;
 				}
 			} else {
-				message("a protective golden light surrounds you, but it quickly disperses.", false);
+				message("一阵金色的光照亮了你的身体，但很快就消散了。", false);
 			}
             createFlare(player.xLoc, player.yLoc, SCROLL_PROTECTION_LIGHT);
 			break;
@@ -5749,10 +5749,10 @@ void readScroll(item *theItem) {
 				tempItem = rogue.weapon;
 				tempItem->flags |= ITEM_PROTECTED;
 				itemName(tempItem, buf2, false, false, NULL);
-				sprintf(buf, "a protective golden light covers your %s.", buf2);
+				sprintf(buf, "一道金色的光亮覆盖了你的%s.", buf2);
 				messageWithColor(buf, &itemMessageColor, false);
 				if (tempItem->flags & ITEM_CURSED) {
-					sprintf(buf, "a malevolent force leaves your %s.", buf2);
+					sprintf(buf, "一阵险恶的能流离开了这件%s。它不再是被诅咒的了。", buf2);
 					messageWithColor(buf, &itemMessageColor, false);
 					tempItem->flags &= ~ITEM_CURSED;
 				}
@@ -5760,13 +5760,13 @@ void readScroll(item *theItem) {
                     rogue.weapon->quiverNumber = rand_range(1, 60000);
                 }
 			} else {
-				message("a protective golden light covers your empty hands, but it quickly disperses.", false);
+				message("一阵金色的光照亮了你的双手，但很快就消散了。", false);
 			}
             createFlare(player.xLoc, player.yLoc, SCROLL_PROTECTION_LIGHT);
 			break;
 		case SCROLL_MAGIC_MAPPING:
 			confirmMessages();
-			messageWithColor("this scroll has a map on it!", &itemMessageColor, false);
+			messageWithColor("你自己看看发现卷轴上画着地图！", &itemMessageColor, false);
 			for (i=0; i<DCOLS; i++) {
 				for (j=0; j<DROWS; j++) {
 					if (!(pmap[i][j].flags & DISCOVERED) && pmap[i][j].layers[DUNGEON] != GRANITE) {
@@ -5788,7 +5788,7 @@ void readScroll(item *theItem) {
 		case SCROLL_AGGRAVATE_MONSTER:
 			aggravateMonsters();
 			colorFlash(&gray, 0, (DISCOVERED | MAGIC_MAPPED), 10, DCOLS / 2, player.xLoc, player.yLoc);
-			message("the scroll emits a piercing shriek that echoes throughout the dungeon!", false);
+			message("卷轴发出了巨大的响声，回声在空挡的地牢里荡漾。", false);
 			break;
 		case SCROLL_SUMMON_MONSTER:
 			for (j=0; j<25 && numberOfMonsters < 3; j++) {
@@ -5809,21 +5809,21 @@ void readScroll(item *theItem) {
 				}
 			}
 			if (numberOfMonsters > 1) {
-				message("the fabric of space ripples, and monsters appear!", false);
+				message("你看到眼前的景象开始扭曲，然后突然出现了几只怪物！", false);
 			} else if (numberOfMonsters == 1) {
-				message("the fabric of space ripples, and a monster appears!", false);
+				message("你看到眼前的景象开始扭曲，然后突然出现了一只怪物！", false);
 			} else {
-				message("the fabric of space boils violently around you, but nothing happens.", false);
+				message("你看到眼前的景象开始扭曲，但是随后什么都没有发生。", false);
 			}
 			break;
 //		case SCROLL_CAUSE_FEAR:
 //            causeFear("the scroll");
 //			break;
 		case SCROLL_NEGATION:
-            negationBlast("the scroll");
+            negationBlast("这个卷轴");
 			break;
 		case SCROLL_SHATTERING:
-			messageWithColor("the scroll emits a wave of turquoise light that pierces the nearby walls!", &itemMessageColor, false);
+			messageWithColor("这件卷轴突然发出一阵蓝色的光，击穿了附近的墙壁！", &itemMessageColor, false);
 			crystalize(9);
 			break;
 	}
@@ -6138,13 +6138,13 @@ uchar itemMagicChar(item *theItem) {
 }
 
 void unequip(item *theItem) {
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	unsigned char command[3];
 	
 	command[0] = UNEQUIP_KEY;
 	if (theItem == NULL) {
 		theItem = promptForItemOfType(ALL_ITEMS, ITEM_EQUIPPED, 0,
-									  "Remove (unequip) what? (a-z or <esc> to cancel)", true);
+									  "选择要取下的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
 	}
 	if (theItem == NULL) {
 		return;
@@ -6155,13 +6155,13 @@ void unequip(item *theItem) {
 	
 	if (!(theItem->flags & ITEM_EQUIPPED)) {
 		itemName(theItem, buf2, false, false, NULL);
-		sprintf(buf, "your %s was not equipped.", buf2);
+		sprintf(buf, "你的%s当前并没有被装备。", buf2);
 		confirmMessages();
 		messageWithColor(buf, &itemMessageColor, false);
 		return;
 	} else if (theItem->flags & ITEM_CURSED) { // this is where the item gets unequipped
 		itemName(theItem, buf2, false, false, NULL);
-		sprintf(buf, "you can't; your %s appears to be cursed.", buf2);
+		sprintf(buf, "你发现自己没法取下来这件%s；它好像是被诅咒的。", buf2);
 		confirmMessages();
 		messageWithColor(buf, &itemMessageColor, false);
 		return;
@@ -6177,7 +6177,7 @@ void unequip(item *theItem) {
 		}
 		confirmMessages();
 		updateEncumbrance();
-		sprintf(buf, "you are no longer %s %s.", (theItem->category & WEAPON ? "wielding" : "wearing"), buf2);
+		sprintf(buf, "现在你不再%s这件%s。", (theItem->category & WEAPON ? "装备着" : "穿着"), buf2);
 		messageWithColor(buf, &itemMessageColor, false);
 	}
 	playerTurnEnded();
@@ -6191,13 +6191,13 @@ boolean canDrop() {
 }
 
 void drop(item *theItem) {
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	unsigned char command[3];
 	
 	command[0] = DROP_KEY;
 	if (theItem == NULL) {
 		theItem = promptForItemOfType(ALL_ITEMS, 0, 0,
-									  "Drop what? (a-z, shift for more info; or <esc> to cancel)", true);
+									  "选择要丢弃的物品：（a-z, 按住<shift>键弹出物品菜单。<esc>键取消）", true);
 	}
 	if (theItem == NULL) {
 		return;
@@ -6207,7 +6207,7 @@ void drop(item *theItem) {
 	
 	if ((theItem->flags & ITEM_EQUIPPED) && (theItem->flags & ITEM_CURSED)) {
 		itemName(theItem, buf2, false, false, NULL);
-		sprintf(buf, "you can't; your %s appears to be cursed.", buf2);
+		sprintf(buf, "你发现自己没丢掉这件%s；它好像是被诅咒的。", buf2);
 		confirmMessages();
 		messageWithColor(buf, &itemMessageColor, false);
 	} else if (canDrop()) {
@@ -6218,12 +6218,12 @@ void drop(item *theItem) {
 		theItem = dropItem(theItem); // This is where it gets dropped.
 		theItem->flags |= ITEM_PLAYER_AVOIDS; // Try not to pick up stuff you've already dropped.
 		itemName(theItem, buf2, true, true, NULL);
-		sprintf(buf, "You dropped %s.", buf2);
+		sprintf(buf, "你把%s丢到了地面上。", buf2);
 		messageWithColor(buf, &itemMessageColor, false);
 		playerTurnEnded();
 	} else {
 		confirmMessages();
-		message("There is already something there.", false);
+		message("你站着的地上已经有些别的东西了。不能再丢在这里。", false);
 	}
 }
 
@@ -6251,7 +6251,7 @@ item *promptForItemOfType(unsigned short category,
 	if (keystroke < 'a' || keystroke > 'z') {
 		confirmMessages();
 		if (keystroke != ESCAPE_KEY && keystroke != ACKNOWLEDGE_KEY) {
-			message("Invalid entry.", false);
+			message("无效的输入。", false);
 		}
 		return NULL;
 	}
@@ -6259,7 +6259,7 @@ item *promptForItemOfType(unsigned short category,
 	theItem = itemOfPackLetter(keystroke);
 	if (theItem == NULL) {
 		confirmMessages();
-		message("No such item.", false);
+		message("没有找到对应的物品。", false);
 		return NULL;
 	}
 	
