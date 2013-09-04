@@ -180,7 +180,7 @@ void monsterShoots(creature *attacker, short targetLoc[2], uchar projChar, color
 void shootWeb(creature *breather, short targetLoc[2], short kindOfWeb) {
 	short listOfCoordinates[DCOLS][2], originLoc[2];
 	short i, x, y, numCells;
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	boolean fastForward = false;
 	dungeonFeature smallWeb = {kindOfWeb, SURFACE, 15, 12, false};
 	dungeonFeature largeWeb = {kindOfWeb, SURFACE, 100, 39, false};
@@ -193,7 +193,7 @@ void shootWeb(creature *breather, short targetLoc[2], short kindOfWeb) {
 	
 	if (pmap[originLoc[0]][originLoc[1]].flags & IN_FIELD_OF_VIEW) {
 		monsterName(buf2, breather, true);
-		sprintf(buf, "%s launches a sticky web.", buf2);
+		sprintf(buf, "%s发射出一团粘人的网。", buf2);
 		message(buf, false);
 	}
 	
@@ -299,7 +299,7 @@ void splitMonster(creature *monst, short x, short y) {
 					refreshSideBar(-1, -1, false);
 					
 					if (canDirectlySeeMonster(monst)) {
-						sprintf(buf, "%s splits in two!", monstName);
+						sprintf(buf, "%s突然分裂成了两个！", monstName);
 						message(buf, false);
 					}
 					
@@ -391,7 +391,7 @@ boolean playerImmuneToMonster(creature *monst) {
 void specialHit(creature *attacker, creature *defender, short damage) {
 	short itemCandidates, randItemIndex, stolenQuantity;
 	item *theItem = NULL, *itemFromTopOfStack;
-	char buf[COLS], buf2[COLS], buf3[COLS];
+	char buf[COLS*3], buf2[COLS*3], buf3[COLS*3];
 	
 	if (!(attacker->info.abilityFlags & SPECIAL_HIT)) {
 		return;
@@ -411,12 +411,12 @@ void specialHit(creature *attacker, creature *defender, short damage) {
 			rogue.armor->enchant1--;
 			equipItem(rogue.armor, true);
 			itemName(rogue.armor, buf2, false, false, NULL);
-			sprintf(buf, "your %s weakens!", buf2);
+			sprintf(buf, "你的%s被弱化了！", buf2);
 			messageWithColor(buf, &itemMessageColor, false);
 		}
 		if (attacker->info.abilityFlags & MA_HIT_HALLUCINATE) {
 			if (!player.status[STATUS_HALLUCINATING]) {
-				combatMessage("you begin to hallucinate", 0);
+				combatMessage("你开始产生幻觉。", 0);
 			}
 			if (!player.status[STATUS_HALLUCINATING]) {
 				player.maxStatus[STATUS_HALLUCINATING] = 0;
@@ -469,7 +469,7 @@ void specialHit(creature *attacker, creature *defender, short damage) {
 					attacker->creatureState = MONSTER_FLEEING;
 					monsterName(buf2, attacker, true);
 					itemName(theItem, buf3, false, true, NULL);
-					sprintf(buf, "%s stole %s!", buf2, buf3);
+					sprintf(buf, "%s偷取了%s！", buf2, buf3);
 					messageWithColor(buf, &badMessageColor, false);
 				}
 			}
@@ -477,7 +477,7 @@ void specialHit(creature *attacker, creature *defender, short damage) {
 	}
 	if ((attacker->info.abilityFlags & MA_POISONS) && damage > 0) {
 		if (defender == &player && !player.status[STATUS_POISONED]) {
-			combatMessage("scalding poison fills your veins", &badMessageColor);
+			combatMessage("毒渗入了你的身体", &badMessageColor);
 		}
 		if (!defender->status[STATUS_POISONED]) {
 			defender->maxStatus[STATUS_POISONED] = 0;
@@ -553,7 +553,7 @@ short runicWeaponChance(item *theItem, boolean customEnchantLevel, float enchant
 }
 
 void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
-	char buf[DCOLS*3], buf2[COLS], monstName[DCOLS], theItemName[DCOLS];
+	char buf[DCOLS*3*2], buf2[COLS*3], monstName[DCOLS], theItemName[DCOLS];
 	
 	color *effectColors[NUMBER_WEAPON_RUNIC_KINDS] = {&white, &black,
 		&yellow, &pink, &green, &confusionGasColor, NULL, NULL, &darkRed, &rainbow};
@@ -597,7 +597,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
 		switch (enchantType) {
 			case W_SPEED:
 				if (player.ticksUntilTurn != -1) {
-					sprintf(buf, "your %s trembles and time freezes for a moment", theItemName);
+					sprintf(buf, "你的%s突然震动了一下，你感觉一瞬间时间停止了流逝", theItemName);
 					buf[DCOLS] = '\0';
 					combatMessage(buf, 0);
 					player.ticksUntilTurn = -1; // free turn!
@@ -606,7 +606,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
 			case W_SLAYING:
 			case W_QUIETUS:
 				inflictLethalDamage(defender);
-				sprintf(buf, "%s suddenly dies", monstName);
+				sprintf(buf, "%s突然死掉了", monstName);
 				buf[DCOLS] = '\0';
 				combatMessage(buf, messageColorFromVictim(defender));
 				break;
@@ -614,17 +614,15 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
 				defender->status[STATUS_PARALYZED] = max(defender->status[STATUS_PARALYZED], weaponParalysisDuration(enchant));
 				defender->maxStatus[STATUS_PARALYZED] = defender->status[STATUS_PARALYZED];
 				if (canDirectlySeeMonster(defender)) {
-					sprintf(buf, "%s is frozen in place", monstName);
+					sprintf(buf, "%s突然动弹不得", monstName);
 					buf[DCOLS] = '\0';
 					combatMessage(buf, messageColorFromVictim(defender));
 				}
 				break;
 			case W_MULTIPLICITY:
-				sprintf(buf, "Your %s emits a flash of light, and %sspectral duplicate%s appear%s!",
+				sprintf(buf, "你的%s突然发出一道光，召唤出了%s奥术幻象！",
 						theItemName,
-						(weaponImageCount(enchant) == 1 ? "a " : ""),
-						(weaponImageCount(enchant) == 1 ? "" : "s"),
-						(weaponImageCount(enchant) == 1 ? "s" : ""));
+						(weaponImageCount(enchant) == 1 ? "一个" : "几个"));
 				buf[DCOLS] = '\0';
 				
 				for (i = 0; i < (weaponImageCount(enchant)); i++) {
@@ -652,20 +650,20 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
 					newMonst->info.damage = player.info.damage;
 					newMonst->status[STATUS_LIFESPAN_REMAINING] = newMonst->maxStatus[STATUS_LIFESPAN_REMAINING] = weaponImageDuration(enchant);
 					if (strLenWithoutEscapes(theItemName) <= 6) {
-						sprintf(newMonst->info.monsterName, "spectral %s", theItemName);
+						sprintf(newMonst->info.monsterName, "奥术之%s", theItemName);
 					} else {
 						switch (rogue.weapon->kind) {
 							case BROADSWORD:
-								strcpy(newMonst->info.monsterName, "spectral sword");
+								strcpy(newMonst->info.monsterName, "奥术之剑");
 								break;
 							case HAMMER:
-								strcpy(newMonst->info.monsterName, "spectral hammer");
+								strcpy(newMonst->info.monsterName, "奥术之锤");
 								break;
 							case PIKE:
-								strcpy(newMonst->info.monsterName, "spectral pike");
+								strcpy(newMonst->info.monsterName, "奥术之矛");
 								break;
 							case WAR_AXE:
-								strcpy(newMonst->info.monsterName, "spectral axe");
+								strcpy(newMonst->info.monsterName, "奥术之斧");
 								break;
 							default:
 								break;
@@ -680,7 +678,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
 			case W_SLOWING:
 				slow(defender, weaponSlowDuration(enchant));
 				if (canDirectlySeeMonster(defender)) {
-					sprintf(buf, "%s slows down", monstName);
+					sprintf(buf, "%s被减速了", monstName);
 					buf[DCOLS] = '\0';
 					combatMessage(buf, messageColorFromVictim(defender));
 				}
@@ -689,7 +687,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
 				defender->status[STATUS_CONFUSED] = max(defender->status[STATUS_CONFUSED], weaponConfusionDuration(enchant));
 				defender->maxStatus[STATUS_CONFUSED] = defender->status[STATUS_CONFUSED];
 				if (canDirectlySeeMonster(defender)) {
-					sprintf(buf, "%s looks very confused", monstName);
+					sprintf(buf, "%s看起来非常困惑", monstName);
 					buf[DCOLS] = '\0';
 					combatMessage(buf, messageColorFromVictim(defender));
 				}
@@ -702,7 +700,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
 				if (canDirectlySeeMonster(defender)
                     && !cellHasTerrainFlag(newLoc[0], newLoc[1], T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_VISION)
                     && !(pmap[newLoc[0]][newLoc[1]].flags & (HAS_MONSTER | HAS_PLAYER))) {
-					sprintf(buf, "you launch %s backward with the force of your blow", monstName);
+					sprintf(buf, "你将%s击飞了出去", monstName);
 					buf[DCOLS] = '\0';
 					combatMessage(buf, messageColorFromVictim(defender));
 				}
@@ -721,17 +719,17 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
                         && inflictDamage(defender, distanceBetween(oldLoc[0], oldLoc[1], defender->xLoc, defender->yLoc), &white)) {
                         
                         if (canDirectlySeeMonster(defender)) {
-                            sprintf(buf, "%s %s on impact with %s",
+                            sprintf(buf, "%s被撞到了%s上%s",
                                     monstName,
-                                    (defender->info.flags & MONST_INANIMATE) ? "is destroyed" : "dies",
-                                    buf2);
+                                    buf2,
+                                    (defender->info.flags & MONST_INANIMATE) ? "被摧毁了" : "死掉了");
                             buf[DCOLS] = '\0';
                             combatMessage(buf, messageColorFromVictim(defender));
                         }
                     } else {
                         moralAttack(&player, defender);
                         if (canDirectlySeeMonster(defender)) {
-                            sprintf(buf, "%s slams against %s",
+                            sprintf(buf, "%s猛的撞到了%s上",
                                     monstName,
                                     buf2);
                             buf[DCOLS] = '\0';
@@ -759,12 +757,12 @@ void attackVerb(char returnString[DCOLS], creature *attacker, short hitPercentil
 	short verbCount, increment;
 	
 	if (attacker != &player && (player.status[STATUS_HALLUCINATING] || !canSeeMonster(attacker))) {
-		strcpy(returnString, "hits");
+		strcpy(returnString, "击中了");
 		return;
 	}
     
     if (attacker == &player && !rogue.weapon) {
-		strcpy(returnString, "punch");
+		strcpy(returnString, "用拳头攻击");
 		return;
     }
 	
@@ -775,7 +773,7 @@ void attackVerb(char returnString[DCOLS], creature *attacker, short hitPercentil
 }
 
 void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *damage, boolean melee) {
-	char armorName[DCOLS], attackerName[DCOLS], monstName[DCOLS], buf[DCOLS * 3];
+	char armorName[DCOLS*3], attackerName[DCOLS*3], monstName[DCOLS*3], buf[DCOLS * 3*2];
 	boolean runicKnown;
 	boolean runicDiscovered;
 	short newDamage, dir, newX, newY, count, i;
@@ -827,15 +825,15 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
 					monst->info.defense = 0;
 					
 					if (strLenWithoutEscapes(attacker->info.monsterName) <= 6) {
-						sprintf(monst->info.monsterName, "spectral %s", attacker->info.monsterName);
+						sprintf(monst->info.monsterName, "奥术之%s", attacker->info.monsterName);
 					} else {
-						strcpy(monst->info.monsterName, "spectral clone");
+						strcpy(monst->info.monsterName, "奥术幻象");
 					}
 				}
                 updateVision(true);
 				
 				runicDiscovered = true;
-				sprintf(returnString, "Your %s flashes, and spectral images of %s appear!", armorName, attackerName);
+				sprintf(returnString, "你的%s突然发出一道闪光，召唤了%s的奥术幻象！", armorName, attackerName);
 			}
 			break;
 		case A_MUTUALITY:
@@ -866,16 +864,16 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
 							if (inflictDamage(hitList[i], (*damage + count) / (count + 1), &blue)
 								&& canSeeMonster(hitList[i])) {
                                 
-								sprintf(buf, "%s %s", monstName, ((hitList[i]->info.flags & MONST_INANIMATE) ? "is destroyed" : "dies"));
+								sprintf(buf, "%s %s", monstName, ((hitList[i]->info.flags & MONST_INANIMATE) ? "被摧毁了" : "死掉了"));
 								combatMessage(buf, messageColorFromVictim(hitList[i]));
 							}
 						}
 					}
 					runicDiscovered = true;
 					if (!runicKnown) {
-						sprintf(returnString, "Your %s pulses, and the damage is shared with %s!",
+						sprintf(returnString, "你的%s突然震动了一下，你受到伤害的一部分被转移到了%s身上！",
 								armorName,
-								(count == 1 ? monstName : "the other adjacent enemies"));
+								(count == 1 ? monstName : "周围的怪物"));
 					}
 					*damage = (*damage + count) / (count + 1);
 				}
@@ -887,7 +885,7 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
 				*damage = 0;
 				runicDiscovered = true;
 				if (!runicKnown) {
-					sprintf(returnString, "your %s pulses and absorbs the blow!", armorName);
+					sprintf(returnString, "你的%s突然震动了一下，将受到的冲击完全吸收了！", armorName);
 				}
 			}
 			break;
@@ -896,12 +894,12 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
 				newDamage = max(1, armorReprisalPercent(enchant) * (*damage) / 100); // 5% reprisal per armor level
 				if (inflictDamage(attacker, newDamage, &blue)) {
 					if (canSeeMonster(attacker)) {
-						sprintf(returnString, "your %s pulses and %s drops dead!", armorName, attackerName);
+						sprintf(returnString, "你的%s突然震动了一下，%s受到反弹的伤害突然死掉了！", armorName, attackerName);
 						runicDiscovered = true;
 					}
 				} else if (!runicKnown) {
 					if (canSeeMonster(attacker)) {
-						sprintf(returnString, "your %s pulses and %s shudders in pain!", armorName, attackerName);
+						sprintf(returnString, "你的%s突然震动了一下，%s受到反弹的伤害痛苦的扭曲了一下！", armorName, attackerName);
 						runicDiscovered = true;
 					}
 				}
@@ -916,7 +914,7 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
 		case A_BURDEN:
 			if (rand_percent(10)) {
 				rogue.armor->strengthRequired++;
-				sprintf(returnString, "your %s suddenly feels heavier!", armorName);
+				sprintf(returnString, "你感觉%s好像变得更重了！", armorName);
 				equipItem(rogue.armor, true);
 				runicDiscovered = true;
 			}
@@ -924,13 +922,13 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
 		case A_VULNERABILITY:
 			*damage *= 2;
 			if (!runicKnown) {
-				sprintf(returnString, "your %s pulses and you are wracked with pain!", armorName);
+				sprintf(returnString, "你的%s突然震动了一下，你感觉之前受到的攻击又来了一次！", armorName);
 				runicDiscovered = true;
 			}
 			break;
         case A_IMMOLATION:
             if (rand_percent(10)) {
-                sprintf(returnString, "flames suddenly explode out of your %s!", armorName);
+                sprintf(returnString, "%s突然爆发出一阵火焰！", armorName);
                 message(returnString, !runicKnown);
                 returnString[0] = '\0';
                 spawnDungeonFeature(player.xLoc, player.yLoc, &(dungeonFeatureCatalog[DF_ARMOR_IMMOLATION]), true, false);
@@ -949,7 +947,7 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
 }
 
 void decrementWeaponAutoIDTimer() {
-    char buf[COLS*2], buf2[COLS*2];
+    char buf[COLS*2*3], buf2[COLS*2*3];
     
     if (rogue.weapon
         && !(rogue.weapon->flags & ITEM_IDENTIFIED)
@@ -957,9 +955,9 @@ void decrementWeaponAutoIDTimer() {
         
         rogue.weapon->flags |= ITEM_IDENTIFIED;
         updateIdentifiableItems();
-        messageWithColor("you are now familiar enough with your weapon to identify it.", &itemMessageColor, false);
+        messageWithColor("由于你已经使用了这件武器足够久的时间，你感觉能确定其隐藏的属性了。", &itemMessageColor, false);
         itemName(rogue.weapon, buf2, true, true, NULL);
-        sprintf(buf, "%s %s.", (rogue.weapon->quantity > 1 ? "they are" : "it is"), buf2);
+        sprintf(buf, "%s %s.", (rogue.weapon->quantity > 1 ? "这些是" : "这是"), buf2);
         messageWithColor(buf, &itemMessageColor, false);
     }
 }
