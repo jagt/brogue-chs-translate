@@ -1207,7 +1207,7 @@ short strLenWithoutEscapes(const char *str) {
 }
 
 void combatMessage(char *theMsg, color *theColor) {
-	char newMsg[COLS * 2 * 3];
+	char newMsg[COLS * 2 * 3 * 3];
 	
 	if (theColor == 0) {
 		theColor = &white;
@@ -1223,7 +1223,7 @@ void combatMessage(char *theMsg, color *theColor) {
 	}
 	
 	if (combatText[0]) {
-		sprintf(combatText, "%s; %s", combatText, newMsg);
+		sprintf(combatText, "%s；%s", combatText, newMsg);
 	} else {
 		strcpy(combatText, newMsg);
 	}
@@ -1414,7 +1414,7 @@ boolean inflictDamage(creature *defender, short damage, const color *flashColor)
 // AdministrativeDeath means the monster simply disappears, with no messages, dropped item, DFs or other effect.
 void killCreature(creature *decedent, boolean administrativeDeath) {
 	short x, y;
-	char monstName[DCOLS], buf[DCOLS];
+	char monstName[DCOLS*3], buf[DCOLS*3];
 	
 	if (decedent->bookkeepingFlags & MONST_IS_DYING) {
 		// monster has already been killed; let's avoid overkill
@@ -1441,7 +1441,7 @@ void killCreature(creature *decedent, boolean administrativeDeath) {
 		
 		if (monsterText[decedent->info.monsterID].DFMessage[0] && canSeeMonster(decedent)) {
 			monsterName(monstName, decedent, true);
-			sprintf(buf, "%s %s", monstName, monsterText[decedent->info.monsterID].DFMessage);
+			sprintf(buf, "%s%s", monstName, monsterText[decedent->info.monsterID].DFMessage);
 			resolvePronounEscapes(buf, decedent);
 			message(buf, false);
 		}
@@ -1456,7 +1456,7 @@ void killCreature(creature *decedent, boolean administrativeDeath) {
 			&& !(decedent->info.flags & MONST_INANIMATE)
 			&& !(decedent->bookkeepingFlags & MONST_BOUND_TO_LEADER)
 			&& !decedent->carriedMonster) {
-			messageWithColor("you feel a sense of loss.", &badMessageColor, false);
+			messageWithColor("你突然有一种失去了什么的感觉。", &badMessageColor, false);
 		}
 		x = decedent->xLoc;
 		y = decedent->yLoc;
@@ -1484,7 +1484,7 @@ void killCreature(creature *decedent, boolean administrativeDeath) {
 				
 				if (canSeeMonster(decedent->carriedMonster)) {
 					monsterName(monstName, decedent->carriedMonster, true);
-					sprintf(buf, "%s appears", monstName);
+					sprintf(buf, "%s出现了", monstName);
 					combatMessage(buf, NULL);
 				}
 				

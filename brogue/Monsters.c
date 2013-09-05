@@ -381,7 +381,7 @@ short pickHordeType(short depth, enum monsterTypes summonerType, unsigned long f
 // it's just generated and inserted into the chains.
 creature *cloneMonster(creature *monst, boolean announce, boolean placeClone) {
 	creature *newMonst, *nextMonst, *parentMonst;
-	char buf[DCOLS], monstName[DCOLS];
+	char buf[DCOLS*3], monstName[DCOLS*3];
 	
 	newMonst = generateMonster(monst->info.monsterID, false, false);
 	nextMonst = newMonst->nextCreature;
@@ -430,7 +430,7 @@ creature *cloneMonster(creature *monst, boolean announce, boolean placeClone) {
 		refreshDungeonCell(newMonst->xLoc, newMonst->yLoc);
 		if (announce && canSeeMonster(newMonst)) {
 			monsterName(monstName, newMonst, false);
-			sprintf(buf, "another %s appears!", monstName);
+			sprintf(buf, "突然又出现了一个%s！", monstName);
 			message(buf, false);
 		}
 	}
@@ -441,7 +441,7 @@ creature *cloneMonster(creature *monst, boolean announce, boolean placeClone) {
 		newMonst->info.damage.upperBound = 2;
 		newMonst->info.damage.clumpFactor = 1;
 		newMonst->info.defense = 0;
-		strcpy(newMonst->info.monsterName, "clone");
+		strcpy(newMonst->info.monsterName, "的克隆");
 		newMonst->creatureState = MONSTER_ALLY;
 	}
 	return newMonst;
@@ -708,8 +708,8 @@ boolean summonMinions(creature *summoner) {
 	short hordeID = pickHordeType(0, summonerType, 0, 0), seenMinionCount = 0, x, y;
 	boolean atLeastOneMinion = false;
 	creature *monst, *host;
-	char buf[DCOLS];
-	char monstName[DCOLS];
+	char buf[DCOLS*3];
+	char monstName[DCOLS*3];
     short **grid;
 	
 	if (hordeID < 0) {
@@ -764,9 +764,9 @@ boolean summonMinions(creature *summoner) {
 	if (canSeeMonster(summoner)) {
 		monsterName(monstName, summoner, true);
 		if (monsterText[summoner->info.monsterID].summonMessage) {
-			sprintf(buf, "%s %s", monstName, monsterText[summoner->info.monsterID].summonMessage);
+			sprintf(buf, "%s%s", monstName, monsterText[summoner->info.monsterID].summonMessage);
 		} else {
-			sprintf(buf, "%s incants darkly!", monstName);
+			sprintf(buf, "%s开始吟唱！", monstName);
 		}
 		message(buf, false);
 	}
@@ -1486,7 +1486,7 @@ void updateMonsterState(creature *monst) {
 
 void decrementMonsterStatus(creature *monst) {
 	short i, damage;
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	
 	monst->bookkeepingFlags &= ~MONST_JUST_SUMMONED;
 	
@@ -1532,9 +1532,9 @@ void decrementMonsterStatus(creature *monst) {
                     if (!(monst->status[STATUS_IMMUNE_TO_FIRE]) && inflictDamage(monst, damage, &orange)) {
                         if (canSeeMonster(monst)) {
                             monsterName(buf, monst, true);
-                            sprintf(buf2, "%s burns %s.",
+                            sprintf(buf2, "%s被%s。",
                                     buf,
-                                    (monst->info.flags & MONST_INANIMATE) ? "up" : "to death");
+                                    (monst->info.flags & MONST_INANIMATE) ? "尽了" : "死了");
                             messageWithColor(buf2, messageColorFromVictim(monst), false);
                         }
                         return;
@@ -1551,7 +1551,7 @@ void decrementMonsterStatus(creature *monst) {
                         killCreature(monst, false);
                         if (canSeeMonster(monst)) {
                             monsterName(buf, monst, true);
-                            sprintf(buf2, "%s dissipates into thin air.", buf);
+                            sprintf(buf2, "%s瞬间化成粉尘，消散在了空中。", buf);
                             messageWithColor(buf2, &white, false);
                         }
                         return;
@@ -1564,7 +1564,7 @@ void decrementMonsterStatus(creature *monst) {
                     if (inflictDamage(monst, 1, &green)) {
                         if (canSeeMonster(monst)) {
                             monsterName(buf, monst, true);
-                            sprintf(buf2, "%s dies of poison.", buf);
+                            sprintf(buf2, "%s被毒死了。", buf);
                             messageWithColor(buf2, messageColorFromVictim(monst), false);
                         }
                         return;
@@ -1916,8 +1916,8 @@ void perimeterCoords(short returnCoords[2], short n) {
 boolean monsterBlinkToPreferenceMap(creature *monst, short **preferenceMap, boolean blinkUphill) {
 	short i, bestTarget[2], bestPreference, nowPreference, maxDistance, target[2], impact[2], origin[2];
 	boolean gotOne;
-	char monstName[DCOLS];
-	char buf[DCOLS];
+	char monstName[DCOLS*3];
+	char buf[DCOLS*3];
     
 	maxDistance = staffBlinkDistance(5);
 	gotOne = false;
@@ -1969,7 +1969,7 @@ boolean monsterBlinkToPreferenceMap(creature *monst, short **preferenceMap, bool
 	if (gotOne) {
 		if (canDirectlySeeMonster(monst)) {
 			monsterName(monstName, monst, true);
-			sprintf(buf, "%s blinks", monstName);
+			sprintf(buf, "%s一瞬间移开了", monstName);
 			combatMessage(buf, 0);
 		}
 		monst->ticksUntilTurn = monst->attackSpeed * (monst->info.flags & MONST_CAST_SPELLS_SLOWLY ? 2 : 1);
@@ -2017,8 +2017,8 @@ boolean monstUseMagic(creature *monst) {
 	short targetLoc[2];
 	short weakestAllyHealthFraction = 100;
 	creature *target, *weakestAlly;
-	char monstName[DCOLS];
-	char buf[DCOLS];
+	char monstName[DCOLS*3];
+	char buf[DCOLS*3];
 	short minionCount = 0;
 	boolean abortHaste, alwaysUse;
 	short listOfCoordinates[MAX_BOLT_LENGTH][2];
@@ -2087,7 +2087,7 @@ boolean monstUseMagic(creature *monst) {
                     
                     if (canDirectlySeeMonster(monst)) {
                         monsterName(monstName, monst, true);
-                        sprintf(buf, "%s casts a beckoning spell", monstName);
+                        sprintf(buf, "%s使用了牵引魔法", monstName);
                         combatMessage(buf, 0);
                     }
                     zap(originLoc, targetLoc, BOLT_BECKONING, 10, false);
@@ -2107,7 +2107,7 @@ boolean monstUseMagic(creature *monst) {
                         
                         monsterName(monstName, monst, true);
                         if (canSeeMonster(monst) || canSeeMonster(target)) {
-                            sprintf(buf, "%s breathes fire!", monstName);
+                            sprintf(buf, "%s吐出了火焰！", monstName);
                             message(buf, false);
                         }
                         zap(originLoc, targetLoc, BOLT_FIRE, 18, false);
@@ -2154,7 +2154,7 @@ boolean monstUseMagic(creature *monst) {
                     
 					if (canDirectlySeeMonster(monst)) {
 						monsterName(monstName, monst, true);
-						sprintf(buf, "%s casts a spell of discord", monstName);
+						sprintf(buf, "%s释放了挑拨法术", monstName);
 						combatMessage(buf, 0);
 					}
 					zap(originLoc, targetLoc, BOLT_DISCORD, 10, false);
@@ -2173,7 +2173,7 @@ boolean monstUseMagic(creature *monst) {
                     
 					if (canDirectlySeeMonster(monst)) {
 						monsterName(monstName, monst, true);
-						sprintf(buf, "%s casts a negation spell", monstName);
+						sprintf(buf, "%s释放了反魔法法术", monstName);
 						combatMessage(buf, 0);
 					}
 					zap(originLoc, targetLoc, BOLT_NEGATION, 10, false);
@@ -2188,7 +2188,7 @@ boolean monstUseMagic(creature *monst) {
                     
 					if (canDirectlySeeMonster(monst)) {
 						monsterName(monstName, monst, true);
-						sprintf(buf, "%s casts a spell of slowness", monstName);
+						sprintf(buf, "%s释放了减速魔法", monstName);
 						combatMessage(buf, 0);
 					}
 					zap(originLoc, targetLoc, BOLT_SLOW, 10, false);
@@ -2216,7 +2216,7 @@ boolean monstUseMagic(creature *monst) {
 				
 				if (canDirectlySeeMonster(monst)) {
 					monsterName(monstName, monst, true);
-					sprintf(buf, "%s casts a negation spell", monstName);
+					sprintf(buf, "%s释放了反魔法法术", monstName);
 					combatMessage(buf, 0);
 				}
 				
@@ -2261,7 +2261,7 @@ boolean monstUseMagic(creature *monst) {
 				
 				if (canDirectlySeeMonster(monst)) {
 					monsterName(monstName, monst, true);
-					sprintf(buf, "%s casts a spell of speed", monstName);
+					sprintf(buf, "%s释放了加速法术", monstName);
 					combatMessage(buf, 0);
 				}
 				
@@ -2307,7 +2307,7 @@ boolean monstUseMagic(creature *monst) {
 				
 				if (canDirectlySeeMonster(monst)) {
 					monsterName(monstName, monst, true);
-					sprintf(buf, "%s casts a spell of protection", monstName);
+					sprintf(buf, "%s释放了魔法盾", monstName);
 					combatMessage(buf, 0);
 				}
 				
@@ -2344,7 +2344,7 @@ boolean monstUseMagic(creature *monst) {
 			
 			if (canDirectlySeeMonster(monst)) {
 				monsterName(monstName, monst, true);
-				sprintf(buf, "%s casts a healing spell", monstName);
+				sprintf(buf, "%s释放了回复法术", monstName);
 				combatMessage(buf, 0);
 			}
 			
@@ -2379,7 +2379,7 @@ boolean monstUseMagic(creature *monst) {
                         
                         if (canSeeMonster(monst)) {
                             monsterName(monstName, monst, true);
-                            sprintf(buf, "%s casts a firebolt", monstName);
+                            sprintf(buf, "%s释放了火球术", monstName);
                             combatMessage(buf, 0);
                         }
                         zap(originLoc, targetLoc, BOLT_FIRE, 4, false);
@@ -2396,7 +2396,7 @@ boolean monstUseMagic(creature *monst) {
                     
                     if (canDirectlySeeMonster(monst)) {
                         monsterName(monstName, monst, true);
-                        sprintf(buf, "%s casts a spark of lightning", monstName);
+                        sprintf(buf, "%s释放了闪电术", monstName);
                         combatMessage(buf, 0);
                     }
                     zap(originLoc, targetLoc, BOLT_LIGHTNING, 1, false);
@@ -2533,7 +2533,7 @@ void moveAlly(creature *monst) {
 	creature *target, *closestMonster = NULL;
 	short i, j, x, y, dir, shortestDistance, targetLoc[2], leashLength;
 	short **enemyMap, **costMap;
-	char buf[DCOLS], monstName[DCOLS];
+	char buf[DCOLS*3], monstName[DCOLS*3];
 	
 	x = monst->xLoc;
 	y = monst->yLoc;
@@ -2687,7 +2687,7 @@ void moveAlly(creature *monst) {
 			&& !(monst->bookkeepingFlags & MONST_ABSORBING)) {
 			if (canSeeMonster(monst)) {
 				monsterName(monstName, monst, true);
-				sprintf(buf, "%s begins %s the fallen %s.", monstName, monsterText[monst->info.monsterID].absorbing, monst->targetCorpseName);
+				sprintf(buf, "%s%s%s的尸体。", monstName, monsterText[monst->info.monsterID].absorbing, monst->targetCorpseName);
 				messageWithColor(buf, &goodMessageColor, false);
 			}
 			monst->corpseAbsorptionCounter = 20;
@@ -2729,7 +2729,7 @@ void moveAlly(creature *monst) {
 void monstersTurn(creature *monst) {
 	short x, y, playerLoc[2], targetLoc[2], dir, shortestDistance;
 	boolean alreadyAtBestScent;
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	creature *ally, *target, *closestMonster;
 	
 	monst->turnsSpentStationary++;
@@ -2762,9 +2762,9 @@ void monstersTurn(creature *monst) {
 				}
 				if (canSeeMonster(monst)) {
 					monsterName(buf2, monst, true);
-					sprintf(buf, "%s finished %s the %s.", buf2, monsterText[monst->info.monsterID].absorbing, monst->targetCorpseName);
+					sprintf(buf, "%s停止%s%s的尸体。", buf2, monsterText[monst->info.monsterID].absorbing, monst->targetCorpseName);
 					messageWithColor(buf, &goodMessageColor, false);
-					sprintf(buf, "%s now %s!", buf2,
+					sprintf(buf, "%s%s！", buf2,
 							(monst->absorbBehavior ? monsterBehaviorFlagDescriptions[unflag(monst->absorptionFlags)] :
 							 monsterAbilityFlagDescriptions[unflag(monst->absorptionFlags)]));
 					resolvePronounEscapes(buf, monst);
@@ -3814,7 +3814,7 @@ void monsterDetails(char buf[], creature *monst) {
 	// ability flags
 	for (i=0; i<32; i++) {
 		// !!!!! DEBUG
-		if ((true || monst->info.abilityFlags & (Fl(i)))
+		if ((monst->info.abilityFlags & (Fl(i)))
 			&& monsterAbilityFlagDescriptions[i][0]) {
 			if (anyFlags) {
 				strcat(newText, "&");
