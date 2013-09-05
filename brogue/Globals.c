@@ -1915,23 +1915,23 @@ const hordeType hordeCatalog[NUMBER_HORDES] = {
 char itemTitles[NUMBER_SCROLL_KINDS][30];
 
 const char titlePhonemes[NUMBER_TITLE_PHONEMES][30] = {
-	"glorp",
-	"snarg",
-	"gana",
-	"flin",
-	"herba",
-	"pora",
-	"nuglo",
-	"greep",
-	"nur",
-	"lofa",
-	"poder",
-	"nidge",
-	"pus",
-	"wooz",
-	"flem",
-	"bloto",
-	"porta"
+	"罰",
+	"諳",
+	"跋",
+	"冥",
+	"羅",
+	"遠",
+	"皤",
+	"沙",
+	"瑟",
+	"陀",
+	"耶",
+	"謹",
+	"陀",
+	"想",
+	"皤",
+	"蘇",
+	"利"
 };
 
 char itemColors[NUMBER_ITEM_COLORS][30];
