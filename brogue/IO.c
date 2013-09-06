@@ -290,12 +290,12 @@ short actionMenu(short x, short y, boolean playingBack) {
 	buttonCount = 0;
 	
 	if (playingBack) {
-		sprintf(buttons[buttonCount].text,	"  %sk: %sFaster playback  ", yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text,	"%sk: %s加速播放", yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = UP_KEY;
 		buttons[buttonCount].hotkey[1] = UP_ARROW;
 		buttons[buttonCount].hotkey[2] = NUMPAD_8;
 		buttonCount++;
-		sprintf(buttons[buttonCount].text,	"  %sj: %sSlower playback  ", yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text,	"  %sj:%s减速播放", yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = DOWN_KEY;
 		buttons[buttonCount].hotkey[1] = DOWN_ARROW;
 		buttons[buttonCount].hotkey[2] = NUMPAD_2;
@@ -305,10 +305,10 @@ short actionMenu(short x, short y, boolean playingBack) {
 		buttons[buttonCount].flags |= B_FORCE_CENTERED;
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text,	"%s0-9: %sFast forward to turn  ", yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text,	"%s0-9:%s快进到回合", yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = '0';
 		buttonCount++;
-		sprintf(buttons[buttonCount].text,	"  %s>:%s Next Level  ", yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text,	"%s>:%s快进到下一层", yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = DESCEND_KEY;
 		buttonCount++;
 		sprintf(buttons[buttonCount].text, "%s---", grayColorEscape);
@@ -316,7 +316,7 @@ short actionMenu(short x, short y, boolean playingBack) {
 		buttons[buttonCount].flags |= B_FORCE_CENTERED;
 		buttonCount++;
 	} else {
-		sprintf(buttons[buttonCount].text, "  %sZ: %sSleep until better  ",		yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text, "%sZ:%s原地休息",		yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = AUTO_REST_KEY;
 		buttonCount++;
 		sprintf(buttons[buttonCount].text, "%s---", grayColorEscape);
@@ -324,7 +324,7 @@ short actionMenu(short x, short y, boolean playingBack) {
 		buttons[buttonCount].flags |= B_FORCE_CENTERED;
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text, "  %sA: %sAutopilot  ",				yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text, "%sA:%s自动战斗",				yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = AUTOPLAY_KEY;
 		buttonCount++;
 		sprintf(buttons[buttonCount].text, "%s---", grayColorEscape);
@@ -332,14 +332,14 @@ short actionMenu(short x, short y, boolean playingBack) {
 		buttons[buttonCount].flags |= B_FORCE_CENTERED;
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text, "  %sS: %sSuspend game and quit  ",	yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text, "%sS:%s中断并退出",	yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = SAVE_GAME_KEY;
 		buttonCount++;
-		sprintf(buttons[buttonCount].text, "  %sO: %sOpen suspended game  ",		yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text, "%sO:%s继续中断的游戏",		yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = LOAD_SAVED_GAME_KEY;
 		
 	}
-	sprintf(buttons[buttonCount].text, "  %sV: %sView saved recording  ",		yellowColorEscape, whiteColorEscape);
+	sprintf(buttons[buttonCount].text, "%sV:%s观看录像",		yellowColorEscape, whiteColorEscape);
 	buttons[buttonCount].hotkey[0] = VIEW_RECORDING_KEY;
 	buttonCount++;
 	sprintf(buttons[buttonCount].text, "%s---", grayColorEscape);
@@ -347,13 +347,13 @@ short actionMenu(short x, short y, boolean playingBack) {
 	buttons[buttonCount].flags |= B_FORCE_CENTERED;
 	buttonCount++;
 	
-	sprintf(buttons[buttonCount].text, "  %sD: %sDiscovered items  ",	yellowColorEscape, whiteColorEscape);
+	sprintf(buttons[buttonCount].text, "%sD:%s已发现的物品",	yellowColorEscape, whiteColorEscape);
 	buttons[buttonCount].hotkey[0] = DISCOVERIES_KEY;
 	buttonCount++;
-	sprintf(buttons[buttonCount].text, "  %s\\: %s%s color effects  ",	yellowColorEscape, whiteColorEscape, rogue.trueColorMode ? "Enable" : "Disable");
+	sprintf(buttons[buttonCount].text, "%s\\:%s%s开关颜色效果",	yellowColorEscape, whiteColorEscape, rogue.trueColorMode ? "Enable" : "Disable");
 	buttons[buttonCount].hotkey[0] = TRUE_COLORS_KEY;
 	buttonCount++;
-	sprintf(buttons[buttonCount].text, "  %s?: %sHelp  ",						yellowColorEscape, whiteColorEscape);
+	sprintf(buttons[buttonCount].text, "%s?:%s帮助",						yellowColorEscape, whiteColorEscape);
 	buttons[buttonCount].hotkey[0] = HELP_KEY;
 	buttonCount++;
 	sprintf(buttons[buttonCount].text, "%s---", grayColorEscape);
@@ -361,7 +361,7 @@ short actionMenu(short x, short y, boolean playingBack) {
 	buttons[buttonCount].flags |= B_FORCE_CENTERED;
 	buttonCount++;
 	
-	sprintf(buttons[buttonCount].text, "  %sQ: %sQuit %s  ",	yellowColorEscape, whiteColorEscape, (playingBack ? "to title screen" : "without saving"));
+	sprintf(buttons[buttonCount].text, "%sQ: %s%s",	yellowColorEscape, whiteColorEscape, (playingBack ? "返回标题界面" : "强制退出游戏"));
 	buttons[buttonCount].hotkey[0] = QUIT_KEY;
 	buttonCount++;
 	
@@ -434,15 +434,15 @@ void initializeMenuButtons(buttonState *state, brogueButton buttons[5]) {
 	buttonCount = 0;
 	
 	if (rogue.playbackMode) {
-		sprintf(buttons[buttonCount].text,	" Unpause (%sspace%s) ", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"   继续(%s空格%s)   ", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = ACKNOWLEDGE_KEY;
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text,	"Omniscience (%stab%s)", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"显示具体信息(%stab%s)", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = TAB_KEY;
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text,	" Next Turn (%sl%s) ", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"   下一回合(%sl%s)  ", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = RIGHT_KEY;
 		buttons[buttonCount].hotkey[1] = RIGHT_ARROW;
 		buttons[buttonCount].hotkey[2] = NUMPAD_6;
@@ -1753,7 +1753,7 @@ void displayWaypoints() {
             }
         }
     }
-    temporaryMessage("Waypoints:", true);
+    temporaryMessage("路点:", true);
 }
 
 boolean pauseBrogue(short milliseconds) {
@@ -2285,7 +2285,7 @@ boolean confirm(char *prompt, boolean alsoDuringPlayback) {
 	encodeMessageColor(yellowColorEscape, 0, &yellow);
 	
 	initializeButton(&(buttons[0]));
-	sprintf(buttons[0].text, "     %sY%ses     ", yellowColorEscape, whiteColorEscape);
+	sprintf(buttons[0].text,  "    %s(y)%s是    ", yellowColorEscape, whiteColorEscape);
 	buttons[0].hotkey[0] = 'y';
 	buttons[0].hotkey[1] = 'Y';
 	buttons[0].hotkey[2] = RETURN_KEY;
@@ -2293,7 +2293,7 @@ boolean confirm(char *prompt, boolean alsoDuringPlayback) {
 	buttons[0].flags |= (B_WIDE_CLICK_AREA | B_KEYPRESS_HIGHLIGHT);
 	
 	initializeButton(&(buttons[1]));
-	sprintf(buttons[1].text, "     %sN%so      ", yellowColorEscape, whiteColorEscape);
+	sprintf(buttons[1].text, "     %s(n)%s否    ", yellowColorEscape, whiteColorEscape);
 	buttons[1].hotkey[0] = 'n';
 	buttons[1].hotkey[1] = 'N';
 	buttons[1].hotkey[2] = ACKNOWLEDGE_KEY;
@@ -2781,7 +2781,7 @@ void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst
 			BROGUE_JUSTIFY_CENTER);
 		BrogueDrawContext_enableProportionalFont(io_state.sidebar_context, 1);
 		BrogueDrawContext_drawAsciiString(
-			io_state.sidebar_context, 0, printY++, "   -- PLAYBACK --   ");
+			io_state.sidebar_context, 0, printY++,     "   -- 重放中 --   ");
 
 		if (rogue.howManyTurns > 0) {
 			sprintf(buf, "Turn %li/%li", rogue.playerTurnNumber, rogue.howManyTurns);
@@ -2791,12 +2791,12 @@ void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst
 			BrogueDrawContext_setForeground(io_state.sidebar_context,
 										    colorForDisplay(badMessageColor));
 			BrogueDrawContext_drawAsciiString(
-				io_state.sidebar_context, 0, printY++, "    [OUT OF SYNC]   ");
+				io_state.sidebar_context, 0, printY++, "    [回放出错!]   ");
 		} else if (rogue.playbackPaused) {
 			BrogueDrawContext_setForeground(io_state.sidebar_context,
 										    colorForDisplay(gray));
 			BrogueDrawContext_drawAsciiString(
-				io_state.sidebar_context, 0, printY++, "      [PAUSED]      ");
+				io_state.sidebar_context, 0, printY++, "      [暂停]     ");
 		}
 		BrogueDrawContext_pop(io_state.sidebar_context);
 	}
@@ -3486,42 +3486,42 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 
 	monstForeColor = white;
 	
-	const char hallucinationStrings[10][COLS] = {
-		"     (Dancing)      ",
-		"     (Singing)      ",
-		"  (Pontificating)   ",
-		"     (Skipping)     ",
-		"     (Spinning)     ",
-		"      (Crying)      ",
-		"     (Laughing)     ",
-		"     (Humming)      ",
-		"    (Whistling)     ",
-		"    (Quivering)     ",
+	const char hallucinationStrings[10][COLS*3] = {
+		"      (起舞中)      ",
+		"      (唱歌中)      ",
+		"      (演讲中)      ",
+		"      (发呆中)      ",
+		"      (旋转中)      ",
+		"      (哭泣中)      ",
+		"      (微笑中)      ",
+		"      (哼唱中)      ",
+		"      (吹口哨)      ",
+		"      (颤抖中)      ",
 	};
-	const char statusStrings[NUMBER_OF_STATUS_EFFECTS][COLS] = {
-		"Weakened: -",
-		"Telepathic",
-		"Hallucinating",
-		"Levitating",
-		"Slowed",
-		"Hasted",
-		"Confused",
-		"Burning",
-		"Paralyzed",
-		"Poisoned",
-		"Stuck",
-		"Nauseous",
-		"Discordant",
-		"Immune to Fire",
+	const char statusStrings[NUMBER_OF_STATUS_EFFECTS][COLS*3] = {
+		"虚弱: -",
+		"心灵感应",
+		"幻视",
+		"悬浮",
+		"减速",
+		"加速",
+		"混乱",
+		"燃烧着",
+		"麻痹",
+		"中毒",
+		"被困住",
+		"反胃",
+		"挑拨",
+		"火焰免疫",
 		"", // STATUS_EXPLOSION_IMMUNITY,
 		"", // STATUS_NUTRITION,
 		"", // STATUS_ENTERS_LEVEL_IN,
-		"Frightened",
-		"Entranced",
-		"Darkened",
-		"Lifespan",
-		"Shielded",
-        "Invisible",
+		"恐惧",
+		"迷惑",
+		"看不清",
+		"限时",
+		"魔法盾",
+        "隐身",
 	};
 	
 	if (y >= ROWS - 1) {
@@ -3667,47 +3667,47 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 				} else if (monst->bookkeepingFlags & MONST_CAPTIVE && y < ROWS - 1) {
 					BrogueDrawContext_drawAsciiString(
 						io_state.sidebar_context, 0, y++,
-						"     (Captive)      ");
+						"       (被囚禁)      ");
 				} else if ((monst->info.flags & MONST_RESTRICTED_TO_LIQUID)
 						   && !cellHasTMFlag(monst->xLoc, monst->yLoc, TM_ALLOWS_SUBMERGING)) {
 					BrogueDrawContext_drawAsciiString(
 						io_state.sidebar_context, 0, y++,
-						"     (Helpless)     ");
+						"        (无助)      ");
 				} else if (monst->creatureState == MONSTER_SLEEPING && y < ROWS - 1) {
 					BrogueDrawContext_drawAsciiString(
 						io_state.sidebar_context, 0, y++,
-						"     (Sleeping)     ");
+						"       (睡眠中)     ");
                 } else if ((monst->creatureState == MONSTER_ALLY) && y < ROWS - 1) {
                     BrogueDrawContext_drawAsciiString(
 						io_state.sidebar_context, 0, y++,
-						"       (Ally)       ");
+						"       (友军)       ");
                 } else if (monst->ticksUntilTurn > player.ticksUntilTurn + player.movementSpeed) {
                     BrogueDrawContext_drawAsciiString(
 						io_state.sidebar_context, 0, y++,
-						"   (Off balance)    ");
+						"      (失去平衡)    ");
 				} else if (monst->creatureState == MONSTER_FLEEING && y < ROWS - 1) {
 					BrogueDrawContext_drawAsciiString(
 						io_state.sidebar_context, 0, y++,
-						"     (Fleeing)      ");
+						"       (逃跑)      ");
 				} else if ((monst->creatureState == MONSTER_TRACKING_SCENT) && y < ROWS - 1) {
 					BrogueDrawContext_drawAsciiString(
 						io_state.sidebar_context, 0, y++,
-						"     (Hunting)      ");
+						"      (狩猎中)     ");
 				} else if ((monst->creatureState == MONSTER_WANDERING) && y < ROWS - 1) {
 					if ((monst->bookkeepingFlags & MONST_FOLLOWER) && monst->leader && (monst->leader->info.flags & MONST_IMMOBILE)) {
 						// follower of an immobile leader -- i.e. a totem
 						BrogueDrawContext_drawAsciiString(
 							io_state.sidebar_context, 0, y++,
-							"    (Worshiping)    ");
+							"     (祭拜中)    ");
 					} else if ((monst->bookkeepingFlags & MONST_FOLLOWER) && monst->leader && (monst->leader->bookkeepingFlags & MONST_CAPTIVE)) {
 						// actually a captor/torturer
 						BrogueDrawContext_drawAsciiString(
 							io_state.sidebar_context, 0, y++,
-							"     (Guarding)     ");
+							"     (守护中)     ");
 					} else {
 						BrogueDrawContext_drawAsciiString(
 							io_state.sidebar_context, 0, y++,
-							"    (Wandering)     ");
+							"      (游荡)     ");
 					}
 				}
 			}
@@ -3747,7 +3747,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 				y++;
 			}
 			if (y < ROWS - 1 && rogue.gold) {
-				sprintf(buf, "Gold: %li", rogue.gold);
+				sprintf(buf, "金币: %li", rogue.gold);
 
 				BrogueDrawContext_push(io_state.sidebar_context);
 				BrogueDrawContext_enableJustify(
