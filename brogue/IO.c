@@ -350,7 +350,7 @@ short actionMenu(short x, short y, boolean playingBack) {
 	sprintf(buttons[buttonCount].text, "%sD:%s已发现的物品",	yellowColorEscape, whiteColorEscape);
 	buttons[buttonCount].hotkey[0] = DISCOVERIES_KEY;
 	buttonCount++;
-	sprintf(buttons[buttonCount].text, "%s\\:%s%s开关颜色效果",	yellowColorEscape, whiteColorEscape, rogue.trueColorMode ? "Enable" : "Disable");
+	sprintf(buttons[buttonCount].text, "%s\\:%s%s颜色效果",	yellowColorEscape, whiteColorEscape, rogue.trueColorMode ? "开启" : "关闭");
 	buttons[buttonCount].hotkey[0] = TRUE_COLORS_KEY;
 	buttonCount++;
 	sprintf(buttons[buttonCount].text, "%s?:%s帮助",						yellowColorEscape, whiteColorEscape);

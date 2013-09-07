@@ -127,46 +127,46 @@ void describedItemCategory(short theCategory, char *buf) {
 	}
 	switch (theCategory) {
 		case FOOD:
-			strcpy(buf, "food");
+			strcpy(buf, "食物");
 			break;
 		case WEAPON:
-			strcpy(buf, "a weapon");
+			strcpy(buf, "一件武器");
 			break;
 		case ARMOR:
-			strcpy(buf, "a suit of armor");
+			strcpy(buf, "一件护甲");
 			break;
 		case POTION:
-			strcpy(buf, "a potion");
+			strcpy(buf, "一瓶药剂");
 			break;
 		case SCROLL:
-			strcpy(buf, "a scroll");
+			strcpy(buf, "一张卷轴");
 			break;
 		case STAFF:
-			strcpy(buf, "a staff");
+			strcpy(buf, "一根法杖");
 			break;
 		case WAND:
-			strcpy(buf, "a wand");
+			strcpy(buf, "一根魔棒");
 			break;
 		case RING:
-			strcpy(buf, "a ring");
+			strcpy(buf, "一个指环");
 			break;
 		case CHARM:
-			strcpy(buf, "a charm");
+			strcpy(buf, "一件法器");
 			break;
 		case AMULET:
-			strcpy(buf, "the Amulet of Yendor");
+			strcpy(buf, "Amulet of Yendor");
 			break;
 		case GEM:
-			strcpy(buf, "a lumenstone");
+			strcpy(buf, "一大块宝石");
 			break;
 		case KEY:
-			strcpy(buf, "a key");
+			strcpy(buf, "一把钥匙");
 			break;
 		case GOLD:
-			strcpy(buf, "a pile of gold");
+			strcpy(buf, "一小堆金币");
 			break;
 		default:
-			strcpy(buf, "something strange");
+			strcpy(buf, "某种东西");
 			break;
 	}
 	restoreRNG;
@@ -190,17 +190,17 @@ void describeLocation(char *buf, short x, short y) {
 	boolean prepositionLocked = false;
 	boolean monsterDormant;
 	
-	char subject[DCOLS];
-	char verb[DCOLS];
-	char preposition[DCOLS];
-	char object[DCOLS];
-	char adjective[DCOLS];
+	char subject[DCOLS*3];
+	char verb[DCOLS*3];
+	char preposition[DCOLS*3];
+	char object[DCOLS*3];
+	char adjective[DCOLS*3];
 	
 	assureCosmeticRNG;
 	
 	if (x == player.xLoc && y == player.yLoc) {
 		if (player.status[STATUS_LEVITATING]) {
-			sprintf(buf, "you are hovering above %s.", tileText(x, y));
+			sprintf(buf, "你悬浮在%s上方。", tileText(x, y));
 		} else {
 			strcpy(buf, tileFlavor(x, y));
 		}
@@ -234,19 +234,19 @@ void describeLocation(char *buf, short x, short y) {
 	if (magicItem) {
 		switch (itemMagicChar(magicItem)) {
 			case GOOD_MAGIC_CHAR:
-				strcpy(object, "benevolent magic");
+				strcpy(object, "某种善意的法力");
 				break;
 			case BAD_MAGIC_CHAR:
-				strcpy(object, "malevolent magic");
+				strcpy(object, "某种恶意的法力");
 				break;
 			case AMULET_CHAR:
-				strcpy(object, "the Amulet of Yendor");
+				strcpy(object, "Amulet of Yendor");
 				break;
 			default:
-				strcpy(object, "mysterious magic");
+				strcpy(object, "某种神秘的法力");
 				break;
 		}
-		sprintf(buf, "you can detect the aura of %s here.", object);
+		sprintf(buf, "你能感受那里有%s。", object);
 		restoreRNG;
 		return;
 	}
@@ -256,25 +256,25 @@ void describeLocation(char *buf, short x, short y) {
         && !canSeeMonster(monst)
         && monsterRevealed(monst)) {
         
-		strcpy(adjective, (((!player.status[STATUS_HALLUCINATING] || rogue.playbackOmniscience) && monst->info.displayChar >= 'a' && monst->info.displayChar <= 'z')
-						   || (player.status[STATUS_HALLUCINATING] && !rogue.playbackOmniscience && rand_range(0, 1)) ? "small" : "large"));
-		if (pmap[x][y].flags & DISCOVERED) {
-			strcpy(object, tileText(x, y));
-			if (monst->bookkeepingFlags & MONST_SUBMERGED) {
-				strcpy(preposition, "under ");
-			} else if (monsterDormant) {
-				strcpy(preposition, "coming from within ");
-			} else if (standsInTerrain) {
-				strcpy(preposition, "in ");
-			} else {
-				strcpy(preposition, "over ");
-			}
-		} else {
-			strcpy(object, "here");
-			strcpy(preposition, "");
-		}
+		// strcpy(adjective, (((!player.status[STATUS_HALLUCINATING] || rogue.playbackOmniscience) && monst->info.displayChar >= 'a' && monst->info.displayChar <= 'z')
+		// 				   || (player.status[STATUS_HALLUCINATING] && !rogue.playbackOmniscience && rand_range(0, 1)) ? "小型的" : "大型的"));
+		// if (pmap[x][y].flags & DISCOVERED) {
+		// 	strcpy(object, tileText(x, y));
+		// 	if (monst->bookkeepingFlags & MONST_SUBMERGED) {
+		// 		strcpy(preposition, "under ");
+		// 	} else if (monsterDormant) {
+		// 		strcpy(preposition, "coming from within ");
+		// 	} else if (standsInTerrain) {
+		// 		strcpy(preposition, "in ");
+		// 	} else {
+		// 		strcpy(preposition, "over ");
+		// 	}
+		// } else {
+		// 	strcpy(object, "here");
+		// 	strcpy(preposition, "");
+		// }
 
-		sprintf(buf, "you can sense a %s psychic emanation %s%s.", adjective, preposition, object);
+		sprintf(buf, "你能感觉这附近有某种生物存在。");
 		restoreRNG;
 		return;
 	}
