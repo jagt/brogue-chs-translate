@@ -292,11 +292,11 @@ void describeLocation(char *buf, short x, short y) {
 			} else {
 				strcpy(object, tileCatalog[pmap[x][y].rememberedTerrain].description);
 			}
-			sprintf(buf, "you remember seeing %s here.", object);
+			sprintf(buf, "你记得这里之前%s%s。", (pmap[x][y].rememberedItemCategory ? "有一个": "是"), object);
 			restoreRNG;
 			return;
 		} else if (pmap[x][y].flags & MAGIC_MAPPED) { // magic mapped
-			sprintf(buf, "you expect %s to be here.", tileCatalog[pmap[x][y].rememberedTerrain].description);
+			sprintf(buf, "你觉得这里应该是%s。", tileCatalog[pmap[x][y].rememberedTerrain].description);
 			restoreRNG;
 			return;
 		}
@@ -310,7 +310,7 @@ void describeLocation(char *buf, short x, short y) {
 		monsterName(subject, monst, true);
 		
 		if (pmap[x][y].layers[GAS] && monst->status[STATUS_INVISIBLE]) { // phantoms in gas
-			sprintf(buf, "you can perceive the faint outline of %s in %s.", subject, tileCatalog[pmap[x][y].layers[GAS]].description);
+			sprintf(buf, "在%s中你能模糊的看到%s的轮廓。",tileCatalog[pmap[x][y].layers[GAS]].description, subject);
 			restoreRNG;
 			return;
 		}
@@ -319,72 +319,72 @@ void describeLocation(char *buf, short x, short y) {
                          && !(monst->info.flags & MONST_GETS_TURN_ON_ACTIVATION));
 		
 		if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
-			strcpy(verb, "is trapped");
+			strcpy(verb, "被困住了");
 			subjectMoving = false;
 		} else if (monst->bookkeepingFlags & MONST_CAPTIVE) {
-			strcpy(verb, "is shackled in place");
+			strcpy(verb, "被锁住了");
 			subjectMoving = false;
 		} else if (monst->status[STATUS_PARALYZED]) {
-			strcpy(verb, "is frozen in place");
+			strcpy(verb, "被麻痹了");
 			subjectMoving = false;
 		} else if (monst->status[STATUS_STUCK]) {
-			strcpy(verb, "is entangled");
+			strcpy(verb, "被缠住了");
 			subjectMoving = false;
 		} else if (monst->status[STATUS_LEVITATING]) {
-			strcpy(verb, (subjectMoving ? "is flying" : "is hovering"));
-			strcpy(preposition, "over");
+			strcpy(verb, (subjectMoving ? "飞行" : "悬浮在"));
+			strcpy(preposition, "上方");
 			prepositionLocked = true;
 		} else if (monsterCanSubmergeNow(monst)) {
-			strcpy(verb, (subjectMoving ? "is gliding" : "is drifting"));
+			strcpy(verb, (subjectMoving ? "在潜出" : "在漂浮"));
 		} else if (cellHasTerrainFlag(x, y, T_MOVES_ITEMS) && !(monst->info.flags & MONST_SUBMERGES)) {
-			strcpy(verb, (subjectMoving ? "is swimming" : "is struggling"));
+			strcpy(verb, (subjectMoving ? "在游泳" : "在挣扎"));
 		} else if (cellHasTerrainFlag(x, y, T_AUTO_DESCENT)) {
-			strcpy(verb, "is suspended in mid-air");
-			strcpy(preposition, "over");
+			strcpy(verb, "停在了");
+			strcpy(preposition, "上方");
 			prepositionLocked = true;
 			subjectMoving = false;
 		} else if (monst->status[STATUS_CONFUSED]) {
-			strcpy(verb, "is staggering");
+			strcpy(verb, "被混乱了");
 		} else if ((monst->info.flags & MONST_RESTRICTED_TO_LIQUID)
 				   && !cellHasTMFlag(monst->xLoc, monst->yLoc, TM_ALLOWS_SUBMERGING)) {
-			strcpy(verb, "is lying");
+			strcpy(verb, "正躺着");
 			subjectMoving = false;
 		} else if (monst->info.flags & MONST_IMMOBILE) {
-			strcpy(verb, "is resting");
+			strcpy(verb, "正在休息");
 		} else {
 			switch (monst->creatureState) {
 				case MONSTER_SLEEPING:
-					strcpy(verb, "is sleeping");
+					strcpy(verb, "正在睡眠");
 					subjectMoving = false;
 					break;
 				case MONSTER_WANDERING:
-					strcpy(verb, subjectMoving ? "is wandering" : "is standing");
+					strcpy(verb, subjectMoving ? "正在游荡" : "站在原地");
 					break;
 				case MONSTER_FLEEING:
-					strcpy(verb, subjectMoving ? "is fleeing" : "is standing");
+					strcpy(verb, subjectMoving ? "正在逃跑" : "站在原地");
 					break;
 				case MONSTER_TRACKING_SCENT:
-					strcpy(verb, subjectMoving ? "is moving" : "is standing");
+					strcpy(verb, subjectMoving ? "正在移动" : "站在原地");
 					break;
 				case MONSTER_ALLY:
-					strcpy(verb, subjectMoving ? "is following you" : "is standing");
+					strcpy(verb, subjectMoving ? "在跟随这你" : "站在原地");
 					break;
 				default:
-					strcpy(verb, "is standing");
+					strcpy(verb, "站在原地");
 					break;
 			}
 		}
 		if (monst->status[STATUS_BURNING] && !(monst->info.flags & MONST_FIERY)) {
-			strcat(verb, ", burning,");
+			strcat(verb, "，燃烧着，");
 		}
 		
 		if (theItem) {
-			strcpy(preposition, "over");
+			strcpy(preposition, "上方");
 			describedItemName(theItem, object);
 		} else {
 			if (!prepositionLocked) {
-				strcpy(preposition, subjectMoving ? (standsInTerrain ? "through" : "across")
-					   : (standsInTerrain ? "in" : "on"));
+				strcpy(preposition, subjectMoving ? (standsInTerrain ? "里" : "间")
+					   : (standsInTerrain ? "上" : "上"));
 			}
 			
 			strcpy(object, tileText(x, y));
@@ -396,23 +396,25 @@ void describeLocation(char *buf, short x, short y) {
 			describedItemName(theItem, subject);
 			subjectMoving = cellHasTerrainFlag(x, y, T_MOVES_ITEMS);
 			
-			strcpy(verb, (theItem->quantity > 1 || (theItem->category & GOLD)) ? "are" : "is");
+			// strcpy(verb, (theItem->quantity > 1 || (theItem->category & GOLD)) ? "are" : "is");
+			strcpy(verb, "");
 			if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
-				strcat(verb, " enclosed");
+				strcat(verb, "被关在");
 			} else {
-				strcat(verb, subjectMoving ? " drifting" : " lying");
+				strcat(verb, subjectMoving ? "漂浮在" : "被放在");
 			}
-			strcpy(preposition, standsInTerrain ? (subjectMoving ? "through" : "in")
-				   : (subjectMoving ? "across" : "on"));
+			strcpy(preposition, standsInTerrain ? (subjectMoving ? "里" : "上")
+				   : (subjectMoving ? "间" : "上"));
 			
 
 		} else { // no item
 			sprintf(buf, "你%s%s。", (playerCanDirectlySee(x, y) ? "看到了" : "感觉到那是"), object);
+			restoreRNG;
 			return;
 		}
 	}
 	
-	sprintf(buf, "%s %s %s %s.", subject, verb, preposition, object);
+	sprintf(buf, "%s%s%s%s。", subject, verb, object, preposition);
 	restoreRNG;
 }
 

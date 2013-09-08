@@ -2285,7 +2285,8 @@ boolean confirm(char *prompt, boolean alsoDuringPlayback) {
 	encodeMessageColor(yellowColorEscape, 0, &yellow);
 	
 	initializeButton(&(buttons[0]));
-	sprintf(buttons[0].text,  "    %s(y)%s是    ", yellowColorEscape, whiteColorEscape);
+	// notice the button can't be too long or it would break into two lines
+	sprintf(buttons[0].text,  "   %s(y)%s是   ", yellowColorEscape, whiteColorEscape);
 	buttons[0].hotkey[0] = 'y';
 	buttons[0].hotkey[1] = 'Y';
 	buttons[0].hotkey[2] = RETURN_KEY;
@@ -2293,7 +2294,7 @@ boolean confirm(char *prompt, boolean alsoDuringPlayback) {
 	buttons[0].flags |= (B_WIDE_CLICK_AREA | B_KEYPRESS_HIGHLIGHT);
 	
 	initializeButton(&(buttons[1]));
-	sprintf(buttons[1].text, "     %s(n)%s否    ", yellowColorEscape, whiteColorEscape);
+	sprintf(buttons[1].text,  "   %s(n)%s否   ", yellowColorEscape, whiteColorEscape);
 	buttons[1].hotkey[0] = 'n';
 	buttons[1].hotkey[1] = 'N';
 	buttons[1].hotkey[2] = ACKNOWLEDGE_KEY;

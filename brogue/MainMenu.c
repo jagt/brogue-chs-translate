@@ -629,7 +629,7 @@ boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
 	free(membuf);
 	
 	if (count == 0) {
-		dialogAlert("No applicable files found.");
+		dialogAlert("找不到合适的文件。");
 		return false;
 	} else {
 		return retval;

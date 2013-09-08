@@ -6615,7 +6615,8 @@ void shuffleFlavors() {
 		for (j=0; j<randNumber; j++) {
 			randIndex = rand_range(0, NUMBER_TITLE_PHONEMES - 1);
 			strcpy(buf, itemTitles[i]);
-			sprintf(itemTitles[i], "%s%s%s", buf, ((rand_percent(50) && j>0) ? " " : ""), titlePhonemes[randIndex]);
+			// no space between phonemes in chinese
+			sprintf(itemTitles[i], "%s%s", buf, titlePhonemes[randIndex]);
 		}
 	}
 }
