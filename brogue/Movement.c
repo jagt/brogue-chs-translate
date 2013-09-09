@@ -437,10 +437,10 @@ void exposeCreatureToFire(creature *monst) {
 			player.info.foreColor = &torchLightColor;
 			refreshDungeonCell(player.xLoc, player.yLoc);
 			//updateVision(); // this screws up the firebolt visual effect by erasing it while a message is displayed
-			message("you catch fire!", true);
+			message("你着火了！", true);
 		} else if (canDirectlySeeMonster(monst)) {
 			monsterName(buf, monst, true);
-			sprintf(buf2, "%s catches fire!", buf);
+			sprintf(buf2, "%s着火了！", buf);
 			message(buf2, false);
 		}
 	}
@@ -455,7 +455,7 @@ void updateFlavorText() {
             && rogue.armor->enchant2 == A_RESPIRATION
             && tileCatalog[pmap[player.xLoc][player.yLoc].layers[highestPriorityLayer(player.xLoc, player.yLoc, false)]].flags & T_RESPIRATION_IMMUNITIES) {
             
-            flavorMessage("A pocket of cool, clean air swirls around you.");
+            flavorMessage("你感觉有一股清新的空气围绕着你。");
 		} else if (player.status[STATUS_LEVITATING]) {
 			describeLocation(buf, player.xLoc, player.yLoc);
 			flavorMessage(buf);
@@ -468,23 +468,25 @@ void updateFlavorText() {
 void useKeyAt(item *theItem, short x, short y) {
 	short layer, i;
 	creature *monst;
-	char buf[COLS], buf2[COLS], terrainName[COLS], preposition[10];
+	char buf[COLS*3], buf2[COLS*3], terrainName[COLS*3], preposition[40];
 	boolean disposable;
 	
-	strcpy(terrainName, "unknown terrain"); // redundant failsafe
+	strcpy(terrainName, "未知地形"); // redundant failsafe
 	for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
 		if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_WITH_KEY) {
+			/* not used in chinese
 			if (tileCatalog[pmap[x][y].layers[layer]].description[0] == 'a'
 				&& tileCatalog[pmap[x][y].layers[layer]].description[1] == ' ') {
-				sprintf(terrainName, "the %s", &(tileCatalog[pmap[x][y].layers[layer]].description[2]));
+				sprintf(terrainName, "%s", &(tileCatalog[pmap[x][y].layers[layer]].description[2]));
 			} else {
 				strcpy(terrainName, tileCatalog[pmap[x][y].layers[layer]].description);
 			}
 			if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_STAND_IN_TILE) {
-				strcpy(preposition, "in");
+				strcpy(preposition, "里");
 			} else {
-				strcpy(preposition, "on");
+				strcpy(preposition, "上");
 			}
+			*/
 			promoteTile(x, y, layer, false);
 		}
 	}
@@ -501,10 +503,9 @@ void useKeyAt(item *theItem, short x, short y) {
 	if (disposable) {
 		if (removeItemFromChain(theItem, packItems)) {
 			itemName(theItem, buf2, true, false, NULL);
-			sprintf(buf, "you use your %s %s %s.",
-					buf2,
-					preposition,
-					terrainName);
+			sprintf(buf, "你对着%s使用了%s。",
+					terrainName,
+					buf2);
 			messageWithColor(buf, &itemMessageColor, false);
 			deleteItem(theItem);
 		} else if (removeItemFromChain(theItem, floorItems)) {
@@ -529,7 +530,7 @@ boolean monsterShouldFall(creature *monst) {
 
 // Called at least every 100 ticks; may be called more frequently.
 void applyInstantTileEffectsToCreature(creature *monst) {
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	short *x = &(monst->xLoc), *y = &(monst->yLoc), damage;
 	enum dungeonLayers layer;
 	item *theItem;
@@ -588,17 +589,17 @@ void applyInstantTileEffectsToCreature(creature *monst) {
 		&& cellHasTerrainFlag(*x, *y, T_LAVA_INSTA_DEATH)) {
 		
 		if (monst == &player) {
-			sprintf(buf, "you plunge into %s!",
+			sprintf(buf, "你不小心掉入了%s里！",
 					tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_LAVA_INSTA_DEATH)]].description);
 			message(buf, true);
-			sprintf(buf, "Killed by %s",
+			sprintf(buf, "被%s杀死",
 					tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_LAVA_INSTA_DEATH)]].description);
 			gameOver(buf, true);
 			return;
 		} else { // it's a monster
 			if (canSeeMonster(monst)) {
 				monsterName(buf, monst, true);
-				sprintf(buf2, "%s is consumed by %s instantly!", buf,
+				sprintf(buf2, "%s瞬间被%s吞没了！", buf,
 						tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_LAVA_INSTA_DEATH)]].description);
 				messageWithColor(buf2, messageColorFromVictim(monst), false);
 			}
@@ -650,11 +651,11 @@ void applyInstantTileEffectsToCreature(creature *monst) {
 		}
 		if (canSeeMonster(monst)) {
 			monsterName(buf, monst, true);
-			sprintf(buf2, "a pressure plate clicks underneath %s!", buf);
+			sprintf(buf2, "%s下方的机关突然响了一声！", buf);
 			message(buf2, true);
 		} else if (playerCanSee(*x, *y)) {
 			// usually means an invisible monster
-			message("a pressure plate clicks!", false);
+			message("附近的机关突然响了一声！", false);
 		}
 		for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
 			if (tileCatalog[pmap[*x][*y].layers[layer]].flags & T_IS_DF_TRAP) {
@@ -692,12 +693,12 @@ void applyInstantTileEffectsToCreature(creature *monst) {
 		&& !(monst->info.flags & MONST_IMMUNE_TO_WEBS) && !(monst->bookkeepingFlags & MONST_SUBMERGED)) {
 		monst->status[STATUS_STUCK] = monst->maxStatus[STATUS_STUCK] = rand_range(3, 7);
 		if (monst == &player) {
-			sprintf(buf2, "you are stuck fast in %s!",
+			sprintf(buf2, "你被困在了%s里！",
 					tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_ENTANGLES)]].description);
 			message(buf2, false);
 		} else if (canDirectlySeeMonster(monst)) { // it's a monster
 			monsterName(buf, monst, true);
-			sprintf(buf2, "%s is stuck fast in %s!", buf,
+			sprintf(buf2, "%s被困在了%s里！", buf,
 					tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_ENTANGLES)]].description);
 			message(buf2, false);
 		}
@@ -715,12 +716,12 @@ void applyInstantTileEffectsToCreature(creature *monst) {
 			message(tileCatalog[pmap[*x][*y].layers[layer]].flavorText, false);
             if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC) && rogue.armor->enchant2 == A_DAMPENING) {
                 itemName(rogue.armor, buf2, false, false, NULL);
-                sprintf(buf, "Your %s pulses and absorbs the damage.", buf2);
+                sprintf(buf, "你身上的%s震动了一下，吸收了爆炸产生的冲击。", buf2);
                 messageWithColor(buf, &goodMessageColor, false);
                 rogue.armor->flags |= ITEM_RUNIC_IDENTIFIED;
             } else if (inflictDamage(&player, damage, &yellow)) {
 				strcpy(buf2, tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_CAUSES_EXPLOSIVE_DAMAGE)]].description);
-				sprintf(buf, "Killed by %s", buf2);
+				sprintf(buf, "被%s杀死", buf2);
 				gameOver(buf, true);
 				return;
 			}
@@ -899,7 +900,7 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
                 rogue.disturbed = true;
                 messageWithColor(tileCatalog[pmap[x][y].layers[layer]].flavorText, &badMessageColor, false);
                 if (inflictDamage(&player, damage, tileCatalog[pmap[x][y].layers[layer]].backColor)) {
-                    sprintf(buf, "被%s杀死。", tileCatalog[pmap[x][y].layers[layer]].description);
+                    sprintf(buf, "被%s杀死", tileCatalog[pmap[x][y].layers[layer]].description);
                     gameOver(buf, true);
                     return;
                 }
@@ -1024,11 +1025,11 @@ void becomeAllyWith(creature *monst) {
 }
 
 void freeCaptive(creature *monst) {
-	char buf[COLS * 3], monstName[COLS];
+	char buf[COLS * 3*3], monstName[COLS];
 	
 	becomeAllyWith(monst);
 	monsterName(monstName, monst, false);
-	sprintf(buf, "you free the grateful %s and gain a faithful ally.", monstName);
+	sprintf(buf, "你解救了被困住的%s，它成为了你的友军。", monstName);
 	message(buf, false);
 }
 
@@ -1051,8 +1052,8 @@ boolean freeCaptivesEmbeddedAt(short x, short y) {
 // Do we need confirmation so we don't accidently hit an acid mound?
 boolean abortAttackAgainstAcidicTarget(creature *hitList[8]) {
     short i;
-	char monstName[COLS], weaponName[COLS];
-	char buf[COLS*3];
+	char monstName[COLS*3], weaponName[COLS*3];
+	char buf[COLS*3*3];
     
     if (rogue.weapon
         && !(rogue.weapon->flags & ITEM_PROTECTED)
@@ -1066,7 +1067,7 @@ boolean abortAttackAgainstAcidicTarget(creature *hitList[8]) {
                 
                 monsterName(monstName, hitList[i], true);
                 itemName(rogue.weapon, weaponName, false, false, NULL);
-                sprintf(buf, "Degrade your %s by attacking %s?", weaponName, monstName);
+                sprintf(buf, "确定要攻击%s吗？攻击会使你的%s受损。", weaponName, monstName);
                 if (confirm(buf, false)) {
                     return false; // Fire when ready!
                 } else {
@@ -1097,8 +1098,8 @@ boolean playerMoves(short direction) {
 	short newX, newY, newestX, newestY, newDir;
 	boolean playerMoved = false, alreadyRecorded = false;
 	creature *defender = NULL, *tempMonst = NULL, *hitList[8] = {NULL};
-	char monstName[COLS];
-	char buf[COLS*3];
+	char monstName[COLS*3];
+	char buf[COLS*3*3];
 	const uchar directionKeys[8] = {UP_KEY, DOWN_KEY, LEFT_KEY, RIGHT_KEY, UPLEFT_KEY, DOWNLEFT_KEY, UPRIGHT_KEY, DOWNRIGHT_KEY};
 	
 #ifdef BROGUE_ASSERTS
@@ -1129,7 +1130,7 @@ boolean playerMoves(short direction) {
                          && canSeeMonster(monsterAtLoc(newestX, newestY))
                          && monsterAtLoc(newestX, newestY)->creatureState != MONSTER_ALLY)) {
                     
-                    if (!confirm("Risk stumbling into lava?", false)) {
+                    if (!confirm("确定要移动吗？有可能不小心掉进附近的岩浆里。", false)) {
                         return false;
                     } else {
                         break;
@@ -1177,7 +1178,7 @@ boolean playerMoves(short direction) {
         
         if (player.status[STATUS_STUCK] && cellHasTerrainFlag(x, y, T_ENTANGLES)) {
             if (--player.status[STATUS_STUCK]) {
-                message("you struggle but cannot free yourself.", false);
+                message("你试着挣扎了一下，但还是无法摆脱束缚。", false);
                 moveEntrancedMonsters(direction);
                 if (!alreadyRecorded) {
                     recordKeystroke(directionKeys[initialDirection], false, false);
@@ -1204,7 +1205,7 @@ boolean playerMoves(short direction) {
 			
 			if (defender->bookkeepingFlags & MONST_CAPTIVE) {
 				monsterName(monstName, defender, false);
-				sprintf(buf, "Free the captive %s?", monstName);
+				sprintf(buf, "解救这只被困的%s吗？", monstName);
 				if (alreadyRecorded || confirm(buf, false)) {
 					if (!alreadyRecorded) {
 						recordKeystroke(directionKeys[initialDirection], false, false);
@@ -1330,13 +1331,13 @@ boolean playerMoves(short direction) {
                             recordKeystroke(directionKeys[initialDirection], false, false);
                             alreadyRecorded = true;
                         }
-                        sprintf(buf, "you struggle but %s is holding your legs!", monstName);
+                        sprintf(buf, "你试着挣扎了一下，但%s还是紧紧的困住了你的腿", monstName);
                         moveEntrancedMonsters(direction);
                         message(buf, false);
                         playerTurnEnded();
                         return true;
                     } else {
-                        sprintf(buf, "you cannot move; %s is holding your legs!", monstName);
+                        sprintf(buf, "你现在无法移动；%s紧紧的困住了你的腿！", monstName);
                         message(buf, false);
                         return false;
                     }
@@ -1352,7 +1353,7 @@ boolean playerMoves(short direction) {
             && player.status[STATUS_IMMUNE_TO_FIRE] <= 1
             && !cellHasTerrainFlag(newX, newY, T_ENTANGLES)
             && !cellHasTMFlag(newX, newY, TM_IS_SECRET)) {
-			message("that would be certain death!", false);
+			message("最好还是不要那样做！", false);
 			return false; // player won't willingly step into lava
 		} else if (pmap[newX][newY].flags & (DISCOVERED | MAGIC_MAPPED)
 				   && player.status[STATUS_LEVITATING] <= 1
@@ -1360,7 +1361,7 @@ boolean playerMoves(short direction) {
 				   && cellHasTerrainFlag(newX, newY, T_AUTO_DESCENT)
 				   && !cellHasTerrainFlag(newX, newY, T_ENTANGLES)
                    && !cellHasTMFlag(newX, newY, TM_IS_SECRET)
-				   && !confirm("Dive into the depths?", false)) {
+				   && !confirm("确定要跃入断层吗？你会掉落到下一层并受到伤害。", false)) {
 			return false;
 		} else if (playerCanSee(newX, newY)
 				   && !player.status[STATUS_CONFUSED]
@@ -1368,7 +1369,7 @@ boolean playerMoves(short direction) {
 				   && player.status[STATUS_IMMUNE_TO_FIRE] <= 1
 				   && cellHasTerrainFlag(newX, newY, T_IS_FIRE)
 				   && !cellHasTMFlag(newX, newY, TM_EXTINGUISHES_FIRE)
-				   && !confirm("Venture into flame?", false)) {
+				   && !confirm("确认要走到火焰里吗？", false)) {
 			return false;
 		} else if (pmap[newX][newY].flags & (ANY_KIND_OF_VISIBLE | MAGIC_MAPPED)
 				   && player.status[STATUS_LEVITATING] <= 1
@@ -1376,7 +1377,7 @@ boolean playerMoves(short direction) {
 				   && cellHasTerrainFlag(newX, newY, T_IS_DF_TRAP)
 				   && !(pmap[newX][newY].flags & PRESSURE_PLATE_DEPRESSED)
 				   && !cellHasTMFlag(newX, newY, TM_IS_SECRET)
-				   && !confirm("Step onto the pressure plate?", false)) {
+				   && !confirm("要踩到机关上吗？", false)) {
 			return false;
 		}
         
@@ -1904,7 +1905,7 @@ void travel(short x, short y, boolean autoConfirm) {
 	}
 	
 	if (!(pmap[x][y].flags & (DISCOVERED | MAGIC_MAPPED))) {
-		message("You have not explored that location.", false);
+		message("你还没有探测到那边。", false);
 		return;
 	}
 	
@@ -1924,7 +1925,7 @@ void travel(short x, short y, boolean autoConfirm) {
 				staircaseConfirmKey = 0;
 			}
 			displayRoute(distanceMap, false);
-			message("Travel this route? (y/n)", false);
+			message("确定要按此路线移动吗？? 输入(y/n)来选择", false);
 			
 			do {
 				nextBrogueEvent(&theEvent, true, false, false);
@@ -1953,7 +1954,7 @@ void travel(short x, short y, boolean autoConfirm) {
 //		}
 	} else {
 		rogue.cursorLoc[0] = rogue.cursorLoc[1] = -1;
-		message("No path is available.", false);
+		message("没有可行的路径能通往那里。", false);
 	}
 	freeGrid(distanceMap);
 }
@@ -2119,7 +2120,7 @@ boolean explore(short frameDelay) {
 	foundUpStairs	= (pmap[rogue.upLoc[0]][rogue.upLoc[1]].flags & (DISCOVERED | MAGIC_MAPPED)) ? true : false;
 	
 	if (player.status[STATUS_CONFUSED]) {
-		message("Not while you're confused.", false);
+		message("在混乱状态下无法使用自动探索。", false);
 		return false;
 	}
 	
@@ -2183,16 +2184,16 @@ boolean explore(short frameDelay) {
 		refreshSideBar(-1, -1, false);
 		
 		if (dir == NO_DIRECTION) {
-			message("I see no path for further exploration.", false);
+			message("已经没有能够自动探索的地方。", false);
 			rogue.disturbed = true;
 		} else if (!playerMoves(dir)) {
 			rogue.disturbed = true;
 		} else if (!foundDownStairs && (pmap[rogue.downLoc[0]][rogue.downLoc[1]].flags & (DISCOVERED | MAGIC_MAPPED))) {
-            message("you see the stairs down.", false);
+            message("你看到了通往下一层的楼梯。", false);
 			foundDownStairs = true;
 			madeProgress = true;
 		} else if (!foundUpStairs && (pmap[rogue.upLoc[0]][rogue.upLoc[1]].flags & (DISCOVERED | MAGIC_MAPPED))) {
-			message("you see the stairs up.", false);
+			message("你看到了回到上一层的楼梯。", false);
 			foundUpStairs = true;
 			madeProgress = true;
 		} else {
@@ -2215,7 +2216,7 @@ void autoPlayLevel(boolean fastForward) {
 	rogue.autoPlayingLevel = true;
 	
 	confirmMessages();
-	message("Playing... press any key to stop.", false);
+	message("自动战斗中... 按任意键停止。", false);
 	
 	// explore until we are not making progress
 	do {
@@ -2423,28 +2424,28 @@ void checkNutrition() {
 	char buf[DCOLS*3], foodWarning[DCOLS*3];
 	
 	if (numberOfMatchingPackItems(FOOD, 0, 0, false) == 0) {
-		sprintf(foodWarning, " and have no food");
+		sprintf(foodWarning, "更糟糕的是现在身上没有任何食物");
 	} else {
 		foodWarning[0] = '\0';
 	}
 	
 	if (player.status[STATUS_NUTRITION] == HUNGER_THRESHOLD) {
         player.status[STATUS_NUTRITION]--;
-		sprintf(buf, "you are hungry%s.", foodWarning);
+		sprintf(buf, "你感觉有些饥饿。%s.", foodWarning);
 		message(buf, false);
 	} else if (player.status[STATUS_NUTRITION] == WEAK_THRESHOLD) {
         player.status[STATUS_NUTRITION]--;
-		sprintf(buf, "you feel weak with hunger%s.", foodWarning);
+		sprintf(buf, "你感觉饿得不行了，身体变得有些虚弱。%s", foodWarning);
 		message(buf, true);
 	} else if (player.status[STATUS_NUTRITION] == FAINT_THRESHOLD) {
         player.status[STATUS_NUTRITION]--;
-		sprintf(buf, "you feel faint with hunger%s.", foodWarning);
+		sprintf(buf, "你感觉已经有点饿晕了。%s", foodWarning);
 		message(buf, true);
 	} else if (player.status[STATUS_NUTRITION] <= 1) {
         // Force the player to eat something if he has it
         for (theItem = packItems->nextItem; theItem != NULL; theItem = theItem->nextItem) {
             if (theItem->category == FOOD) {
-                sprintf(buf, "unable to control your hunger, you eat a %s.", (theItem->kind == FRUIT ? "mango" : "ration of food"));
+                sprintf(buf, "你感觉饿到不行了，不由自主的吃掉了携带着的%s。", (theItem->kind == FRUIT ? "芒果" : "粮食"));
                 messageWithColor(buf, &itemMessageColor, true);
                 apply(theItem, false);
                 break;
@@ -2454,15 +2455,15 @@ void checkNutrition() {
 	
 	if (player.status[STATUS_NUTRITION] == 1) {	// Didn't manage to eat any food above.
 		player.status[STATUS_NUTRITION] = 0;	// So the status bar changes in time for the message:
-		message("you are starving to death!", true);
+		message("你感觉再不吃点东西的话，说不定就这样被饿死了！", true);
 	}
 }
 
 void burnItem(item *theItem) {
 	short x, y;
-	char buf1[DCOLS], buf2[DCOLS];
+	char buf1[DCOLS*3], buf2[DCOLS*3];
 	itemName(theItem, buf1, false, true, NULL);
-	sprintf(buf2, "%s burns up!", buf1);
+	sprintf(buf2, "%s被烧成了一团灰烬！", buf1);
 	
 	x = theItem->xLoc;
 	y = theItem->yLoc;
@@ -2761,7 +2762,7 @@ void updateVolumetricMedia() {
 void monstersFall() {
 	creature *monst, *previousCreature, *nextCreature;
 	short x, y;
-	char buf[DCOLS], buf2[DCOLS];
+	char buf[DCOLS*3], buf2[DCOLS*3];
 	
 	// monsters plunge into chasms at the end of the turn
 	for (monst = monsters->nextCreature; monst != NULL; monst = nextCreature) {
@@ -2772,7 +2773,7 @@ void monstersFall() {
 			
 			if (canSeeMonster(monst)) {
 				monsterName(buf, monst, true);
-				sprintf(buf2, "%s plunges out of sight!", buf);
+				sprintf(buf2, "%s突然掉了下去！", buf);
 				messageWithColor(buf2, messageColorFromVictim(monst), false);
 			}
 			monst->bookkeepingFlags |= MONST_PREPLACED;
@@ -3114,7 +3115,7 @@ void updateSafeTerrainMap() {
 
 void rechargeItemsIncrementally() {
 	item *theItem, *autoIdentifyItems[3] = {rogue.armor, rogue.ringLeft, rogue.ringRight};
-	char buf[DCOLS*3], theItemName[DCOLS*3];
+	char buf[DCOLS*3*3], theItemName[DCOLS*3*3];
 	short rechargeIncrement, staffRechargeAmount, i;
 	
 	if (rogue.wisdomBonus) {
@@ -3140,7 +3141,7 @@ void rechargeItemsIncrementally() {
             theItem->charges--;
             if (theItem->charges == 0) {
 				itemName(theItem, theItemName, false, false, NULL);
-				sprintf(buf, "your %s has recharged.", theItemName);
+				sprintf(buf, "你的%s已充能，可再次使用。", theItemName);
                 message(buf, false);
             }
         }
@@ -3155,7 +3156,7 @@ void rechargeItemsIncrementally() {
 			theItem->charges--;
 			if (theItem->charges <= 0) {
 				itemName(theItem, theItemName, false, false, NULL);
-				sprintf(buf, "you are now familiar enough with your %s to identify it.", theItemName);
+				sprintf(buf, "由于你已经很熟悉这件%s，你感觉你能确定其真实作用了。", theItemName);
 				messageWithColor(buf, &itemMessageColor, false);
 				
 				if (theItem->category & ARMOR) {
@@ -3167,7 +3168,7 @@ void rechargeItemsIncrementally() {
 				updateIdentifiableItems();
 				
 				itemName(theItem, theItemName, true, true, NULL);
-				sprintf(buf, "%s %s.", (theItem->quantity > 1 ? "they are" : "it is"), theItemName);
+				sprintf(buf, "%s%s.", (theItem->quantity > 1 ? "这些是" : "这是"), theItemName);
 				messageWithColor(buf, &itemMessageColor, false);
 			}
 		}
@@ -3182,14 +3183,14 @@ void extinguishFireOnCreature(creature *monst) {
 		rogue.minersLight.lightColor = &minersLightColor;
 		refreshDungeonCell(player.xLoc, player.yLoc);
 		updateVision(true);
-		message("you are no longer on fire.", false);
+		message("你身上的火焰已经熄灭了。", false);
 	}
 }
 
 // n is the monster's depthLevel - 1.
 void monsterEntersLevel(creature *monst, short n) {
     creature *prevMonst;
-	char monstName[COLS], buf[COLS];
+	char monstName[COLS*3], buf[COLS*3];
 	boolean pit = false;
     
     // place traversing monster near the stairs on this level

@@ -1979,7 +1979,7 @@ void itemDetails(char *buf, item *theItem) {
 				if (theItem->flags & ITEM_EQUIPPED) {
 					sprintf(buf2, "\n\n你正身着这件%s%s。",
 							theName,
-							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法脱掉它。" : ""));
+							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法脱掉它" : ""));
 					strcat(buf, buf2);
 				} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 						   && (theItem->flags & ITEM_CURSED)) {

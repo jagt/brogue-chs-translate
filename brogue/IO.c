@@ -3519,7 +3519,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 		"", // STATUS_ENTERS_LEVEL_IN,
 		"恐惧",
 		"迷惑",
-		"看不清",
+		"视野模糊",
 		"限时",
 		"魔法盾",
         "隐身",
