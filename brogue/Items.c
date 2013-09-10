@@ -1627,7 +1627,7 @@ void itemDetails(char *buf, item *theItem) {
 			// enchanted? strength modifier?
 			if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
 				if (theItem->enchant1) {
-					sprintf(buf2, "\n\n这种%s带有%s%i点%s%s%s",
+					sprintf(buf2, "\n\n这种%s带有%s%i点%s%s",
 							theName,
                             (theItem->enchant1 > 0 ? goodColorEscape : badColorEscape),
 							theItem->enchant1,
@@ -1873,7 +1873,7 @@ void itemDetails(char *buf, item *theItem) {
 				
 				// equipped? cursed?
 				if (theItem->flags & ITEM_EQUIPPED) {
-					sprintf(buf2, "\n\n你正手握着这把%s。",
+					sprintf(buf2, "\n\n你正手握着这把%s。%s",
 							theName,
 							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法放开它" : ""));
 					strcat(buf, buf2);
@@ -1937,6 +1937,7 @@ void itemDetails(char *buf, item *theItem) {
 									sprintf(buf2, "这件护甲能阻挡%i%%指向你的法术，并能以%i%%的几率将法术反射回施法者。（如果这件%s被增强了，概率会分别上升到%i%%和%i%%）",
 											reflectChance,
 											reflectChance * reflectChance / 100,
+											theName,
 											reflectChance2,
 											reflectChance2 * reflectChance2 / 100);
 								} else if (theItem->enchant1 < 0) {
@@ -1945,6 +1946,7 @@ void itemDetails(char *buf, item *theItem) {
 									sprintf(buf2, "这件护甲会以%i%%的几率使你的施法失效，并会以%i%%的概率把你发出的法术反射回你自己（如果这件%s被增强了，概率会分别降低到%i%%和%i%%）",
 											reflectChance,
 											reflectChance * reflectChance / 100,
+											theName,
 											reflectChance2,
 											reflectChance2 * reflectChance2 / 100);
 								}
@@ -5200,8 +5202,7 @@ void throwCommand(item *theItem) {
         }
 	}
 	
-	sprintf(buf, "把%s投掷到哪里？（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标）",
-			theName);
+	sprintf(buf, "把%s投掷到哪里？（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标）", theName);
 	temporaryMessage(buf, false);
 	maxDistance = (12 + 2 * max(rogue.strength - player.weaknessAmount - 12, 2));
 	autoTarget = (theItem->category & (WEAPON | POTION)) ? true : false;

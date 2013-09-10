@@ -2404,7 +2404,7 @@ void displayMessageArchive() {
 // It will disappear when messages are refreshed and will not be archived.
 // This is primarily used to display prompts.
 void temporaryMessage(char *msg, boolean requireAcknowledgment) {
-	char message[COLS];
+	char message[COLS * 4]; // expand for utf8 strings, this related to throw command causes out of sync
 	short i;
 	
 	if (rogue.playbackFastForward) {
