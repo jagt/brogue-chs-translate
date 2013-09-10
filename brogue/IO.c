@@ -451,16 +451,16 @@ void initializeMenuButtons(buttonState *state, brogueButton buttons[5]) {
 		strcpy(buttons[buttonCount].text,	"    菜单    ");
 		buttonCount++;
 	} else {
-		sprintf(buttons[buttonCount].text,	"(x) 自动探索", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"(%sx%s) 自动探索", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = EXPLORE_KEY;
 		buttons[buttonCount].hotkey[1] = 'X';
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text,	"  (z) 休息  ", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"  (%sz%s) 休息  ", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = REST_KEY;
 		buttonCount++;
 		
-		sprintf(buttons[buttonCount].text,	"(s) 搜索周围", goldTextEscape, whiteTextEscape);
+		sprintf(buttons[buttonCount].text,	"(%ss%s) 搜索周围", goldTextEscape, whiteTextEscape);
 		buttons[buttonCount].hotkey[0] = SEARCH_KEY;
 		buttonCount++;
 		
@@ -468,7 +468,7 @@ void initializeMenuButtons(buttonState *state, brogueButton buttons[5]) {
 		buttonCount++;
 	}
 	
-	sprintf(buttons[4].text,	" (i) 物品栏 ", goldTextEscape, whiteTextEscape);
+	sprintf(buttons[4].text,	" (%si%s) 物品栏 ", goldTextEscape, whiteTextEscape);
 	buttons[4].hotkey[0] = INVENTORY_KEY;
 	buttons[4].hotkey[1] = 'I';
 	
@@ -2433,7 +2433,7 @@ void temporaryMessage(char *msg, boolean requireAcknowledgment) {
 }
 
 void messageWithColor(char *msg, color *theColor, boolean requireAcknowledgment) {
-	char buf[COLS*2] = "";
+	char buf[COLS*2*2] = "";
 	short i;
 	
 	i=0;
@@ -3479,7 +3479,7 @@ void printProgressBar(
 
 // returns the y-coordinate after the last line printed
 short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight) {
-	char buf[COLS], monstName[COLS];
+	char buf[COLS*3], monstName[COLS*3];
 	uchar monstChar;
 	color monstForeColor, healthBarColor, tempColor;
 	short i, displayedArmor;
@@ -3773,7 +3773,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 
 // Returns the y-coordinate after the last line printed.
 short printItemInfo(item *theItem, short y, boolean dim, boolean highlight) {
-	char name[COLS];
+	char name[COLS*3];
 	uchar itemChar;
 	BROGUE_TEXT_SIZE size;
 	
@@ -4236,6 +4236,9 @@ static int u8_wc_toutf8(char *dest, wchar_t ch)
 static char packed_strings[PACKED_BUF_SIZE][PACKED_LINE_SIZE] = {{0}};
 static char packed_ix = 0;
 
+
+// turns out doen't need this
+/*
 char* T(const wchar_t *ws) {
     // char* packed = calloc((wcslen(ws)*3 + 1), sizeof(char));
     char* packed = packed_strings[packed_ix++];
@@ -4260,6 +4263,7 @@ char* T(const wchar_t *ws) {
     
     return packed;
 }
+*/
 
 
 int T_unpack(const char* s, wchar_t *ws, int ws_size) {

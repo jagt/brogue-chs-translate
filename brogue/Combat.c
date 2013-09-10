@@ -1092,8 +1092,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 						describeClause, defenderName,
 						explicationClause);
 			} else {
-				sprintf(buf, "%s%s%s%s%s", interClause,
-						attackerName,
+				sprintf(buf, "%s%s%s%s%s%s", attackerName, interClause,
 						((defender->info.flags & MONST_INANIMATE) ? "摧毁了" : "杀死了"),
 						describeClause, defenderName,
 						explicationClause);
