@@ -3258,17 +3258,17 @@ void monsterEntersLevel(creature *monst, short n) {
         if (!monst->status[STATUS_LEVITATING]) {
             if (inflictDamage(monst, randClumpedRange(6, 12, 2), &red)) {
                 if (canSeeMonster(monst)) {
-                    sprintf(buf, "%s plummets from above and splatters against the ground!", monstName);
+                    sprintf(buf, "%s突然从空中重重的摔了了下来！", monstName);
                     messageWithColor(buf, messageColorFromVictim(monst), false);
                 }
             } else {
                 if (canSeeMonster(monst)) {
-                    sprintf(buf, "%s falls from above and crashes to the ground!", monstName);
+                    sprintf(buf, "%s从空中落了下来！", monstName);
                     message(buf, false);
                 }
             }
         } else if (canSeeMonster(monst)) {
-            sprintf(buf, "%s swoops into the cavern from above.", monstName);
+            sprintf(buf, "%s从上一层追到了这一层。", monstName);
             message(buf, false);
         }
     }
@@ -3303,7 +3303,7 @@ void decrementPlayerStatus() {
 	
 	if (player.status[STATUS_TELEPATHIC] > 0 && !--player.status[STATUS_TELEPATHIC]) {
 		updateVision(true);
-		message("your preternatural mental sensitivity fades.", false);
+		message("你感觉心灵感应的效果逐渐消去了。", false);
 	}
 	
 	if (player.status[STATUS_DARKNESS] > 0) {
@@ -3314,48 +3314,48 @@ void decrementPlayerStatus() {
 	
 	if (player.status[STATUS_HALLUCINATING] > 0 && !--player.status[STATUS_HALLUCINATING]) {
 		displayLevel();
-		message("your hallucinations fade.", false);
+		message("你逐渐冷静了下来，不再看到幻觉。", false);
 	}
 	
 	if (player.status[STATUS_LEVITATING] > 0 && !--player.status[STATUS_LEVITATING]) {
-		message("you are no longer levitating.", false);
+		message("漂浮的效果终止了。", false);
 	}
 	
 	if (player.status[STATUS_CONFUSED] > 0 && !--player.status[STATUS_CONFUSED]) {
-		message("you no longer feel confused.", false);
+		message("你冷静了下来，感觉能看清方向了。", false);
 	}
 	
 	if (player.status[STATUS_NAUSEOUS] > 0 && !--player.status[STATUS_NAUSEOUS]) {
-		message("you feel less nauseous.", false);
+		message("你不再感觉那么恶心了。", false);
 	}
 	
 	if (player.status[STATUS_PARALYZED] > 0 && !--player.status[STATUS_PARALYZED]) {
-		message("you can move again.", false);
+		message("你麻痹的感觉逐渐消去了。", false);
 	}
 	
 	if (player.status[STATUS_HASTED] > 0 && !--player.status[STATUS_HASTED]) {
 		player.movementSpeed = player.info.movementSpeed;
 		player.attackSpeed = player.info.attackSpeed;
         synchronizePlayerTimeState();
-		message("your supernatural speed fades.", false);
+		message("你感觉加速效果逐渐褪去了。", false);
 	}
 	
 	if (player.status[STATUS_SLOWED] > 0 && !--player.status[STATUS_SLOWED]) {
 		player.movementSpeed = player.info.movementSpeed;
 		player.attackSpeed = player.info.attackSpeed;
         synchronizePlayerTimeState();
-		message("your normal speed resumes.", false);
+		message("你感觉减速的效果消去了。", false);
 	}
 	
 	if (player.status[STATUS_WEAKENED] > 0 && !--player.status[STATUS_WEAKENED]) {
 		player.weaknessAmount = 0;
-		message("strength returns to your muscles as the weakening toxin wears off.", false);
+		message("你感觉虚弱的效果逐渐褪去，力量回复到了之前水平。", false);
 		updateEncumbrance();
 	}
 	
 	if (player.status[STATUS_IMMUNE_TO_FIRE] > 0 && !--player.status[STATUS_IMMUNE_TO_FIRE]) {
 		//player.info.flags &= ~MONST_IMMUNE_TO_FIRE;
-		message("you no longer feel immune to fire.", false);
+		message("你感觉火焰免疫的效果褪去了。", false);
 	}
 	
 	if (player.status[STATUS_STUCK] && !cellHasTerrainFlag(player.xLoc, player.yLoc, T_ENTANGLES)) {
@@ -3378,7 +3378,7 @@ void decrementPlayerStatus() {
 	}
     
 	if (player.status[STATUS_INVISIBLE] > 0 && !--player.status[STATUS_INVISIBLE]) {
-		message("you are no longer invisible.", false);
+		message("你感觉隐身的效果褪去了。", false);
 	}
 	
 	if (rogue.monsterSpawnFuse <= 0) {
@@ -3554,7 +3554,7 @@ void startFighting(enum directions dir, boolean tillDeath) {
 //}
 
 void addXPXPToAlly(short XPXP, creature *monst) {
-    char theMonsterName[100], buf[200];
+    char theMonsterName[COLS*3], buf[COLS*3];
     if (!(monst->info.flags & (MONST_INANIMATE | MONST_IMMOBILE))
         && monst->creatureState == MONSTER_ALLY
         && monst->spawnDepth <= rogue.depthLevel
@@ -3575,7 +3575,7 @@ void addXPXPToAlly(short XPXP, creature *monst) {
                 monst->bookkeepingFlags |= MONST_TELEPATHICALLY_REVEALED;
                 updateVision(true);
                 monsterName(theMonsterName, monst, false);
-                sprintf(buf, "you have developed a bond with your %s.", theMonsterName);
+                sprintf(buf, "你感觉和%s产生了更强烈的羁绊。", theMonsterName);
                 messageWithColor(buf, &advancementMessageColor, false);
             }
             //				if (canSeeMonster(monst)) {
@@ -3624,7 +3624,7 @@ void playerFalls() {
 	if (layer >= 0) {
 		message(tileCatalog[pmap[player.xLoc][player.yLoc].layers[layer]].flavorText, true);
 	} else if (layer == -1) {
-		message("You plunge downward!", true);
+		message("你掉落了下去！", true);
 	}
 	
     player.bookkeepingFlags &= ~(MONST_IS_FALLING | MONST_SEIZED | MONST_SEIZING);
@@ -3634,14 +3634,14 @@ void playerFalls() {
         rogue.depthLevel++;
         startLevel(rogue.depthLevel - 1, 0);
         damage = randClumpedRange(FALL_DAMAGE_MIN, FALL_DAMAGE_MAX, 2);
-        messageWithColor("You are damaged by the fall.", &badMessageColor, false);
+        messageWithColor("掉落产生的冲击对你产生了伤害。", &badMessageColor, false);
         if (inflictDamage(&player, damage, &red)) {
-            gameOver("Killed by a fall", true);
+            gameOver("被摔死了。", true);
         } else if (rogue.depthLevel > rogue.deepestLevel) {
             rogue.deepestLevel = rogue.depthLevel;
         }
     } else {
-        message("A strange force seizes you as you fall.", false);
+        message("一股诡异的力量阻止了你下落。", false);
         teleport(&player, -1, -1, true);
     }
     createFlare(player.xLoc, player.yLoc, GENERIC_FLASH_LIGHT);
@@ -3650,7 +3650,7 @@ void playerFalls() {
 }
 
 void handleAllyHungerAlerts() {
-    char buf[COLS*3], name[50];
+    char buf[COLS*3*3], name[50];
     creature *monst;
     
     if (!player.status[STATUS_HALLUCINATING]) {
@@ -3662,7 +3662,7 @@ void handleAllyHungerAlerts() {
                 
                 monst->bookkeepingFlags |= MONST_ALLY_ANNOUNCED_HUNGER;
                 monsterName(name, monst, true);
-                sprintf(buf, "%s looks like $HESHE's ready to learn something new.", name);
+                sprintf(buf, "%s看起来准备学习一些新的技巧。", name);
                 resolvePronounEscapes(buf, monst);
                 messageWithColor(buf, &advancementMessageColor, false);
             }
@@ -3686,7 +3686,7 @@ void handleHealthAlerts() {
 				} else {
 					y = mapToWindowY(player.yLoc + 2);
 				}
-				sprintf(buf, " <%i%% health ", thresholds[i]);
+				sprintf(buf, "生命值<%i%%", thresholds[i]);
 				x = mapToWindowX(player.xLoc - strLenWithoutEscapes(buf) / 2);
 				if (x > COLS - strLenWithoutEscapes(buf)) {
 					x = COLS - strLenWithoutEscapes(buf);
@@ -3708,7 +3708,7 @@ void synchronizePlayerTimeState() {
 
 void playerTurnEnded() {
 	short soonestTurn, damage, turnsRequiredToShore, turnsToShore;
-	char buf[COLS], buf2[COLS];
+	char buf[COLS*3], buf2[COLS*3];
 	creature *monst, *monst2, *nextMonst;
 	boolean fastForward = false;
 	
@@ -3750,7 +3750,7 @@ void playerTurnEnded() {
 		if (player.status[STATUS_NUTRITION] <= 0) {
 			player.currentHP--;
 			if (player.currentHP <= 0) {
-				gameOver("Starved to death", true);
+				gameOver("被饿死了。", true);
 				return;
 			}
 		} else if (player.currentHP < player.info.maxHP
@@ -3781,7 +3781,7 @@ void playerTurnEnded() {
 				killCreature(monst, false);
 				if (canSeeMonster(monst)) {
 					monsterName(buf2, monst, true);
-					sprintf(buf, "%s dissipates into thin air", buf2);
+					sprintf(buf, "%s消散在了空气中", buf2);
 					combatMessage(buf, messageColorFromVictim(monst));
 				}
 			}
@@ -3790,7 +3790,7 @@ void playerTurnEnded() {
 		if (player.status[STATUS_BURNING] > 0) {
 			damage = rand_range(1, 3);
 			if (!(player.status[STATUS_IMMUNE_TO_FIRE]) && inflictDamage(&player, damage, &orange)) {
-				gameOver("Burned to death", true);
+				gameOver("被烧死了。", true);
 			}
 			if (!--player.status[STATUS_BURNING]) {
 				player.status[STATUS_BURNING]++; // ugh
@@ -3801,7 +3801,7 @@ void playerTurnEnded() {
 		if (player.status[STATUS_POISONED] > 0) {
 			player.status[STATUS_POISONED]--;
 			if (inflictDamage(&player, 1, &green)) {
-				gameOver("Died from poison", true);
+				gameOver("被毒死了。", true);
 			}
 		}
 		
@@ -3944,7 +3944,7 @@ void playerTurnEnded() {
 								monst->info.monsterArticle,
 								buf2);
 						if (rogue.cautiousMode) {
-							strcat(buf, ".");
+							strcat(buf, "。");
 							message(buf, true);
 						} else {
 							combatMessage(buf, 0);
@@ -3964,7 +3964,7 @@ void playerTurnEnded() {
 					
 					rogue.weapon->flags |= ITEM_RUNIC_HINTED;
 					itemName(rogue.weapon, buf2, false, false, NULL);
-					sprintf(buf, "the runes on your %s gleam balefully.", buf2);
+					sprintf(buf, "你%s上的符文闪起了凶恶的红光。", buf2);
 					messageWithColor(buf, &itemMessageColor, true);
 				}
 				if (rogue.armor && rogue.armor->flags & ITEM_RUNIC
@@ -3974,7 +3974,7 @@ void playerTurnEnded() {
 					
 					rogue.armor->flags |= ITEM_RUNIC_HINTED;
 					itemName(rogue.armor, buf2, false, false, NULL);
-					sprintf(buf, "the runes on your %s glow protectively.", buf2);
+					sprintf(buf, "你%s上的符文闪起了金色的光芒。", buf2);
 					messageWithColor(buf, &itemMessageColor, true);
 				}
 			} else if (!canSeeMonster(monst)
@@ -4038,10 +4038,10 @@ void playerTurnEnded() {
 				turnsToShore = player.status[STATUS_LEVITATING] * 100 / player.movementSpeed;
 			}
 			if (turnsRequiredToShore == turnsToShore || turnsRequiredToShore + 1 == turnsToShore) {
-				message("better head back to solid ground!", true);
+				message("特效快要消失了，再不离开这里就会很危险了！", true);
 				rogue.receivedLevitationWarning = true;
 			} else if (turnsRequiredToShore > turnsToShore) {
-				message("you're past the point of no return!", true);
+				message("特效即将消失了，你感觉不能安全的回去了！", true);
 				rogue.receivedLevitationWarning = true;
 			}
 		}
@@ -4150,7 +4150,7 @@ boolean search(short searchStrength) {
 
 void routeTo(short x, short y, char *failureMessage) {
 	if (player.xLoc == x && player.yLoc == y) {
-		message("you are already there.", false);
+		message("你已经在这里了。", false);
 	} else if (pmap[x][y].flags & (DISCOVERED | MAGIC_MAPPED)) {
 		if (rogue.cursorLoc[0] == x && rogue.cursorLoc[1] == y) {
 			travel(x, y, true);
@@ -4172,7 +4172,7 @@ boolean useStairs(short stairDirection) {
             //copyDisplayBuffer(fromBuf, displayBuffer);
             rogue.cursorLoc[0] = rogue.cursorLoc[1] = -1;
             rogue.depthLevel++;
-            message("You descend.", false);
+            message("你走向地牢的下一层。", false);
             startLevel(rogue.depthLevel - 1, stairDirection);
             if (rogue.depthLevel > rogue.deepestLevel) {
                 rogue.deepestLevel = rogue.depthLevel;
@@ -4183,8 +4183,8 @@ boolean useStairs(short stairDirection) {
             victory(true);
         } else {
 			confirmMessages();
-            messageWithColor("the crystal archway repels you with a mysterious force!", &lightBlue, false);
-            messageWithColor("(Only the bearer of the Amulet of Yendor may pass.)", &backgroundMessageColor, false);
+            messageWithColor("水晶的拱门发出一股神奇的力量阻止你穿过！", &lightBlue, false);
+            messageWithColor("（持有 Amulet of Yendor 的人才能从这里通过）", &backgroundMessageColor, false);
         }
 		succeeded = true;
 	} else {
@@ -4195,7 +4195,7 @@ boolean useStairs(short stairDirection) {
 				victory(false);
 			} else {
                 //copyDisplayBuffer(fromBuf, displayBuffer);
-				message("You ascend.", false);
+				message("你走上地牢的上一层。", false);
 				startLevel(rogue.depthLevel + 1, stairDirection);
                 //copyDisplayBuffer(toBuf, displayBuffer);
                 //irisFadeBetweenBuffers(fromBuf, toBuf, mapToWindowX(player.xLoc), mapToWindowY(player.yLoc), 10, true);
@@ -4203,8 +4203,8 @@ boolean useStairs(short stairDirection) {
 			succeeded = true;
 		} else {
 			confirmMessages();
-            messageWithColor("The dungeon exit is magically sealed!", &lightBlue, false);
-            messageWithColor("(Only the bearer of the Amulet of Yendor may pass.)", &backgroundMessageColor, false);
+            messageWithColor("地牢的出口被魔法的力量封印了起来！", &lightBlue, false);
+            messageWithColor("（持有 Amulet of Yendor 的人才能从这里通过）", &backgroundMessageColor, false);
 		}
 	}
 	
