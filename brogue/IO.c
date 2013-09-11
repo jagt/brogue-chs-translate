@@ -2518,7 +2518,7 @@ void message(const char *msg, boolean requireAcknowledgment) {
 	}
 	displayCombatText();
 	
-	lines = wrapText(text, msg, DCOLS);
+	lines = wrapText(text, msg, DCOLS+15);// hack to get longer breaks of line
 	msgPtr = &(text[0]);
 	
 	// for(i=0; text[i] == COLOR_ESCAPE; i+=4);
@@ -3085,15 +3085,14 @@ void printHelpScreen() {
 		"             Z  ****原地休息100回合，或直到被打断",
 		"             s  ****搜索附近的隐藏门和陷阱",
 		"          <, >  ****移动到向上/向下的楼梯处",
-		"             x  ****自动探索，自动控制角色探索未知地形，拾取物品，按任意键停止。(CTRL+x: 加快显示速度)",
-		"             A  ****自动游戏，包括自动探索的功能，遇到怪物会一直进行攻击，按任意键停止。(CTRL+A: 加快显示速度)",
+		"             x  ****自动探索，自动控探索未知地形，拾取物品，按任意键停止。(CTRL+x: 快速显示)",
+		"             A  ****自动游戏，包括自动探索的功能，但遇到怪物会一直进行攻击，按任意键停止。(CTRL+A: 快速显示)",
 		"             M  ****显示所有信息列表",
         "",
 		"             S  ****中断游戏，保存游戏进度并退出",
 		"             O  ****读取存档",
 		"             V  ****观看已保存的录像",
 		"             Q  ****强制退出游戏",
-        "",
 		"             \\  ****关闭/开启颜色特效",
 		"    空格或ESC键  ****确认信息",
 		"",

@@ -305,7 +305,7 @@ void playbackPanic() {
 		confirmMessages();
 		message("回放同步出错。", false);
 		
-		printTextBox("录像/存档回放出错。这可能是由于汉化引入的问题，也有可能是游戏本体原来就有的问题。存档/录像功能目前不是很稳定，如果可能请尽量在一次游戏内通关。", 0, &white, &black, NULL, 0);
+		printTextBox("录像/存档回放出错。这可能是由于汉化引入的错误，也有可能是游戏本身原来就有的问题。存档/录像功能目前不是很稳定，如果可能请尽量在一次游戏内通关。", 0, &white, &black, NULL, 0);
 		
 		rogue.playbackMode = false;
 		displayMoreSign();
@@ -632,7 +632,7 @@ void advanceToLocation(unsigned long destinationFrame) {
 		now = getTicks();			
 		if (useProgressBar && now - drawTime > 30) {
             rogue.playbackFastForward = false;
-            drawProgress(context, effect, 1, 1, "     载入中...   ",
+            drawProgress(context, effect, 1, 1, "载入中...",
                              rogue.playerTurnNumber - initialFrameNumber,
                              destinationFrame - initialFrameNumber, &darkPurple, false);
             pauseBrogue(1);

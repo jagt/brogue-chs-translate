@@ -1979,7 +1979,7 @@ void itemDetails(char *buf, item *theItem) {
 				
 				// equipped? cursed?
 				if (theItem->flags & ITEM_EQUIPPED) {
-					sprintf(buf2, "\n\n你正身着这件%s%s。",
+					sprintf(buf2, "\n\n你正穿着这件%s%s。",
 							theName,
 							((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法脱掉它" : ""));
 					strcat(buf, buf2);
@@ -5767,7 +5767,7 @@ void readScroll(item *theItem) {
 			break;
 		case SCROLL_MAGIC_MAPPING:
 			confirmMessages();
-			messageWithColor("你自己看看发现卷轴上画着地图！", &itemMessageColor, false);
+			messageWithColor("你仔细看看发现卷轴上画着地图！", &itemMessageColor, false);
 			for (i=0; i<DCOLS; i++) {
 				for (j=0; j<DROWS; j++) {
 					if (!(pmap[i][j].flags & DISCOVERED) && pmap[i][j].layers[DUNGEON] != GRANITE) {
@@ -5789,7 +5789,7 @@ void readScroll(item *theItem) {
 		case SCROLL_AGGRAVATE_MONSTER:
 			aggravateMonsters();
 			colorFlash(&gray, 0, (DISCOVERED | MAGIC_MAPPED), 10, DCOLS / 2, player.xLoc, player.yLoc);
-			message("卷轴发出了巨大的响声，回声在空挡的地牢里荡漾。", false);
+			message("卷轴发出了巨大的响声，回声在空荡的地牢里荡漾。", false);
 			break;
 		case SCROLL_SUMMON_MONSTER:
 			for (j=0; j<25 && numberOfMonsters < 3; j++) {
