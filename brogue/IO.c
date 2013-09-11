@@ -2782,7 +2782,7 @@ void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst
 			BROGUE_JUSTIFY_CENTER);
 		BrogueDrawContext_enableProportionalFont(io_state.sidebar_context, 1);
 		BrogueDrawContext_drawAsciiString(
-			io_state.sidebar_context, 0, printY++,     "   -- 重放中 --   ");
+			io_state.sidebar_context, 0, printY++,     "   -- 回放中 --   ");
 
 		if (rogue.howManyTurns > 0) {
 			sprintf(buf, "Turn %li/%li", rogue.playerTurnNumber, rogue.howManyTurns);
@@ -3074,6 +3074,7 @@ void printHelpScreen() {
 		" CTRL+左键单击  ****向光标方向移动一格",
 		"          回车  ****使用键盘来控制光标",
 		"   空格或ESC键  ****禁用键盘控制光标",
+		"       <tab>键  ****切换目标",
 		"<hjklyubn>, 方向键及小键盘  ****移动和攻击。按住 CTRL 或 SHIFT 朝方向进行连续移动",
 		"",
 		"   a/e/r/t/d/c  ****分别对应 使用/装备/卸下装备/投掷/丢弃/命名 物品的菜单",

@@ -303,9 +303,9 @@ void playbackPanic() {
 		refreshSideBar(-1, -1, false);
 		
 		confirmMessages();
-		message("Playback is out of sync.", false);
+		message("回放同步出错。", false);
 		
-		printTextBox(OOS_APOLOGY, 0, &white, &black, NULL, 0);
+		printTextBox("录像/存档回放出错。这可能是由于汉化引入的问题，也有可能是游戏本体原来就有的问题。存档/录像功能目前不是很稳定，如果可能请尽量在一次游戏内通关。", 0, &white, &black, NULL, 0);
 		
 		rogue.playbackMode = false;
 		displayMoreSign();
@@ -334,7 +334,7 @@ void recallEvent(rogueEvent *event) {
 				break;
 			case SAVED_GAME_LOADED:
 				tryAgain = true;
-				flashTemporaryAlert(" Saved game loaded ", 1000);
+				flashTemporaryAlert("已载入中断存档", 1000);
 				break;
 			case MOUSE_UP:
 			case MOUSE_DOWN:
@@ -348,7 +348,7 @@ void recallEvent(rogueEvent *event) {
 			case END_OF_RECORDING:
 			case EVENT_ERROR:
 			default:
-				message("Unrecognized event type in playback.", true);
+				message("回放中出现错误的事件类型！", true);
 				tryAgain = true;
 				playbackPanic();
 				break;
@@ -473,7 +473,7 @@ void initRecording() {
 		if (strcmp(versionString, BROGUE_VERSION_STRING)) {
 			rogue.playbackMode = false;
 			rogue.playbackFastForward = false;
-			sprintf(buf, "This file is from version %s and cannot be opened in version %s.", versionString, BROGUE_VERSION_STRING);
+			sprintf(buf, "文件是由版本%s的 brogue 产生，不能用于当前 %s 的版本中。", versionString, BROGUE_VERSION_STRING);
 			dialogAlert(buf);
 			rogue.playbackMode = true;
 			rogue.playbackPaused = true;
@@ -512,7 +512,7 @@ void OOSCheck(unsigned long x, short numberOfBytes) {
 		recordedNumber = recallNumber(numberOfBytes);
 		if (eventType != RNG_CHECK || recordedNumber != x) {
 			if (eventType != RNG_CHECK) {
-				message("Event type mismatch in RNG check.", false);
+				message("RNG检查发现错误。", false);
 			}
 			playbackPanic();
 		}
@@ -542,7 +542,7 @@ void RNGCheck() {
 
 boolean unpause() {
 	if (rogue.playbackOOS) {
-		flashTemporaryAlert(" Out of sync ", 2000);
+		flashTemporaryAlert("发生同步错误", 2000);
 	} else if (rogue.playbackPaused) {
 		rogue.playbackPaused = false;
 		return true;
@@ -556,23 +556,23 @@ void printPlaybackHelpScreen() {
 	char helpText[PLAYBACK_HELP_LINE_COUNT][DCOLS * 3] = {
 		"",
 		"",
-		"Commands:",
+		"回放模式操作帮助：",
 		"",
-		"         <space>: ****pause or unpause playback",
-		"   k or up arrow: ****play back faster",
-		" j or down arrow: ****play back slower",
-		"               >: ****skip to next level",
-		"             0-9: ****skip to specified turn number",
-		"l or right arrow: ****advance one turn (shift for 5 turns; control for 20)",
+		"            空格: ****暂停/恢复回放",
+		"     k键或者上键: ****加快回放速度",
+		"     j键或者下键: ****减慢回放速度",
+		"               >: ****快进到到下一层",
+		"             0-9: ****快进到指定回合数",
+		"   l或者右方向键: ****播放一回合（按住 SHIFT/CTRL 播放 5/20 回合）",
 		"",
-		"           <tab>: ****enable or disable omniscience",
-		"          return: ****examine surroundings",
-		"               i: ****display inventory",
-		"               D: ****display discovered items",
-		"               V: ****view saved recording",
-		"               O: ****open and resume saved game",
-		"               N: ****begin a new game",
-		"               Q: ****quit to title screen",
+		"           <tab>: ****开启或关闭详细信息",
+		"            回车: ****暂停播放，允许查看当前的状况",
+		"               i: ****查看物品栏",
+		"               D: ****显示当前游戏中已经被鉴定过的物品列表",
+		"               V: ****打开另外的录像",
+		"               O: ****载入中断存档",
+		"               N: ****开始新的游戏",
+		"               Q: ****返回标题界面",
 		"",
 		"        -- 按任意键继续 --"
 	};
@@ -632,7 +632,7 @@ void advanceToLocation(unsigned long destinationFrame) {
 		now = getTicks();			
 		if (useProgressBar && now - drawTime > 30) {
             rogue.playbackFastForward = false;
-            drawProgress(context, effect, 1, 1, "     Loading...   ",
+            drawProgress(context, effect, 1, 1, "     载入中...   ",
                              rogue.playerTurnNumber - initialFrameNumber,
                              destinationFrame - initialFrameNumber, &darkPurple, false);
             pauseBrogue(1);
@@ -666,7 +666,7 @@ void promptToAdvanceToLocation(short keystroke) {
 		buf[1] = '\0';
 		
 		rogue.playbackMode = false;
-		enteredText = getInputTextString(entryText, "Go to turn number: ", log10(ULONG_MAX) - 1, buf, "", TEXT_INPUT_NUMBERS, false);
+		enteredText = getInputTextString(entryText, "输入快进到的回合数： ", log10(ULONG_MAX) - 1, buf, "", TEXT_INPUT_NUMBERS, false);
 		confirmMessages();
 		rogue.playbackMode = true;
 		
@@ -674,9 +674,9 @@ void promptToAdvanceToLocation(short keystroke) {
 			sscanf(entryText, "%lu", &destinationFrame);
 			
 			if (destinationFrame >= rogue.howManyTurns) {
-				flashTemporaryAlert(" Past end of recording ", 3000);
+				flashTemporaryAlert("输入超过了录像长度", 3000);
 			} else if (destinationFrame == rogue.playerTurnNumber) {
-				sprintf(buf, " Already at turn %li ", destinationFrame);
+				sprintf(buf, "已经在%li回合", destinationFrame);
 				flashTemporaryAlert(buf, 1000);
 			} else {
                 advanceToLocation(destinationFrame);
@@ -689,11 +689,11 @@ void promptToAdvanceToLocation(short keystroke) {
 void pausePlayback() {
 	if (!rogue.playbackPaused) {
 		rogue.playbackPaused = true;
-		messageWithColor("recording paused. Press space to play.", &teal, false);
+		messageWithColor("回放已暂停。按空格键继续。", &teal, false);
 		refreshSideBar(-1, -1, false);
 		mainInputLoop();
 		
-		messageWithColor("recording unpaused.", &teal, false);
+		messageWithColor("回放继续。", &teal, false);
 		rogue.playbackPaused = false;
 		refreshSideBar(-1, -1, false);
 		rogue.playbackDelayThisTurn = DEFAULT_PLAYBACK_DELAY;
@@ -721,7 +721,7 @@ void executePlaybackInput(rogueEvent *recordingInput) {
 			case UP_KEY:
 				newDelay = max(1, min(rogue.playbackDelayPerTurn / 1.5, rogue.playbackDelayPerTurn - 1));
 				if (newDelay != rogue.playbackDelayPerTurn) {
-					flashTemporaryAlert(" Faster ", 300);
+					flashTemporaryAlert("加速", 300);
 				}
 				rogue.playbackDelayPerTurn = newDelay;
 				break;
@@ -729,13 +729,13 @@ void executePlaybackInput(rogueEvent *recordingInput) {
 			case DOWN_KEY:
 				newDelay = min(3000, max(rogue.playbackDelayPerTurn * 1.5, rogue.playbackDelayPerTurn + 1));
 				if (newDelay != rogue.playbackDelayPerTurn) {
-					flashTemporaryAlert(" Slower ", 300);
+					flashTemporaryAlert("减速", 300);
 				}
 				rogue.playbackDelayPerTurn = newDelay;
 				break;
 			case ACKNOWLEDGE_KEY:
 				if (rogue.playbackOOS && rogue.playbackPaused) {
-					flashTemporaryAlert(" Out of sync ", 2000);
+					flashTemporaryAlert("回放出错", 2000);
 				} else {
 					pausePlayback();
 				}
@@ -745,9 +745,9 @@ void executePlaybackInput(rogueEvent *recordingInput) {
 				displayLevel();
 				refreshSideBar(-1, -1, false);
 				if (rogue.playbackOmniscience) {
-					messageWithColor("Omniscience enabled.", &teal, false);
+					messageWithColor("开启详细信息。", &teal, false);
 				} else {
-					messageWithColor("Omniscience disabled.", &teal, false);
+					messageWithColor("关闭详细信息。", &teal, false);
 				}
 				break;
 			case DESCEND_KEY:
@@ -755,7 +755,7 @@ void executePlaybackInput(rogueEvent *recordingInput) {
                 previousDeepestLevel = rogue.deepestLevel;
 				if (!rogue.playbackPaused || unpause()) {
 					if (rogue.deepestLevel < maxLevelChanges) {
-						displayCenteredAlert(" Loading... ");
+						displayCenteredAlert("载入中...");
 						pauseBrogue(5);
 						rogue.playbackFastForward = true;
 						while ((rogue.deepestLevel <= previousDeepestLevel || !rogue.playbackBetweenTurns)
@@ -769,7 +769,7 @@ void executePlaybackInput(rogueEvent *recordingInput) {
 						refreshSideBar(-1, -1, false);
 						displayLevel();
 					} else {
-						flashTemporaryAlert(" Already reached deepest depth explored ", 1000);
+						flashTemporaryAlert("已经在录像内容中的最底层。", 1000);
 					}
 				}
 				rogue.playbackPaused = pauseState;
@@ -808,10 +808,10 @@ void executePlaybackInput(rogueEvent *recordingInput) {
                 }
                 
                 if (destinationFrame == rogue.playerTurnNumber) {
-                    flashTemporaryAlert(" Already at end of recording ", 1000);
+                    flashTemporaryAlert("回放已经结束", 1000);
                 } else if (frameCount < 0) {
                     rogue.playbackMode = false;
-                    proceed = (rogue.playerTurnNumber < 100 || confirm("Rewind?", true));
+                    proceed = (rogue.playerTurnNumber < 100 || confirm("重头开始播放？", true));
                     rogue.playbackMode = true;
                     if (proceed) {
                         advanceToLocation(destinationFrame);
@@ -852,13 +852,13 @@ void executePlaybackInput(rogueEvent *recordingInput) {
 			case VIEW_RECORDING_KEY:
 				confirmMessages();
 				rogue.playbackMode = false;
-				if (dialogChooseFile(path, RECORDING_SUFFIX, "View recording: ")) {
+				if (dialogChooseFile(path, RECORDING_SUFFIX, "选择要回放的录像：")) {
 					if (fileExists(path)) {
 						strcpy(rogue.nextGamePath, path);
 						rogue.nextGame = NG_VIEW_RECORDING;
 						rogue.gameHasEnded = true;
 					} else {
-						message("File not found.", false);
+						message("找不到文件。", false);
 					}
 				}
 				rogue.playbackMode = true;
@@ -866,20 +866,20 @@ void executePlaybackInput(rogueEvent *recordingInput) {
 			case LOAD_SAVED_GAME_KEY:
 				confirmMessages();
 				rogue.playbackMode = false;
-				if (dialogChooseFile(path, GAME_SUFFIX, "Open saved game: ")) {
+				if (dialogChooseFile(path, GAME_SUFFIX, "选择要载入的存档：")) {
 					if (fileExists(path)) {
 						strcpy(rogue.nextGamePath, path);
 						rogue.nextGame = NG_OPEN_GAME;
 						rogue.gameHasEnded = true;
 					} else {
-						message("File not found.", false);
+						message("找不到文件。", false);
 					}
 				}
 				rogue.playbackMode = true;
 				break;
 			case NEW_GAME_KEY:
 				rogue.playbackMode = false;
-				if (confirm("Close recording and begin a new game?", true)) {
+				if (confirm("退出回放并开始新的游戏？", true)) {
 					rogue.nextGame = NG_NEW_GAME;
 					rogue.gameHasEnded = true;
 				}
@@ -896,9 +896,9 @@ void executePlaybackInput(rogueEvent *recordingInput) {
                 displayLevel();
                 refreshSideBar(-1, -1, false);
                 if (rogue.trueColorMode) {
-                    messageWithColor("Color effects disabled. Press '\\' again to enable.", &teal, false);
+                    messageWithColor("已禁用颜色特效。 再次按下 <\\> 键重新启用。", &teal, false);
                 } else {
-                    messageWithColor("Color effects enabled. Press '\\' again to disable.", &teal, false);
+                    messageWithColor("已启用颜色特效。 再次按下 <\\> 键重新禁用。", &teal, false);
                 }
                 break;
 			case SEED_KEY:
@@ -959,16 +959,16 @@ void saveGame() {
 	deleteMessages();
 	do {
 		askAgain = false;
-		if (getInputTextString(filePath, "Save game as (<esc> to cancel): ",
+		if (getInputTextString(filePath, "输入中断存档名（按<esc>键取消）：",
 							   BROGUE_FILENAME_MAX - strlen(GAME_SUFFIX), defaultPath, GAME_SUFFIX, TEXT_INPUT_NORMAL, false)) {
 			
 			strcat(filePath, GAME_SUFFIX);
-			if (!fileExists(filePath) || confirm("File of that name already exists. Overwrite?", true)) {
+			if (!fileExists(filePath) || confirm("该文件已经存在，是否覆盖？", true)) {
 				remove(filePath);
 				flushBufferToFile();
 				rename(currentFilePath, filePath);
 				strcpy(currentFilePath, filePath);
-				message("Saved.", true);
+				message("已存档。", true);
 				rogue.gameHasEnded = true;
 			} else {
 				askAgain = true;
@@ -991,11 +991,11 @@ void saveRecording() {
 	deleteMessages();
 	do {
 		askAgain = false;
-		if (getInputTextString(filePath, "Save recording as (<esc> to cancel): ",
+		if (getInputTextString(filePath, "输入保存录像文件名（按<esc>键取消）：",
 							   BROGUE_FILENAME_MAX - strlen(RECORDING_SUFFIX), defaultPath, RECORDING_SUFFIX, TEXT_INPUT_NORMAL, false)) {
 			
 			strcat(filePath, RECORDING_SUFFIX);
-			if (!fileExists(filePath) || confirm("File of that name already exists. Overwrite?", true)) {
+			if (!fileExists(filePath) || confirm("该文件已经存在，是否覆盖？", true)) {
 				remove(filePath);
 				rename(currentFilePath, filePath);
 			} else {
@@ -1094,7 +1094,7 @@ void loadSavedGame() {
 			
 			if (now - drawTime > 30 && !rogue.playbackOOS) {
 				rogue.playbackFastForward = false; // so the progress bar redraws make it to the screen
-				drawProgress(context, effect, 1, 1, "     Loading...   ", recordingLocation, lengthOfPlaybackFile, &darkPurple, false);
+				drawProgress(context, effect, 1, 1, "载入中...", recordingLocation, lengthOfPlaybackFile, &darkPurple, false);
 				pauseBrogue(1);
 				drawTime = getTicks();
 
