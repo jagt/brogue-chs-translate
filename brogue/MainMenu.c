@@ -332,7 +332,7 @@ void titleMenu() {
 	encodeMessageColor(whiteColorEscape, 0, &white);
 	encodeMessageColor(goldColorEscape, 0, &itemMessageColor);
 	sprintf(newGameText, " %s(N)%s 开始新游戏", goldColorEscape, whiteColorEscape);
-	sprintf(customNewGameText, " %sN%sew Game (custom)  ", goldColorEscape, whiteColorEscape);
+	sprintf(customNewGameText, " %s(N)%s 生成新游戏", goldColorEscape, whiteColorEscape);
 	b = 0;
 	button = -1;
 	
@@ -740,7 +740,7 @@ void mainBrogueJunction() {
 						} else {
 							sprintf(seedDefault, "%lu", previousGameSeed);
 						}
-						if (getInputTextString(buf, "Generate dungeon with seed number:",
+						if (getInputTextString(buf, "输入指定的随机数种子来生成地下城：",
 											   log10(ULONG_MAX) + 1,
 											   seedDefault,
 											   "",
@@ -788,7 +788,7 @@ void mainBrogueJunction() {
 					strcpy(path, rogue.nextGamePath);
 					rogue.nextGamePath[0] = '\0';
 				} else {
-					dialogChooseFile(path, GAME_SUFFIX, "Open saved game:");
+					dialogChooseFile(path, GAME_SUFFIX, "选择中断存档进行读取：");
 					//chooseFile(path, "Open saved game: ", "Saved game", GAME_SUFFIX);
 				}
 					
@@ -811,7 +811,7 @@ void mainBrogueJunction() {
 					strcpy(path, rogue.nextGamePath);
 					rogue.nextGamePath[0] = '\0';
 				} else {
-					dialogChooseFile(path, RECORDING_SUFFIX, "View recording:");
+					dialogChooseFile(path, RECORDING_SUFFIX, "选择录像文件进行回放：");
 					//chooseFile(path, "View recording: ", "Recording", RECORDING_SUFFIX);
 				}
 				

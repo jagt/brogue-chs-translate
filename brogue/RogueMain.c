@@ -998,7 +998,7 @@ void freeEverything() {
 }
 
 void gameOver(char *killedBy, boolean useCustomPhrasing) {
-	char buf[COLS];
+	char buf[COLS*3];
 	rogueHighScoresEntry theEntry;
 	boolean playback;
 	rogueEvent theEvent;
@@ -1012,7 +1012,7 @@ void gameOver(char *killedBy, boolean useCustomPhrasing) {
 		if (rogue.playbackMode) {
 			playback = rogue.playbackMode;
 			rogue.playbackMode = false;
-			message("(The player quit at this point.)", true);
+			message("（玩家在此时退出了游戏）", true);
 			rogue.playbackMode = playback;
 		}
 	} else {
@@ -1020,9 +1020,9 @@ void gameOver(char *killedBy, boolean useCustomPhrasing) {
 		if (!D_IMMORTAL) {
 			rogue.playbackMode = false;
 		}
-        strcpy(buf, "You die...");
+        strcpy(buf, "你死掉了...");
         encodeMessageColor(buf, strlen(buf), &veryDarkGray);
-        strcat(buf, " (press 'i' to view your inventory)");
+        strcat(buf, "（按<i>键查看当前身上的物品）");
 		messageWithColor(buf, &badMessageColor, false);
         displayMoreSignWithoutWaitingForAcknowledgment();
         
@@ -1033,7 +1033,7 @@ void gameOver(char *killedBy, boolean useCustomPhrasing) {
                 && theEvent.param1 != ESCAPE_KEY
                 && theEvent.param1 != INVENTORY_KEY) {
                 
-                flashTemporaryAlert(" -- Press space or click to continue, or press 'i' to view inventory -- ", 1500);
+                flashTemporaryAlert(" -- 按空格键或者点击鼠标左键继续，按<i>键查看物品栏 -- ", 1500);
             } else if (theEvent.eventType == KEYSTROKE && theEvent.param1 == INVENTORY_KEY) {
                 for (theItem = packItems->nextItem; theItem != NULL; theItem = theItem->nextItem) {
                     identify(theItem);
@@ -1052,7 +1052,7 @@ void gameOver(char *killedBy, boolean useCustomPhrasing) {
     rogue.creaturesWillFlashThisTurn = false;
 	
 	if (D_IMMORTAL && !rogue.quit) {
-		message("...but then you get better.", false);
+		message("...但是你又活了过来。", false);
 		player.currentHP = player.info.maxHP;
 		if (player.status[STATUS_NUTRITION] < 10) {
 			player.status[STATUS_NUTRITION] = STOMACH_SIZE;
@@ -1071,11 +1071,11 @@ void gameOver(char *killedBy, boolean useCustomPhrasing) {
 	}
 	
 	if (useCustomPhrasing) {
-		sprintf(buf, "%s on level %i%s.", killedBy, rogue.depthLevel,
-				(numberOfMatchingPackItems(AMULET, 0, 0, false) > 0 ? ", amulet in hand" : ""));
+		sprintf(buf, "%s（在第%i层%s）", killedBy, rogue.depthLevel,
+				(numberOfMatchingPackItems(AMULET, 0, 0, false) > 0 ? "，获得了 Amulet of Yendor" : ""));
 	} else {
-		sprintf(buf, "Killed by a%s %s on level %i%s.", (isVowelish(killedBy) ? "n" : ""), killedBy,
-				rogue.depthLevel, (numberOfMatchingPackItems(AMULET, 0, 0, false) > 0 ? ", amulet in hand" : ""));
+		sprintf(buf, "被%s杀死。（在第%i层%s）", killedBy,
+				rogue.depthLevel, (numberOfMatchingPackItems(AMULET, 0, 0, false) > 0 ? "，获得了 Amulet of Yendor" : ""));
 	}
 	
 	theEntry.score = rogue.gold;
@@ -1114,20 +1114,20 @@ void victory(boolean superVictory) {
 	
 	deleteMessages();
     if (superVictory) {
-        message(    "Light streams through the portal, and you are teleported out of the dungeon.", false);
+        message(    "炫目的光芒从传送门中涌了出来，你成功离开了地牢。", false);
 //        copyDisplayBuffer(dbuf, displayBuffer);
         displayMoreSign();
-	centerResultMessage("Congratulations; you have transcended the Dungeons of Doom!");
+	centerResultMessage("恭喜你！你活着离开了厄运之地牢！");
         displayMoreSign();
         deleteMessages();
-        strcpy(displayedMessage[0], "You retire in splendor, forever renowned for your remarkable triumph.     ");
+        strcpy(displayedMessage[0], "你的冒险生涯就此画上了句号。你的传说将被永久的传颂下去。");
     } else {
-        message(    "You are bathed in sunlight as you throw open the heavy doors.", false);
+        message(    "推开地牢大门的一瞬间，久违的阳光使你感觉有些张不开眼。", false);
         displayMoreSign();
-	centerResultMessage("Congratulations; you have escaped from the Dungeons of Doom!");
+	centerResultMessage("恭喜你！你活着逃出了厄运之地牢！");
         displayMoreSign();
         deleteMessages();
-        strcpy(displayedMessage[0], "You sell your treasures and live out your days in fame and glory.");
+        strcpy(displayedMessage[0], "你卖掉了所获得的宝藏，从此过上了安逸的日子。");
     }
 
 	blackOutScreen();
@@ -1142,7 +1142,7 @@ void victory(boolean superVictory) {
 	BrogueDrawContext_enableJustify(context, 0, COLS, BROGUE_JUSTIFY_LEFT);
 
 	BrogueDrawContext_setForeground(context, colorForDisplay(white));
-	BrogueDrawContext_drawAsciiString(context, 30, 2, "Gold");
+	BrogueDrawContext_drawAsciiString(context, 30, 2, "金币");
 
 	sprintf(buf, "%li", rogue.gold);
 	BrogueDrawContext_setForeground(
@@ -1190,19 +1190,19 @@ void victory(boolean superVictory) {
 	BrogueDrawContext_setForeground(
 		context, colorForDisplay(lightBlue));
 	BrogueDrawContext_drawAsciiString(
-		context, 30, min(ROWS - 1, i + 1), "TOTAL:");
+		context, 30, min(ROWS - 1, i + 1), "总计：");
 
 	sprintf(buf, "%li", totalValue);
 	BrogueDrawContext_drawAsciiString(
 		context, 70, min(ROWS - 1, i + 1), buf);
 	
-    strcpy(victoryVerb, superVictory ? "Mastered" : "Escaped");
+    strcpy(victoryVerb, superVictory ? "华丽的逃出了" : "逃出了");
 	if (gemCount == 0) {
-		sprintf(theEntry.description, "%s the Dungeons of Doom!", victoryVerb);
+		sprintf(theEntry.description, "%s厄运之地牢", victoryVerb);
 	} else if (gemCount == 1) {
-		sprintf(theEntry.description, "%s the Dungeons of Doom with a lumenstone!", victoryVerb);
+		sprintf(theEntry.description, "%s厄运之地牢，并获得了一个宝石！", victoryVerb);
 	} else {
-		sprintf(theEntry.description, "%s the Dungeons of Doom with %i lumenstones!", victoryVerb, gemCount);
+		sprintf(theEntry.description, "%s厄运之地牢，并获得了%i个宝石！", victoryVerb, gemCount);
 	}
 	
 	theEntry.score = totalValue;
@@ -1234,22 +1234,22 @@ void victory(boolean superVictory) {
 
 void enableEasyMode() {
 	if (rogue.easyMode) {
-		message("Alas, all hope of salvation is lost. You shed scalding tears at your plight.", false);
+		message("一瞬间，你感觉人生一片灰暗，面对如此绝境，你流下了屈辱的泪水。", false);
 		return;
 	}
-	message("A dark presence surrounds you, whispering promises of stolen power.", true);
-	if (confirm("Succumb to demonic temptation (i.e. enable Easy Mode)?", false)) {
+	message("突然一阵黑暗包围了你，它不断对你耳语，承诺赋予你无尽的力量。", true);
+	if (confirm("屈服于这种诱惑么（开启简单模式）？", false)) {
 		recordKeystroke(EASY_MODE_KEY, false, true);
-		message("An ancient and terrible evil burrows into your willing flesh!", true);
+		message("一股远古的邪恶力量涌进了你的肉体！", true);
 		player.info.displayChar = '&';
 		rogue.easyMode = true;
 		refreshDungeonCell(player.xLoc, player.yLoc);
 		refreshSideBar(-1, -1, false);
-		message("Wracked by spasms, your body contorts into an ALL-POWERFUL AMPERSAND!!!", false);
-		message("You have a feeling that you will take 20% as much damage from now on.", false);
-		message("But great power comes at a great price -- specifically, a 90% income tax rate.", false);
+		message("伴随一股抽搐，你的身体扭曲的不成人形！！！", false);
+		message("你感觉从此以后你受到的伤害将减少80%。", false);
+		message("但是邪恶的力量需要你付出更多的代价，具体来说就是90%的个人所得税。（分数将大幅减少）", false);
 	} else {
-		message("The evil dissipates, hissing, from the air around you.", false);
+		message("你的坚定意志将这股邪恶的力量驱散了。", false);
 	}
 }
 

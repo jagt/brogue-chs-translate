@@ -290,7 +290,7 @@ short actionMenu(short x, short y, boolean playingBack) {
 	buttonCount = 0;
 	
 	if (playingBack) {
-		sprintf(buttons[buttonCount].text,	"%sk: %s加速播放", yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text,	"%sk:%s加速播放", yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = UP_KEY;
 		buttons[buttonCount].hotkey[1] = UP_ARROW;
 		buttons[buttonCount].hotkey[2] = NUMPAD_8;
@@ -4066,31 +4066,31 @@ unsigned long printCarriedItemDetails(item *theItem,
 		encodeMessageColor(whiteColorEscape, 0, &white);
 		
 		if (theItem->category & (FOOD | SCROLL | POTION | WAND | STAFF | CHARM)) {
-			sprintf(buttons[b].text, "   %sa%spply   ", goldColorEscape, whiteColorEscape);
+			sprintf(buttons[b].text,     " %s(a)%s使用 ", goldColorEscape, whiteColorEscape);
 			buttons[b].hotkey[0] = APPLY_KEY;
 			b++;
 		}
 		if (theItem->category & (ARMOR | WEAPON | RING)) {
 			if (theItem->flags & ITEM_EQUIPPED) {
-				sprintf(buttons[b].text, "  %sr%semove   ", goldColorEscape, whiteColorEscape);
+				sprintf(buttons[b].text, " %s(r)%s卸下 ", goldColorEscape, whiteColorEscape);
 				buttons[b].hotkey[0] = UNEQUIP_KEY;
 				b++;
 			} else {
-				sprintf(buttons[b].text, "   %se%squip   ", goldColorEscape, whiteColorEscape);
+				sprintf(buttons[b].text, " %s(e)%s装备 ", goldColorEscape, whiteColorEscape);
 				buttons[b].hotkey[0] = EQUIP_KEY;
 				b++;
 			}
 		}
-		sprintf(buttons[b].text, "   %sd%srop    ", goldColorEscape, whiteColorEscape);
+		sprintf(buttons[b].text,         " %s(d)%s丢弃 ", goldColorEscape, whiteColorEscape);
 		buttons[b].hotkey[0] = DROP_KEY;
 		b++;
 		
-		sprintf(buttons[b].text, "   %st%shrow   ", goldColorEscape, whiteColorEscape);
+		sprintf(buttons[b].text,         " %s(t)%s投掷 ", goldColorEscape, whiteColorEscape);
 		buttons[b].hotkey[0] = THROW_KEY;
 		b++;
 		
 		if (itemCanBeCalled(theItem)) {
-			sprintf(buttons[b].text, "   %sc%sall    ", goldColorEscape, whiteColorEscape);
+			sprintf(buttons[b].text,     " %s(c)%s命名 ", goldColorEscape, whiteColorEscape);
 			buttons[b].hotkey[0] = CALL_KEY;
 			b++;
 		}
