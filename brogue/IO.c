@@ -295,7 +295,7 @@ short actionMenu(short x, short y, boolean playingBack) {
 		buttons[buttonCount].hotkey[1] = UP_ARROW;
 		buttons[buttonCount].hotkey[2] = NUMPAD_8;
 		buttonCount++;
-		sprintf(buttons[buttonCount].text,	"  %sj:%s减速播放", yellowColorEscape, whiteColorEscape);
+		sprintf(buttons[buttonCount].text,	"%sj:%s减速播放", yellowColorEscape, whiteColorEscape);
 		buttons[buttonCount].hotkey[0] = DOWN_KEY;
 		buttons[buttonCount].hotkey[1] = DOWN_ARROW;
 		buttons[buttonCount].hotkey[2] = NUMPAD_2;
@@ -2785,7 +2785,7 @@ void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst
 			io_state.sidebar_context, 0, printY++,     "   -- 回放中 --   ");
 
 		if (rogue.howManyTurns > 0) {
-			sprintf(buf, "Turn %li/%li", rogue.playerTurnNumber, rogue.howManyTurns);
+			sprintf(buf, "回合 %li/%li", rogue.playerTurnNumber, rogue.howManyTurns);
 			printProgressBar(0, printY++, buf, rogue.playerTurnNumber, rogue.howManyTurns, &darkPurple, false);
 		}
 		if (rogue.playbackOOS) {
@@ -3502,7 +3502,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 	const char statusStrings[NUMBER_OF_STATUS_EFFECTS][COLS*3] = {
 		"虚弱: -",
 		"心灵感应",
-		"幻视",
+		"幻觉",
 		"悬浮",
 		"减速",
 		"加速",

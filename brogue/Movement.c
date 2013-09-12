@@ -401,7 +401,7 @@ void describeLocation(char *buf, short x, short y) {
 			if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
 				strcat(verb, "被关在");
 			} else {
-				strcat(verb, subjectMoving ? "漂浮在" : "被放在");
+				strcat(verb, subjectMoving ? "漂浮在" : "摆放在");
 			}
 			strcpy(preposition, standsInTerrain ? (subjectMoving ? "里" : "上")
 				   : (subjectMoving ? "间" : "上"));
@@ -732,14 +732,14 @@ void applyInstantTileEffectsToCreature(creature *monst) {
 			monsterName(buf, monst, true);
 			if (inflictDamage(monst, damage, &yellow)) {
 				// if killed
-				sprintf(buf2, "%s dies in %s.", buf,
+				sprintf(buf2, "%s死在了%s里。", buf,
 						tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_CAUSES_EXPLOSIVE_DAMAGE)]].description);
 				messageWithColor(buf2, messageColorFromVictim(monst), false);
 				refreshDungeonCell(*x, *y);
 				return;
 			} else {
 				// if survived
-				sprintf(buf2, "%s engulfs %s.",
+				sprintf(buf2, "%s被%s吞没了。",
 						tileCatalog[pmap[*x][*y].layers[layerWithFlag(*x, *y, T_CAUSES_EXPLOSIVE_DAMAGE)]].description, buf);
 				messageWithColor(buf2, messageColorFromVictim(monst), false);
 			}
@@ -754,7 +754,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
         && (rogue.armor->flags & ITEM_RUNIC)
         && rogue.armor->enchant2 == A_RESPIRATION) {
         if (!(rogue.armor->flags & ITEM_RUNIC_IDENTIFIED)) {
-            message("Your armor trembles and a pocket of clean air swirls around you.", false);
+            message("你的护甲突然震动了一下，你感觉身体周围有一股清新空气围绕着你。", false);
             autoIdentify(rogue.armor);
         }
     } else {
@@ -772,8 +772,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
                 }
                 flashMonster(monst, &brown, 100);
                 monsterName(buf, monst, true);
-                sprintf(buf2, "%s choke%s and gag%s on the stench of rot.", buf,
-                        (monst == &player ? "": "s"), (monst == &player ? "": "s"));
+                sprintf(buf2, "%s被恶心的味道呛到不行。", buf);
                 message(buf2, false);
             }
             monst->status[STATUS_NAUSEOUS] = monst->maxStatus[STATUS_NAUSEOUS] = max(monst->status[STATUS_NAUSEOUS], 20);
@@ -790,7 +789,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
                 }
                 flashMonster(monst, &confusionGasColor, 100);
                 monsterName(buf, monst, true);
-                sprintf(buf2, "%s %s very confused!", buf, (monst == &player ? "feel": "looks"));
+                sprintf(buf2, "%s%s非常的困惑！", buf, (monst == &player ? "感觉": "看起来"));
                 message(buf2, false);
             }
             monst->status[STATUS_CONFUSED] = monst->maxStatus[STATUS_CONFUSED] = max(monst->status[STATUS_CONFUSED], 25);
@@ -801,7 +800,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
             if (canDirectlySeeMonster(monst) && !monst->status[STATUS_PARALYZED]) {
                 flashMonster(monst, &pink, 100);
                 monsterName(buf, monst, true);
-                sprintf(buf2, "%s %s paralyzed!", buf, (monst == &player ? "are": "is"));
+                sprintf(buf2, "%s被麻痹了！", buf);
                 message(buf2, (monst == &player));
             }
             monst->status[STATUS_PARALYZED] = monst->maxStatus[STATUS_PARALYZED] = max(monst->status[STATUS_PARALYZED], 20);
@@ -822,7 +821,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
             }
             flashMonster(monst, &green, 100);
             monsterName(buf, monst, true);
-            sprintf(buf2, "the lichen's grasping tendrils poison %s.", buf);
+            sprintf(buf2, "苔藓的触须使%s中毒了。", buf);
             messageWithColor(buf2, messageColorFromVictim(monst), false);
         }
         monst->status[STATUS_POISONED] = max(monst->status[STATUS_POISONED], 10);

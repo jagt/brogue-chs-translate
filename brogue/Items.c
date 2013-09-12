@@ -1335,12 +1335,12 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 			case CHARM:
 				strcat(article, "件"); break;
 			case GOLD:
+			case FOOD:
 				strcat(article, "个"); break;
 			case KEY:
 				strcat(article, "把"); break;
 			case AMULET:
 			case ARMOR:
-			case FOOD:
 			default:
 				// pass
 				break;
