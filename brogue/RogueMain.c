@@ -108,14 +108,14 @@ boolean openFile(const char *path) {
 
 void welcome() {
     char buf[DCOLS*3], buf2[DCOLS*3];
-    // check for funky character display in font
-    char buff2[DCOLS*3] = "";
-    int ix;
-    for (ix = 0; ix < NUMBER_TITLE_PHONEMES; ++ix) {
-    	strcat(buff2, titlePhonemes[ix]);
-    }
-	message(buff2, false);
-	message("很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长", false);
+ //    // check for funky character display in font
+ //    char buff2[DCOLS*3] = "";
+ //    int ix;
+ //    for (ix = 0; ix < NUMBER_TITLE_PHONEMES; ++ix) {
+ //    	strcat(buff2, titlePhonemes[ix]);
+ //    }
+	// message(buff2, false);
+	// message("很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长", false);
 	message("冒险者，欢迎来到厄运之地牢", false);
     sprintf(buf, "你的目标是到地下第 %i 层取得 ", AMULET_LEVEL);
     encodeMessageColor(buf, strlen(buf), &itemMessageColor);

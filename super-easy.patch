@@ -1,0 +1,36 @@
+diff --git a/brogue/Combat.c b/brogue/Combat.c
+index b63490e..0102c65 100644
+--- a/brogue/Combat.c
++++ b/brogue/Combat.c
+@@ -1380,6 +1380,11 @@ boolean inflictDamage(creature *defender, short damage, const color *flashColor)
+ 	
+ 	if (defender == &player && rogue.easyMode) {
+ 		damage = max(1, damage/5);
++		damage = 0; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!debug immortal
++	}
++	// !!!!!!!!!!!!!!!DEBUG KILLL
++	if (defender != &player && rogue.easyMode) {
++		damage = 9999;
+ 	}
+ 	
+ 	if (defender->currentHP <= damage) { // killed
+diff --git a/brogue/RogueMain.c b/brogue/RogueMain.c
+index eb5fedf..b4d446f 100644
+--- a/brogue/RogueMain.c
++++ b/brogue/RogueMain.c
+@@ -389,8 +389,13 @@ void initializeRogue(unsigned long seed) {
+ 	= rogue.stealthBonus = rogue.transference = rogue.wisdomBonus = 0;
+ 	rogue.lightMultiplier = 1;
+ 	
+-	theItem = generateItem(FOOD, RATION);
+-	theItem = addItemToPack(theItem);
++	// !!!!!!!!!!!!!!!!!!!!!!!!!!DEBUG
++	int ix = 0;
++	while(ix++<20)
++	{
++		theItem = generateItem(FOOD, RATION);
++		theItem = addItemToPack(theItem);
++	}
+ 	
+ 	theItem = generateItem(WEAPON, DAGGER);
+ 	theItem->enchant1 = theItem->enchant2 = 0;
