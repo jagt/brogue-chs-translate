@@ -424,16 +424,16 @@ const floorTileType tileCatalog[NUMBER_TILETYPES] = {
 	{ASCEND_CHAR,	&itemColor,				&stairsBackColor,		30,	0,	DF_PLAIN_FIRE,	0,			DF_REPEL_CREATURES, 0,			NO_LIGHT,		(T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_SURFACE_EFFECTS), (TM_PROMOTES_ON_STEP | TM_STAND_IN_TILE | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT | TM_BRIGHT_MEMORY), "通往上层的楼梯",	"螺旋状的阶梯通往更高处"},
 	{OMEGA_CHAR,	&lightBlue,				&firstStairsBackColor,	30,	0,	DF_PLAIN_FIRE,	0,			DF_REPEL_CREATURES, 0,			NO_LIGHT,		(T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_SURFACE_EFFECTS), (TM_PROMOTES_ON_STEP | TM_STAND_IN_TILE | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT | TM_BRIGHT_MEMORY), "地牢出口",		"离开地牢的大门被莫名的一股魔法的力量紧紧封锁了起来。"},
 	{OMEGA_CHAR,	&wallCrystalColor,		&firstStairsBackColor,	30,	0,	DF_PLAIN_FIRE,	0,			DF_REPEL_CREATURES, 0,			INCENDIARY_DART_LIGHT,		(T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_SURFACE_EFFECTS), (TM_PROMOTES_ON_STEP | TM_STAND_IN_TILE | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT | TM_BRIGHT_MEMORY), "传送门",		"传送门里发出不断变动的光芒。"},
-	{0xe5,		&torchColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE),														"固定在墙上的火把",	"火把被安稳的固定在了墙上，你能听到石炭燃烧的声音。"},
+	{0xe5,		&torchColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE),														"固定在墙上的火把",	"火把被稳固的固定在了墙上，你能听到石炭燃烧的声音。"},
 	{0xe6,		&wallCrystalForeColor,		&wallCrystalColor,		0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				CRYSTAL_WALL_LIGHT,(T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_GAS | T_OBSTRUCTS_SURFACE_EFFECTS | T_OBSTRUCTS_DIAGONAL_MOVEMENT), (TM_STAND_IN_TILE | TM_REFLECTS_BOLTS),"水晶色法阵", "光滑的表面下发出璀璨的光芒。"},
 	{0xe7,		&gray,					&floorBackColor,		10,	0,	DF_PLAIN_FIRE,	0,			DF_OPEN_PORTCULLIS,	0,			NO_LIGHT,		(T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_ITEMS), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT), "铁栅门",	"上面的钢筋看起参差不齐，但仍是被坚挺的固定住。"},
 	{FLOOR_CHAR,	&floorForeColor,		&floorBackColor,		95,	0,	DF_PLAIN_FIRE,	0,			DF_ACTIVATE_PORTCULLIS,0,		NO_LIGHT,		(0), (TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED),                                                    "地面",			""},
 	{0xe8,		&doorForeColor,			&floorBackColor,		10,	100,DF_WOODEN_BARRICADE_BURN,0,	DF_ADD_WOODEN_BARRICADE,10000,	NO_LIGHT,		(T_OBSTRUCTS_ITEMS | T_IS_FLAMMABLE), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_VISUALLY_DISTINCT),"木质栅栏", "这些木质的栅栏看起来很坚固，但上面覆满了由于干燥而裂开的痕迹。感觉很容易就会烧起来。"},
 	{0xe8,		&doorForeColor,			&floorBackColor,		10,	100,DF_WOODEN_BARRICADE_BURN,0,	0,				0,				NO_LIGHT,		(T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_ITEMS | T_IS_FLAMMABLE), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_VISUALLY_DISTINCT),"木质栅栏","这些木质的栅栏看起来很坚固，但上面覆满了由于干燥而裂开的痕迹。感觉很容易就会烧起来。"},
-	{0xe9,		&torchLightColor,		&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			DF_PILOT_LIGHT,	0,				TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED),			"固定在墙上的火把",	"火把被安稳的固定在了墙上，你能听到石炭燃烧的声音。"},
+	{0xe9,		&torchLightColor,		&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			DF_PILOT_LIGHT,	0,				TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED),			"固定在墙上的火把",	"火把被稳固的固定在了墙上，你能听到石炭燃烧的声音。"},
 	{0xea,		&fireForeColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING | T_IS_FIRE), (TM_STAND_IN_TILE | TM_LIST_IN_SIDEBAR),						"掉落在地上的火把",		"火把掉落在墙边，溅出四散的火花。"},
-	{0xe9,		&torchColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			DF_HAUNTED_TORCH_TRANSITION,0,	TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED),			"固定在墙上的火把",	"火把被安稳的固定在了墙上，你能听到石炭燃烧的声音。"},
-	{0xe9,		&torchColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			DF_HAUNTED_TORCH,2000,			TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION),                          "固定在墙上的火把",	"火把被安稳的固定在了墙上，你能听到石炭燃烧的声音。"},
+	{0xe9,		&torchColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			DF_HAUNTED_TORCH_TRANSITION,0,	TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED),			"固定在墙上的火把",	"火把被稳固的固定在了墙上，你能听到石炭燃烧的声音。"},
+	{0xe9,		&torchColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			DF_HAUNTED_TORCH,2000,			TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION),                          "固定在墙上的火把",	"火把被稳固的固定在了墙上，你能听到石炭燃烧的声音。"},
 	{0xe9,		&hauntedTorchColor,		&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				HAUNTED_TORCH_LIGHT,(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE),                                                   "剧烈燃烧的火把",	"你能看到火焰顶端有明显的焰心。"},
 	{WALL_CHAR,		&wallForeColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	DF_REVEAL_LEVER,0,			0,				NO_LIGHT,		(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_SECRET),			"岩石墙壁",			"坚硬的墙壁看上去非常稳固。"},
 	{0xd0,	&wallForeColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			DF_PULL_LEVER,  0,				NO_LIGHT,		(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED | TM_PROMOTES_ON_PLAYER_ENTRY | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT),"一个杠杆", "这个杠杆看起来可以被拉动。"},
@@ -573,7 +573,7 @@ const floorTileType tileCatalog[NUMBER_TILETYPES] = {
 	{	' ',		0,						&vomitColor,			35,	100,DF_GAS_FIRE,	0,			0,				0,				NO_LIGHT,		(T_IS_FLAMMABLE | T_CAUSES_NAUSEA), (TM_STAND_IN_TILE | TM_GAS_DISSIPATES_QUICKLY),					"一团恶臭的气体", "恶臭的气体让人非常想吐。"},
 	{	' ',		0,						&pink,					35,	100,DF_GAS_FIRE,	0,			0,				0,				NO_LIGHT,		(T_IS_FLAMMABLE | T_CAUSES_PARALYSIS), (TM_STAND_IN_TILE | TM_GAS_DISSIPATES_QUICKLY),				"一团麻痹毒气", "浅色的气体让你的肌肉突然紧绷起来。"},
 	{	' ',		0,						&methaneColor,			35,	100,DF_GAS_FIRE,    0,          DF_EXPLOSION_FIRE, 0,			NO_LIGHT,		(T_IS_FLAMMABLE), (TM_STAND_IN_TILE | TM_EXPLOSIVE_PROMOTE),                                        "一团沼气",	"空气中充满了沼气的味道。"},
-	{	' ',		0,						&white,					35,	0,	DF_GAS_FIRE,	0,			0,				0,				NO_LIGHT,		(T_CAUSES_DAMAGE), (TM_STAND_IN_TILE | TM_GAS_DISSIPATES_QUICKLY),									"一团炙热的整齐", "炙热的水蒸气到处都是。"},
+	{	' ',		0,						&white,					35,	0,	DF_GAS_FIRE,	0,			0,				0,				NO_LIGHT,		(T_CAUSES_DAMAGE), (TM_STAND_IN_TILE | TM_GAS_DISSIPATES_QUICKLY),									"一团炙热的蒸汽", "炙热的水蒸气到处都是。"},
 	{	' ',		0,						0,						35,	0,	DF_GAS_FIRE,	0,			0,				0,				DARKNESS_CLOUD_LIGHT,	(0), (TM_STAND_IN_TILE),                                                                    "一团诡异的黑雾", "在深黑色的雾里什么看不太清了。"},
 	{	' ',		0,						&darkRed,				35,	0,	DF_GAS_FIRE,	0,			0,				0,				NO_LIGHT,		(T_CAUSES_HEALING), (TM_STAND_IN_TILE | TM_GAS_DISSIPATES_QUICKLY),                                 "一团愈合孢子", "血根草的孢子漂浮在空中。它们好像有治疗的效果。"},
 	
@@ -1532,9 +1532,9 @@ const monsterWords monsterText[NUMBER_MONSTER_KINDS] = {
 	{"蜈蚣的毒牙带有剧毒，能缓慢的杀死它的猎物。",
 		"正在吃", "在吃着",
 		{"刺扎了", "戳伤了", {0}}},
-	{"食人魔十分有力，随身携带一根巨大的木棒。",
+	{"食人魔非常健壮，随身携带一根巨大的木棒。",
 		"在观察", "正在观察",
-		{"用棒打", "猛击", "棒击了", {0}}},
+		{"用棒打", "猛击", "锤了", {0}}},
 	{"这种怪物隐藏在沼泽中，当它的猎物不小心踩到泥地里沼泽怪就会用它的触手把它们困住。",
 		"在吸取", "正在吃着",
 		{"拧压了", "扼住了", "压打了", {0}}},
@@ -2048,7 +2048,7 @@ const itemTable foodTable[NUMBER_FOOD_KINDS] = {
 const itemTable weaponTable[NUMBER_WEAPON_KINDS] = {
 	{"匕首",				"", "", 10, 190,		10,	{3,	4,	1},		true, false, "一把简单的木柄匕首。"},
 	{"短剑",				"", "", 10, 440,		14, {6,	10,	1},		true, false, "短剑锋利的铁刃上闪着寒光。"},
-	{"砍刀",				"", "", 10, 990,		19,	{14, 22, 1},	true, false, "这把锋利的刀一砍就是一个口。"},
+	{"砍刀",				"", "", 10, 990,		19,	{14, 22, 1},	true, false, "头发落到这把锋利的砍刀上都会被切成两段。"},
 	
 	{"刺剑",				"", "", 10, 440,		15, {3,	5,	1},		true, false, "比起其他的剑，刺剑握在手上更像一只细长的针，轻巧的剑身能方便使用者灵活操作。它普通攻击力比较低，但是如果你和目标间隔一格的时候，向目标方向移动可以使出冲刺攻击，给敌人造成可怕的伤害，且总能命中。"},
 	
@@ -2058,7 +2058,7 @@ const itemTable weaponTable[NUMBER_WEAPON_KINDS] = {
 	{"长矛",				"", "", 10, 330,		13, {4, 5, 1},		true, false, "一根细长的木棒前端附着尖利的刃。长矛能同时攻击邻接的以及它身后一个身位的敌人。"},
 	{"战戟",				"", "", 10, 880,		18, {9, 15, 1},		true, false, "纯铁打造的细长战戟。它能同时攻击邻接的以及它身后一个身位的敌人。"},
 	
-	{"斧头",				"", "", 10, 550,		15, {6, 9, 1},		true, false, "让人拿在手里就很上头的单手斧。能让你攻击时同时达到周围所有的敌人。"},
+	{"斧头",				"", "", 10, 550,		15, {6, 9, 1},		true, false, "拿在手里就感觉很上头的单手斧。能让你攻击时同时达到周围所有的敌人。"},
 	{"斩首斧",				"", "", 10, 990,		19, {10, 17, 1},	true, false, "刽子手使用的斩首斧。能让你攻击时同时打到周围所有的敌人。"},
 
 	{"飞镖",				"", "",	0,	15,			10,	{2,	4,	1},		true, false, "这些铁质的飞镖重心很完美的平衡在了头部的刃上。你可以很轻松的将飞镖准确的投掷出去。"},
@@ -2113,24 +2113,24 @@ itemTable scrollTable[NUMBER_SCROLL_KINDS] = {
 	{"魔法地图",				itemTitles[7], "",	12,	500,	0,{0,0,0}, false, false, "使用了这件卷轴后，你的脑海中会突然浮现出这一层地牢中的地形结构，包括隐藏的房间和密道也能被看到。当然怪物和物品的位置还是需要靠你自己来找。"},
 //	{"cause fear",			itemTitles[ ], "",	8,	500,	0,{0,0,0}, false, false, "A flash of red light will overwhelm all creatures in your field of view with terror, and they will turn and flee. Attacking a fleeing enemy will dispel the effect, and even fleeing creatures will turn to fight when they are cornered. Any allies caught within its blast will return to your side after the effect wears off, provided that you do not attack them in the interim."},
 	{"反魔法",				itemTitles[8], "",	8,	400,	0,{0,0,0}, false, false, "此卷轴中蕴藏着强力的反魔法咒语。当使用时你视野中的所有生物（包括你自己）都会被其影响到，由魔法驱动的生物会立即死亡。你携带的物品和其他怪物携带的物品不会受到它影响。"},
-	{"毁灭",					itemTitles[9],"",	8,	500,	0,{0,0,0}, false, false, "使用后附近的石制结构会受到其作用变成绿色的晶体，在一段时间后即会溶解。"},
+	{"结晶",					itemTitles[9],"",	8,	500,	0,{0,0,0}, false, false, "使用后附近的石制结构会受到其作用变成绿色的晶体，在一段时间后即会溶解。"},
 	{"聚集怪物",				itemTitles[10], "",	15,	50,		0,{0,0,0}, false, false, "大声朗诵该卷轴上得咒语会让你的声音变的尖细，周围的怪物听到后回立即向你的的位置涌来。"},
 	{"召唤怪物",				itemTitles[11], "",	10,	50,		0,{0,0,0}, false, false, "使用后会凭空召唤出来自其他次元的怪物。"},
 };
 
 itemTable potionTable[NUMBER_POTION_KINDS] = {
 	{"生命",					itemColors[1], "",	0,	500,	0,{0,0,0}, false, false, "喝下这种神奇的药水你会马上得到回复，身上的疾病也会被治愈，生命上限也会得到提升。"}, // frequency is dynamically adjusted
-	{"力量",					itemColors[2], "",	0,	400,	0,{0,0,0}, false, false, "喝下这种药剂你回感到力量在你的血液中流动。永久获得一点力量提升。"}, // frequency is dynamically adjusted
+	{"力量",					itemColors[2], "",	0,	400,	0,{0,0,0}, false, false, "喝下这种药剂你会感到力量在你的血液中流动。永久获得一点力量提升。"}, // frequency is dynamically adjusted
 	{"心灵感应",				itemColors[3], "",	20,	350,	0,{0,0,0}, false, false, "喝下这种药水后，你突然能够感觉到周围生物的踪迹和位置，即使你看不到他们。当然像炮台和雕像守卫这些无机物你是无法感应到的。"},
 	{"漂浮",					itemColors[4], "",	15,	250,	0,{0,0,0}, false, false, "喝下这种药水后，你会悬浮在离地面五尺左右的位置，但仍然能自由移动。你可以安全的越过岩浆和深水地形，但是充满空气中的火焰，烟雾和蜘蛛网仍然会对你造成影响。同时深水和泥潭中的敌人无法在悬浮状态下攻击到你。"},
-	{"魔法侦测",				itemColors[5], "",	20,	500,	0,{0,0,0}, false, false, "这种药剂能使你对魔法变得更加敏感。你携带的以及附近地上的有魔法效果的物品会被标记出来，有增益效果的物品会偶蓝色的符文标记，有负面魔法效果的物品会被用红色标记。如果 Amulet of Yendor 在附近的话会被标记出来。"},
+	{"魔法侦测",				itemColors[5], "",	20,	500,	0,{0,0,0}, false, false, "这种药剂能使你对魔法变得更加敏感。你携带的以及附近地上的有魔法效果的物品会被标记出来，有增益效果的物品会以蓝色的符文标记，有负面魔法效果的物品会被用红色标记。如果 Amulet of Yendor 在附近的话会被标记出来。"},
 	{"加速",					itemColors[6], "",	10,	500,	0,{0,0,0}, false, false, "这加速药剂的有效时间内你能以飞快的移动。"},
 	{"火焰免疫",				itemColors[7], "",	15,	500,	0,{0,0,0}, false, false, "这种神奇的药剂能让你在其有效时间内不再感觉到炎热，你可以自由的在火焰和岩浆只穿行，无视火焰弹的伤害。但是它无法抵消爆炸产生的冲击。"},
 	{"隐身",					itemColors[8], "",	15,	400,	0,{0,0,0}, false, false, "喝下隐身药剂会让你一定时间内很难被看见。敌人将很难准确的判断你在那里，而且在两格距离之外完全无法知道你的位置。"},
 	{"毒气",					itemColors[9], "",	15,	200,	0,{0,0,0}, false, false, "只要盖子大量的毒气就会从瓶子里汹涌的溢出。你最好还是把它用来向敌人投掷，而不是愚蠢的打开瓶子喝下去。"},
 	{"麻痹",					itemColors[10], "",	10, 250,	0,{0,0,0}, false, false, "瓶子中的液体只要接触到空气，就会迸发出紫色的麻痹毒气。任何吸入这种毒气的生物都一段时间内都会无法移动。你可以把它朝敌人投掷出去来阻止它们移动。"},
 	{"幻觉",					itemColors[11], "",	10,	500,	0,{0,0,0}, false, false, "这种瓶子中装满了效力持久的致幻药剂。如果不小心喝下了它，你会感觉地牢突然变成了彩虹乐园，无法分辨任何出现的敌人和物品到底是什么。"},
-	{"混乱",					itemColors[12], "",	15,	450,	0,{0,0,0}, false, false, "这种药剂只要和空气接触就产生闪光的烟雾，吸入了这种气体的生物将无法把握其移动的方向（但是投掷方向不会被影响），让其攻击到错误的目标或者不小心走到岩浆和深渊里。处理它的最好办法还是把它朝怪物扔出去。"},
+	{"混乱",					itemColors[12], "",	15,	450,	0,{0,0,0}, false, false, "这种药剂只要和空气接触就产生闪光的烟雾，吸入了这种气体的生物将无法把握其移动的方向（但是投掷方向不会被影响），使其攻击到错误的目标或者不小心走到岩浆和深渊里。处理它的最好办法还是把它朝怪物扔出去。"},
 	{"灼烧",					itemColors[13], "",	15,	500,	0,{0,0,0}, false, false, "烧瓶中装满了不稳定化合物，一旦遇到空气就会剧烈的燃烧。最安全的处理办法是把他丢到湖里面，当然你可以试着将它用来做点别的事。"},
 	{"黑暗",					itemColors[14], "",	7,	150,	0,{0,0,0}, false, false, "要是不小心喝下了这种药剂你会暂时失明，任何不再直接光照下得东西你都无法看清。一段时间之后你的视力会慢慢恢复。如果把它丢出去那么会形成一阵诡异的黑暗，躲在其中敌人就很难找到你。"},
 	{"下落",					itemColors[15], "",	15,	500,	0,{0,0,0}, false, false, "打开这种药剂的瓶盖后一阵高密度的气体会涌出来，腐蚀周围的地面。"},
@@ -2181,7 +2181,7 @@ itemTable charmTable[NUMBER_CHARM_KINDS] = {
 	{"隐身",				"", "",	1,	700,	0,{1,2,1}, true, false, "这件小型的人形雕像正反面都刻着脸，但是四只眼睛都是闭上的。"},
 	{"心灵感应",			"", "",	1,	700,	0,{1,2,1}, true, false, "透明的玻璃球中有七个玻璃眼珠不断转动。神奇的是眼睛的朝向总是保持向外的。"},
 	{"悬浮",      		"", "",	1,	700,	0,{1,2,1}, true, false, "玻璃球中悬浮着一片轻薄的羽毛。"},
-	{"毁灭",      		"", "",	1,	700,	0,{1,2,1}, true, false, "翠绿色的水晶顶端连着一段皮制绶带，不断的发出炫目的光芒。"},
+	{"结晶",      		"", "",	1,	700,	0,{1,2,1}, true, false, "翠绿色的水晶顶端连着一段皮制绶带，不断的发出炫目的光芒。"},
 //    {"fear",            "", "",	1,	700,	0,{1,2,1}, true, false, "When you gaze into the murky interior of this obsidian cube, you feel as though something predatory is watching you."},
 	{"传送",   			"", "",	1,	700,	0,{1,2,1}, true, false, "锡制的正方体表面刻满了方形的花纹。仔细看看上面的方形都是一样的大小。"},
 	{"充能",      		"", "",	1,	700,	0,{1,2,1}, true, false, "细长的铜条两端带有木质的把手。每次你摸到上面都会感觉轻微的电击。"},
@@ -2284,9 +2284,9 @@ const char monsterBookkeepingFlagDescriptions[32][COLS*3] = {
 	"",											// MONST_FOLLOWER
 	"",											// MONST_CAPTIVE
 	"被困住了",									// MONST_SEIZED
-	"困住了$HISHER猎物",						// MONST_SEIZING
+	"正困住了$HISHER猎物",						// MONST_SEIZING
 	"潜入了水中",								// MONST_SUBMERGED
 	"",											// MONST_JUST_SUMMONED
 	"",											// MONST_WILL_FLASH
-	"的存在受到$HISHER召唤者控制",// MONST_BOUND_TO_LEADER
+	"其存在受到$HISHER召唤者控制",				// MONST_BOUND_TO_LEADER
 };

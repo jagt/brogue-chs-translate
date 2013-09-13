@@ -1971,7 +1971,7 @@ boolean monsterBlinkToPreferenceMap(creature *monst, short **preferenceMap, bool
 	if (gotOne) {
 		if (canDirectlySeeMonster(monst)) {
 			monsterName(monstName, monst, true);
-			sprintf(buf, "%s一瞬间移开了", monstName);
+			sprintf(buf, "%s瞬间移动了位置", monstName);
 			combatMessage(buf, 0);
 		}
 		monst->ticksUntilTurn = monst->attackSpeed * (monst->info.flags & MONST_CAST_SPELLS_SLOWLY ? 2 : 1);

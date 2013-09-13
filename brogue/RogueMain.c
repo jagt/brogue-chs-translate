@@ -809,9 +809,9 @@ void startLevel(short oldLevelNumber, short stairDirection) {
     if (!levels[rogue.depthLevel-1].visited) {
         levels[rogue.depthLevel-1].visited = true;
         if (rogue.depthLevel == AMULET_LEVEL) {
-            messageWithColor("An alien energy permeates the area. The Amulet of Yendor must be nearby!", &itemMessageColor, false);
+            messageWithColor("你能感觉到一股奇异的能量，Amulet of Yendor 一定就在附近！", &itemMessageColor, false);
         } else if (rogue.depthLevel == DEEPEST_LEVEL) {
-            messageWithColor("An overwhelming sense of peace and tranquility settles upon you.", &lightBlue, false);
+            messageWithColor("你感觉到一股莫名的平静的感觉。", &lightBlue, false);
         }
     }
 	
@@ -1247,7 +1247,7 @@ void enableEasyMode() {
 		refreshSideBar(-1, -1, false);
 		message("伴随一股抽搐，你的身体扭曲的不成人形！！！", false);
 		message("你感觉从此以后你受到的伤害将减少80%。", false);
-		message("但是邪恶的力量需要你付出更多的代价，具体来说就是90%的个人所得税。（分数将大幅减少）", false);
+		message("但是为此你也必须付出巨大的代价，具体来说就是90%的个人所得税！（分数将大幅减少）", false);
 	} else {
 		message("你的坚定意志将这股邪恶的力量驱散了。", false);
 	}

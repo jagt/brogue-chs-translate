@@ -5989,7 +5989,7 @@ void drinkPotion(item *theItem) {
 			if (player.status[STATUS_BURNING]) {
 				extinguishFireOnCreature(&player);
 			}
-			message("你感觉到喝下去的药剂很冰爽，一段时间内对火焰免疫。", false);
+			message("你感觉到喝下去的药剂很冰爽，使你在一段时间内对火焰免疫。", false);
 			break;
 		case POTION_INVISIBILITY:
 			player.status[STATUS_INVISIBLE] = player.maxStatus[STATUS_INVISIBLE] = 75;

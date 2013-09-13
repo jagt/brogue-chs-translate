@@ -1884,7 +1884,7 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 				recordKeystroke(DESCEND_KEY, false, false);
 				useStairs(1);
 			} else {
-				routeTo(rogue.downLoc[0], rogue.downLoc[1], "我还没找到往下一层的路。");
+				routeTo(rogue.downLoc[0], rogue.downLoc[1], "还没找到通往下一层的路。");
 			}
 			//refreshSideBar(-1, -1, false);
 			break;
@@ -1894,7 +1894,7 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
 				recordKeystroke(ASCEND_KEY, false, false);
 				useStairs(-1);
 			} else {
-				routeTo(rogue.upLoc[0], rogue.upLoc[1], "我还没找到往上一层的路。");
+				routeTo(rogue.upLoc[0], rogue.upLoc[1], "还没找到通往上一层的路。");
 			}
 			//refreshSideBar(-1, -1, false);
 			break;
@@ -3507,7 +3507,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 		"减速",
 		"加速",
 		"混乱",
-		"燃烧着",
+		"燃烧",
 		"麻痹",
 		"中毒",
 		"被困住",

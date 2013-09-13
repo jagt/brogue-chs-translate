@@ -477,7 +477,7 @@ void specialHit(creature *attacker, creature *defender, short damage) {
 	}
 	if ((attacker->info.abilityFlags & MA_POISONS) && damage > 0) {
 		if (defender == &player && !player.status[STATUS_POISONED]) {
-			combatMessage("毒渗入了你的身体", &badMessageColor);
+			combatMessage("毒液渗入了你的身体", &badMessageColor);
 		}
 		if (!defender->status[STATUS_POISONED]) {
 			defender->maxStatus[STATUS_POISONED] = 0;
