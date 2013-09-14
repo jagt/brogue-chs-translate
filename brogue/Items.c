@@ -5202,7 +5202,7 @@ void throwCommand(item *theItem) {
         }
 	}
 	
-	sprintf(buf, "把%s投掷到哪里？（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标）", theName);
+	sprintf(buf, "把%s投掷到哪里？（<hjklyubn>键或者鼠标选择位置, 按<tab>键快速切换目标）", theName);
 	temporaryMessage(buf, false);
 	maxDistance = (12 + 2 * max(rogue.strength - player.weaknessAmount - 12, 2));
 	autoTarget = (theItem->category & (WEAPON | POTION)) ? true : false;
@@ -5254,7 +5254,7 @@ boolean useStaffOrWand(item *theItem, boolean *commandsRecorded) {
         messageWithColor(buf, &itemMessageColor, false);
         return false;
     }
-    temporaryMessage("选择施法方向：（<hjklyubn>键或者鼠标选择位置, 按<tab>键切换敌人目标，回车键确认）", false);
+    temporaryMessage("选择施法方向：（<hjklyubn>键或者鼠标选择位置, 按<tab>键快速切换目标，回车键确认）", false);
     itemName(theItem, buf2, false, false, NULL);
 
     if ((theItem->category & STAFF) && theItem->kind == STAFF_BLINKING

@@ -3638,7 +3638,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
 			} else if (i == STATUS_POISONED
 					   && monst->status[i] > 0
 					   && monst->status[i] >= monst->currentHP) {
-				printProgressBar(0, y++, "已中剧毒", monst->status[i], monst->maxStatus[i], &redBar, dim);
+				printProgressBar(0, y++, "将被毒死", monst->status[i], monst->maxStatus[i], &redBar, dim);
 			} else if (statusStrings[i][0] && monst->status[i] > 0) {
 				printProgressBar(0, y++, statusStrings[i], monst->status[i], monst->maxStatus[i], &redBar, dim);
 			}
