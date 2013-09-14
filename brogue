@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+if [ `uname -s` = Darwin ]
+then
+    BROGUE_DIR=build/osx/Brogue.app/Contents/Resources
+    BROGUE=../MacOS/brogue
+else
+    BROGUE_DIR=build/linux
+    BROGUE=./brogue
+fi
+
+if [ -e ${BROGUE_DIR}/${BROGUE} ]
+then
+    cd ${BROGUE_DIR}
+    ${BROGUE} $*
+else
+    echo Use \'make\' to build brogue
+fi

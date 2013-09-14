@@ -1,0 +1,161 @@
+# a compact Makefile to be used on windows with mingw gcc only
+# using cmd commands only
+
+# from Makefile
+RELEASENAME = brogue-1.7.2-clight2-chs
+BASE_CFLAGS = -Isrc/brogue -Isrc/platform 
+
+GLOBAL_HEADERS = \
+	src/brogue/IncludeGlobals.h \
+	src/brogue/Rogue.h
+
+SOURCE = \
+	src/brogue/Architect.c \
+	src/brogue/Combat.c \
+	src/brogue/Dijkstra.c \
+	src/brogue/Globals.c \
+	src/brogue/IO.c \
+	src/brogue/Items.c \
+	src/brogue/Light.c \
+	src/brogue/Monsters.c \
+	src/brogue/Buttons.c \
+	src/brogue/Movement.c \
+	src/brogue/Recordings.c \
+	src/brogue/RogueMain.c \
+	src/brogue/Random.c \
+	src/brogue/MainMenu.c \
+	src/brogue/Grid.c \
+	\
+	src/platform/main.c \
+	src/platform/platformdependent.c \
+	src/platform/sdl-platform.c \
+	src/platform/sdl-display.c \
+	src/platform/sdl-draw.c \
+	src/platform/sdl-effects.c \
+        src/platform/sdl-keymap.c \
+	src/platform/sdl-svgset.c 
+
+
+# from Makefile.win32
+# WIN32_SDL_TTF_BIN_URL = http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.11-win32.zip
+# WIN32_SDL_TTF_DEV_URL = http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-devel-2.0.11-VC.zip
+# WIN32_SDL_DEV_URL = http://www.libsdl.org/release/SDL-devel-1.2.14-mingw32.tar.gz
+# WIN32_GTK_DEV_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/gtk+-bundle_2.24.10-20120208_win32.zip
+# WIN32_RSVG_DEV_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/librsvg/2.32/librsvg-dev_2.32.1-1_win32.zip
+# WIN32_RSVG_BIN_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/librsvg/2.32/librsvg_2.32.1-1_win32.zip
+# WIN32_LIBCROCO_BIN_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/libcroco/0.6/libcroco_0.6.2-1_win32.zip
+# WIN32_LIBXML_BIN_URL = ftp://ftp.zlatkovic.com/libxml/libxml2-2.7.8.win32.zip
+# WIN32_ICONV_BIN_URL = ftp://ftp.zlatkovic.com/libxml/iconv-1.9.2.win32.zip
+
+WIN32_SDL = windeps/SDL-1.2.14
+WIN32_SDL_TTF = windeps/SDL_ttf-2.0.11
+WIN32_LIBXML = wind/libxml2-2.7.8.win32
+WIN32_ICONV = wind/iconv-1.9.2.win32
+
+WIN32_INCLUDE = \
+	      -I$(WIN32_SDL)/include \
+	      -Iwindeps/include \
+	      -Iwindeps/include/librsvg-2.0 \
+	      -Iwindeps/include/glib-2.0 \
+	      -Iwindeps/lib/glib-2.0/include \
+	      -Iwindeps/include/gdk-pixbuf-2.0
+
+WIN32_LIBPATH = \
+	-Lwindeps/lib \
+	-Lwindeps/SDL-1.2.14/lib
+
+WIN32_LIB = \
+	   -lrsvg-2 \
+	   -lcairo \
+	   -lgobject-2.0 \
+	   -lglib-2.0 \
+	   -lSDL \
+	   ${WIN32_SDL_TTF}/lib/x86/SDL_ttf.dll
+
+WIN32_DLL = \
+	  winbuild/SDL_ttf.dll \
+	  winbuild/SDL.dll \
+	  winbuild/libcairo-2.dll \
+	  winbuild/libcroco-0.6-3.dll \
+	  winbuild/libexpat-1.dll \
+	  winbuild/libfontconfig-1.dll \
+	  winbuild/libfreetype-6.dll \
+	  winbuild/libgdk_pixbuf-2.0-0.dll \
+	  winbuild/libgio-2.0-0.dll \
+	  winbuild/libglib-2.0-0.dll \
+	  winbuild/libgmodule-2.0-0.dll \
+	  winbuild/libgobject-2.0-0.dll \
+	  winbuild/libgthread-2.0-0.dll \
+	  winbuild/libpango-1.0-0.dll \
+	  winbuild/libpangocairo-1.0-0.dll \
+	  winbuild/libpangoft2-1.0-0.dll \
+	  winbuild/libpangowin32-1.0-0.dll \
+	  winbuild/libpng14-14.dll \
+	  winbuild/librsvg-2-2.dll \
+	  winbuild/libxml2-2.dll \
+	  winbuild/iconv.dll \
+	  winbuild/intl.dll \
+	  winbuild/freetype6.dll \
+	  winbuild/zlib1.dll
+
+
+WIN32_OBJS = $(patsubst src/%.c,winbuild/obj/%.o,${SOURCE})
+ifeq (${RELEASE},TRUE)
+WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -O2 -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable
+WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,windows -Wall
+else
+WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -g -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable
+WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,console -g -Wall
+endif
+
+#WIN32_GCC = i686-w64-mingw32-gcc
+#WIN32_WINDRES = i686-w64-mingw32-windres
+WIN32_GCC = gcc
+WIN32_WINDRES = windres
+
+WIN32DIST = \
+	$(wildcard *.txt) \
+	$(wildcard res/*.rtf) \
+	res/Andale_Mono.ttf \
+	res/FreeSans.ttf \
+	res/keymap \
+	res/icon.bmp \
+	winbuild/brogue.exe \
+	${WIN32_DLL}
+
+WIN32RES = \
+	winbuild/svg \
+	winbuild/Andale_Mono.ttf \
+	winbuild/Zfull-GB.ttf
+
+# never depends on phony targets
+.PHONY: all clean
+
+all: winbuild winbuild/brogue.exe
+
+clean:
+	del /F /Q /S winbuild
+	rmdir /S /Q winbuild
+
+winbuild/obj/%.o: src/%.c ${GLOBAL_HEADERS}
+	@echo '    CC' $@
+	@${WIN32_GCC} ${WIN32_CFLAGS} -c $< -o $@
+
+winbuild/brogue.exe: ${WIN32_OBJS} winbuild/brogue.res
+	@echo '    LD' $@
+	@${WIN32_GCC} -o $@ ${WIN32_OBJS} winbuild/brogue.res ${WIN32_LDFLAGS}
+
+winbuild/brogue.res: res/brogue-icon.ico build/brogue.rc
+	${WIN32_WINDRES} build/brogue.rc -O coff -o $@
+
+winbuild:
+	@echo 'mkdir winbuild'
+	@mkdir winbuild
+	@echo 'mkdir winbuild/obj'
+	@mkdir winbuild\obj\brogue winbuild\obj\platform
+	copy windll\* winbuild
+	mkdir winbuild\svg
+	copy svg winbuild\svg
+	copy res\Andale_Mono.ttf winbuild
+	copy res\Zfull-GB.ttf winbuild
+

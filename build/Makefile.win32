@@ -1,0 +1,177 @@
+WIN32_SDL_TTF_BIN_URL = http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.11-win32.zip
+WIN32_SDL_TTF_DEV_URL = http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-devel-2.0.11-VC.zip
+WIN32_SDL_DEV_URL = http://www.libsdl.org/release/SDL-devel-1.2.14-mingw32.tar.gz
+WIN32_GTK_DEV_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/gtk+-bundle_2.24.10-20120208_win32.zip
+WIN32_RSVG_DEV_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/librsvg/2.32/librsvg-dev_2.32.1-1_win32.zip
+WIN32_RSVG_BIN_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/librsvg/2.32/librsvg_2.32.1-1_win32.zip
+WIN32_LIBCROCO_BIN_URL = http://ftp.gnome.org/pub/gnome/binaries/win32/libcroco/0.6/libcroco_0.6.2-1_win32.zip
+WIN32_LIBXML_BIN_URL = ftp://ftp.zlatkovic.com/libxml/libxml2-2.7.8.win32.zip
+WIN32_ICONV_BIN_URL = ftp://ftp.zlatkovic.com/libxml/iconv-1.9.2.win32.zip
+
+WIN32_SDL = build/win32/SDL-1.2.14
+WIN32_SDL_TTF = build/win32/SDL_ttf-2.0.11
+WIN32_LIBXML = build/win32/libxml2-2.7.8.win32
+WIN32_ICONV = build/win32/iconv-1.9.2.win32
+
+WIN32_INCLUDE = \
+	      -I$(WIN32_SDL)/include \
+	      -Ibuild/win32/include \
+	      -Ibuild/win32/include/librsvg-2.0 \
+	      -Ibuild/win32/include/glib-2.0 \
+	      -Ibuild/win32/lib/glib-2.0/include \
+	      -Ibuild/win32/include/gdk-pixbuf-2.0
+
+WIN32_LIBPATH = \
+	-Lbuild/win32/lib \
+	-Lbuild/win32/SDL-1.2.14/lib
+
+WIN32_LIB = \
+	   -lrsvg-2 \
+	   -lcairo \
+	   -lgobject-2.0 \
+	   -lglib-2.0 \
+	   -lSDL \
+	   ${WIN32_SDL_TTF}/lib/x86/SDL_ttf.dll
+
+WIN32_DLL = \
+	  build/win32/SDL_ttf.dll \
+	  build/win32/SDL.dll \
+	  build/win32/libcairo-2.dll \
+	  build/win32/libcroco-0.6-3.dll \
+	  build/win32/libexpat-1.dll \
+	  build/win32/libfontconfig-1.dll \
+	  build/win32/libfreetype-6.dll \
+	  build/win32/libgdk_pixbuf-2.0-0.dll \
+	  build/win32/libgio-2.0-0.dll \
+	  build/win32/libglib-2.0-0.dll \
+	  build/win32/libgmodule-2.0-0.dll \
+	  build/win32/libgobject-2.0-0.dll \
+	  build/win32/libgthread-2.0-0.dll \
+	  build/win32/libpango-1.0-0.dll \
+	  build/win32/libpangocairo-1.0-0.dll \
+	  build/win32/libpangoft2-1.0-0.dll \
+	  build/win32/libpangowin32-1.0-0.dll \
+	  build/win32/libpng14-14.dll \
+	  build/win32/librsvg-2-2.dll \
+	  build/win32/libxml2-2.dll \
+	  build/win32/iconv.dll \
+	  build/win32/intl.dll \
+	  build/win32/freetype6.dll \
+	  build/win32/zlib1.dll
+
+WIN32_DEV_PKGS = \
+	       build/win32/SDL_ttf-dev.zip \
+	       build/win32/SDL-dev.tar.gz \
+	       build/win32/gtk-dev.zip \
+	       build/win32/rsvg-dev.zip \
+	       build/win32/rsvg-bin.zip \
+	       build/win32/libxml-bin.zip \
+	       build/win32/libcroco-bin.zip \
+	       build/win32/iconv-bin.zip
+
+WIN32_OBJS = $(patsubst src/%.c,build/win32/obj/%.o,${SOURCE})
+ifeq (${RELEASE},TRUE)
+WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -O2 -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable
+WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,windows -Wall
+else
+WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -g -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable
+WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,console -g -Wall
+endif
+
+#WIN32_GCC = i686-w64-mingw32-gcc
+#WIN32_WINDRES = i686-w64-mingw32-windres
+WIN32_GCC = gcc
+WIN32_WINDRES = windres
+
+WIN32DIST = \
+	$(wildcard *.txt) \
+	$(wildcard res/*.rtf) \
+	res/Andale_Mono.ttf \
+	res/FreeSans.ttf \
+	res/keymap \
+	res/icon.bmp \
+	build/win32/brogue.exe \
+	${WIN32_DLL}
+
+win32: win32depends build/win32/brogue.exe ${WIN32_DLL}
+
+win32depends:
+	build/checkdeps.sh gcc-mingw-w64-i686 wget
+	_mkdir -p build/win32 build/win32/obj/brogue build/win32/obj/platform
+
+build/win32/obj/%.o: src/%.c ${GLOBAL_HEADERS} ${WIN32_DEV_PKGS}
+	@echo '    CC' $@
+	@${WIN32_GCC} ${WIN32_CFLAGS} -c $< -o $@
+
+build/win32/brogue.exe: ${WIN32_OBJS} build/win32/brogue.res
+	@echo '    LD' $@
+	@${WIN32_GCC} -o $@ ${WIN32_OBJS} build/win32/brogue.res ${WIN32_LDFLAGS}
+
+build/win32/brogue.res: res/brogue-icon.ico build/brogue.rc
+	${WIN32_WINDRES} build/brogue.rc -O coff -o $@
+
+${WIN32_SDL}/include/SDL/SDL_ttf.h: ${WIN32_SDL_TTF}/include/SDL_ttf.h
+	cp $< $@
+
+zip: ${ZIPFILE}
+
+${ZIPFILE}: win32
+	_mkdir -p ${RELEASENAME}
+	_mkdir -p ${RELEASENAME}/svg
+	cp ${WIN32DIST} ${RELEASENAME}
+	cp svg/*.svg ${RELEASENAME}/svg
+	rm -f ${ZIPFILE}
+	zip -r ${ZIPFILE} ${RELEASENAME}
+	rm -fr ${RELEASENAME}
+
+build/win32/SDL_ttf-dev.zip: build/win32/SDL-dev.tar.gz
+	wget ${WIN32_SDL_TTF_DEV_URL} -O $@
+	unzip -o -d build/win32 $@
+	cp ${WIN32_SDL_TTF}/include/*.h ${WIN32_SDL}/include/SDL
+	touch $@
+
+build/win32/SDL-dev.tar.gz:
+	wget ${WIN32_SDL_DEV_URL} -O $@
+	tar -zxf $@ -C build/win32
+
+build/win32/gtk-dev.zip:
+	wget ${WIN32_GTK_DEV_URL} -O $@
+	unzip -o -d build/win32 $@
+
+build/win32/rsvg-dev.zip:
+	wget ${WIN32_RSVG_DEV_URL} -O $@
+	unzip -o -d build/win32 $@
+
+build/win32/rsvg-bin.zip:
+	wget ${WIN32_RSVG_BIN_URL} -O $@
+	unzip -o -d build/win32 $@
+
+build/win32/libxml-bin.zip:
+	wget ${WIN32_LIBXML_BIN_URL} -O $@
+	unzip -o -d build/win32 $@
+
+build/win32/libcroco-bin.zip:
+	wget ${WIN32_LIBCROCO_BIN_URL} -O $@
+	unzip -o -d build/win32 $@
+
+build/win32/iconv-bin.zip:
+	wget ${WIN32_ICONV_BIN_URL} -O $@
+	unzip -o -d build/win32 $@
+
+build/win32/SDL_ttf.dll: ${WIN32_DEV_PKGS}
+	cp ${WIN32_SDL_TTF}/lib/x86/SDL_ttf.dll $@
+
+build/win32/libfreetype-6.dll: ${WIN32_DEV_PKGS}
+	cp ${WIN32_SDL_TTF}/lib/x86/libfreetype-6.dll $@
+
+build/win32/SDL.dll: ${WIN32_DEV_PKGS}
+	cp ${WIN32_SDL}/bin/SDL.dll $@
+
+build/win32/libxml2-2.dll: ${WIN32_DEV_PKGS}
+	cp ${WIN32_LIBXML}/bin/libxml2.dll $@
+
+build/win32/iconv.dll: ${WIN32_DEV_PKGS}
+	cp ${WIN32_ICONV}/bin/iconv.dll $@
+
+build/win32/%: ${WIN32_DEV_PKGS} build/win32/bin/%
+	cp build/win32/bin/$* $@

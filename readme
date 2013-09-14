@@ -1,0 +1,35 @@
+Be sure to read readme.rtf too.  This readme only explains functionality that
+is specific to the Linux release of Brogue.
+
+---
+
+Brogue now supports remapped keys.  The remapping engine is quite limited
+and is described in res/keymap.
+
+Press F12 or alt-enter to toggle fullscreen mode.
+
+Press pgdn/pgup to adjust the font size
+
+--
+
+./brogue is a shell script that will invoke brogue with the
+appropriate switches and in the correct working folder.  It therefore
+serves as an acceptable target for a desktop shortcut (see
+make-link-for-desktop.sh for an easy way to make one.)  It will pass
+command line arguments along to brogue.  The following switches are
+accepted:
+
+-h                         print a help message
+-V                         print the version
+--scores                   dump scores to output and exit immediately
+
+-n                         start a new game, skipping the menu
+-s seed                    start a new game with the specified numerical seed
+-o filename[.broguesave]   open a recording (extension may be omitted)
+-v recording[.broguerec]   view a recording (extension may be omitted)
+-M                         same as --no-menu
+
+--size N                   starts the game with font size N (1 to 13)
+--no-menu                  never display the menu (automatically pick new game)
+--noteye-hack              ignore SDL-specific application state checks
+
