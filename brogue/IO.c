@@ -3012,6 +3012,7 @@ short wrapText(char *to, const char *sourceText, short width) {
 	
 	// ! Since now we have long unicode lines, replacing spaces is not fesible
 	// ! so don't break on spaces now. just hard break anything longer than the width
+	i = 0;
 	w = currentLineLength = 0;
 	while (i < textLength) {
 		if (sourceText[i] == COLOR_ESCAPE) {
