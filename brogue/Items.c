@@ -1075,8 +1075,8 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 				sprintf(root, "芒果");
 			} else {
 				if (theItem->quantity == 1) {
-					sprintf(article, "一份");
-					sprintf(root, "食物");
+					// sprintf(article, "一份");
+					sprintf(root, "粮食");
 				} else {
 					sprintf(root, "粮食");
 				}
@@ -1313,7 +1313,7 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 			sprintf(article, "%i", theItem->quantity);
 		} else if (theItem->category & AMULET) {
 			sprintf(article, "");
-		} else if (!(theItem->category & ARMOR) && !(theItem->category & FOOD && theItem->kind == RATION)) {
+		} else if (!(theItem->category & ARMOR)) {
 			// otherwise prepend a/an if the item is not armor and not a ration of food;
 			// armor gets no article, and "some food" was taken care of above.
 			sprintf(article, "一");
@@ -1334,8 +1334,9 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
 				strcat(article, "只"); break;
 			case CHARM:
 				strcat(article, "件"); break;
-			case GOLD:
 			case FOOD:
+				strcat(article, "份"); break;
+			case GOLD:
 				strcat(article, "个"); break;
 			case KEY:
 				strcat(article, "把"); break;
