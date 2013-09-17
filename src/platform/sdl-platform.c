@@ -23,6 +23,8 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <locale.h>
+#include <iconv.h>
 
 #include "platform.h"
 #include "IncludeGlobals.h"
@@ -113,7 +115,7 @@ static SDL_CONSOLE console;
     relative paths.  */
 char *SdlConsole_getAppPath(const char *file)
 {
-    char *path = malloc(strlen(file) + strlen(console.app_path) + 2);
+    char *path = malloc(strlen(file) + strlen(console.app_path) + 16); // add more padding just for safety
     if (path == NULL)
     {
 	return NULL;
@@ -985,13 +987,31 @@ void SdlConsole_remap(const char *input_name, const char *output_name)
 /*  Allocate the structures to be used by the console.  */
 void SdlConsole_allocate(void)
 {
+    
     char app_dir[1024];
+#ifdef _WIN32
+    char utf8_dir[1024];    
+    size_t outbytesleft, inbytesleft, conv_ret;
+    const char *tin = app_dir;
+    char *tout = utf8_dir;
+#endif
 
     if (getcwd(app_dir, 1024) == NULL)
     {
 	printf("Failed to get working directory\n");
 	exit(1);
     }
+
+#ifdef _WIN32
+    // since we're targetting chs user, convert from gbk anyway
+    // if all are ascii then nothing happens really
+    inbytesleft = strlen(app_dir) + 1;
+    outbytesleft = 1024;
+    iconv_t cd = iconv_open("UTF-8", "GBK");
+    conv_ret = iconv(cd, &tin, &inbytesleft, &tout, &outbytesleft);
+    iconv_close(cd);
+    memcpy(app_dir, utf8_dir, sizeof(char)*1024);
+#endif
 
     console.app_path = malloc(strlen(app_dir) + 1);
     strcpy(console.app_path, app_dir);

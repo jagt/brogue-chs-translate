@@ -70,6 +70,7 @@ WIN32_LIB = \
 	   -lgobject-2.0 \
 	   -lglib-2.0 \
 	   -lSDL \
+	   -liconv \
 	   ${WIN32_SDL_TTF}/lib/x86/SDL_ttf.dll
 
 WIN32_DLL = \
