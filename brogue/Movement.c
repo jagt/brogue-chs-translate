@@ -319,58 +319,58 @@ void describeLocation(char *buf, short x, short y) {
                          && !(monst->info.flags & MONST_GETS_TURN_ON_ACTIVATION));
 		
 		if (cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
-			strcpy(verb, "被困住了");
+			strcpy(verb, "被困在");
 			subjectMoving = false;
 		} else if (monst->bookkeepingFlags & MONST_CAPTIVE) {
-			strcpy(verb, "被锁住了");
+			strcpy(verb, "被锁在");
 			subjectMoving = false;
 		} else if (monst->status[STATUS_PARALYZED]) {
-			strcpy(verb, "被麻痹了");
+			strcpy(verb, "被麻痹在");
 			subjectMoving = false;
 		} else if (monst->status[STATUS_STUCK]) {
-			strcpy(verb, "被缠住了");
+			strcpy(verb, "被缠住在");
 			subjectMoving = false;
 		} else if (monst->status[STATUS_LEVITATING]) {
-			strcpy(verb, (subjectMoving ? "飞行" : "悬浮在"));
+			strcpy(verb, (subjectMoving ? "飞行在" : "悬浮在"));
 			strcpy(preposition, "上方");
 			prepositionLocked = true;
 		} else if (monsterCanSubmergeNow(monst)) {
-			strcpy(verb, (subjectMoving ? "在潜出" : "在漂浮"));
+			strcpy(verb, (subjectMoving ? "出现在" : "漂浮在"));
 		} else if (cellHasTerrainFlag(x, y, T_MOVES_ITEMS) && !(monst->info.flags & MONST_SUBMERGES)) {
-			strcpy(verb, (subjectMoving ? "在游泳" : "在挣扎"));
+			strcpy(verb, (subjectMoving ? "游在" : "挣扎在"));
 		} else if (cellHasTerrainFlag(x, y, T_AUTO_DESCENT)) {
 			strcpy(verb, "停在了");
 			strcpy(preposition, "上方");
 			prepositionLocked = true;
 			subjectMoving = false;
 		} else if (monst->status[STATUS_CONFUSED]) {
-			strcpy(verb, "被混乱了");
+			strcpy(verb, "被混乱在");
 		} else if ((monst->info.flags & MONST_RESTRICTED_TO_LIQUID)
 				   && !cellHasTMFlag(monst->xLoc, monst->yLoc, TM_ALLOWS_SUBMERGING)) {
-			strcpy(verb, "正躺着");
+			strcpy(verb, "正躺在");
 			subjectMoving = false;
 		} else if (monst->info.flags & MONST_IMMOBILE) {
-			strcpy(verb, "正在休息");
+			strcpy(verb, "正休息在");
 		} else {
 			switch (monst->creatureState) {
 				case MONSTER_SLEEPING:
-					strcpy(verb, "正在睡眠");
+					strcpy(verb, "正睡在");
 					subjectMoving = false;
 					break;
 				case MONSTER_WANDERING:
-					strcpy(verb, subjectMoving ? "正在游荡" : "站在原地");
+					strcpy(verb, subjectMoving ? "正在游荡在" : "站在");
 					break;
 				case MONSTER_FLEEING:
-					strcpy(verb, subjectMoving ? "正在逃跑" : "站在原地");
+					strcpy(verb, subjectMoving ? "正在逃向" : "站在");
 					break;
 				case MONSTER_TRACKING_SCENT:
-					strcpy(verb, subjectMoving ? "正在移动" : "站在原地");
+					strcpy(verb, subjectMoving ? "正在走向" : "站在");
 					break;
 				case MONSTER_ALLY:
-					strcpy(verb, subjectMoving ? "在跟随这你" : "站在原地");
+					strcpy(verb, subjectMoving ? "在跟随你走向" : "站在");
 					break;
 				default:
-					strcpy(verb, "站在原地");
+					strcpy(verb, "站在");
 					break;
 			}
 		}
