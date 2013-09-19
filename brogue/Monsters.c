@@ -1534,7 +1534,7 @@ void decrementMonsterStatus(creature *monst) {
                     if (!(monst->status[STATUS_IMMUNE_TO_FIRE]) && inflictDamage(monst, damage, &orange)) {
                         if (canSeeMonster(monst)) {
                             monsterName(buf, monst, true);
-                            sprintf(buf2, "%s被%s。",
+                            sprintf(buf2, "%s被烧%s。",
                                     buf,
                                     (monst->info.flags & MONST_INANIMATE) ? "尽了" : "死了");
                             messageWithColor(buf2, messageColorFromVictim(monst), false);
