@@ -1678,7 +1678,7 @@ void itemDetails(char *buf, item *theItem) {
 					sprintf(buf2, "这件武器的真实力量在你用它杀死%i个敌人后会显现出来。",
 							theItem->charges);
 				} else {
-					sprintf(buf2, "这件装备的真是力量在你穿着它%i回合后会显现出来。",
+					sprintf(buf2, "这件装备的真实力量在你穿着它%i回合后会显现出来。",
 							theItem->charges);
 				}
 				strcat(buf, buf2);

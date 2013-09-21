@@ -3422,7 +3422,7 @@ void printHighScores(boolean hiliteMostRecent) {
 
 void printSeed() {
 	char buf[COLS];
-	sprintf(buf, "Dungeon seed #%lu; turn #%lu", rogue.seed, rogue.playerTurnNumber);
+	sprintf(buf, "随机数种子 #%lu； 回合数 #%lu", rogue.seed, rogue.playerTurnNumber);
 	message(buf, false);	
 }
 

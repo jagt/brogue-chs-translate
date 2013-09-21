@@ -740,8 +740,8 @@ void mainBrogueJunction() {
 						} else {
 							sprintf(seedDefault, "%lu", previousGameSeed);
 						}
-						if (getInputTextString(buf, "输入指定的随机数种子来生成地下城：",
-											   log10(ULONG_MAX) + 1,
+						if (getInputTextString(buf, "输入随机数种子生成地下城：",
+											   log10(ULONG_MAX) + 1 + 6, // pad for header text
 											   seedDefault,
 											   "",
 											   TEXT_INPUT_NUMBERS,
