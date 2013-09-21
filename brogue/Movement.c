@@ -151,7 +151,7 @@ void describedItemCategory(short theCategory, char *buf) {
 			strcpy(buf, "一个指环");
 			break;
 		case CHARM:
-			strcpy(buf, "一件法器");
+			strcpy(buf, "一件魔导器");
 			break;
 		case AMULET:
 			strcpy(buf, "Amulet of Yendor");

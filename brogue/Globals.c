@@ -2075,7 +2075,7 @@ const itemTable armorTable[NUMBER_ARMOR_KINDS] = {
 	{"板甲",			"", "", 10, 1300,		19, {110,110,0},	true, false, "华丽而厚重的板甲，虽然很拉风但是其重量不是所有人都能承受的。"}
 };
 
-const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30*2] = {
+const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30] = {
 	"加速",
 	"偿还",
 	"麻痹",
@@ -2088,7 +2088,7 @@ const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30*2] = {
 	"复制"
 };
 
-const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30*2] = {
+const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30] = {
 	"召唤",
 	"散射",
 	"保护",

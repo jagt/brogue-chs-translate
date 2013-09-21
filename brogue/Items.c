@@ -1959,13 +1959,13 @@ void itemDetails(char *buf, item *theItem) {
                                 strcpy(buf2, "这件护甲能吸吸收爆炸产生的伤害，但你仍然会被烧到。");
                                 break;
 							case A_BURDEN:
-								strcpy(buf2, "每次你受到攻击这件护甲都会有10%%的概率变得更重。");
+								strcpy(buf2, "每次你受到攻击这件护甲都会有10%的概率变得更重。");
 								break;
 							case A_VULNERABILITY:
 								strcpy(buf2, "这件护甲会使你受到的伤害提高两倍。");
 								break;
                             case A_IMMOLATION:
-								strcpy(buf2, "每次你受到伤害这件护甲都有10%%的概率产生爆炸。");
+								strcpy(buf2, "每次你受到伤害这件护甲都有10%的概率产生爆炸。");
 								break;
 							default:
 								break;
