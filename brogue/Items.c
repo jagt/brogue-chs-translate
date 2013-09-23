@@ -667,9 +667,9 @@ void removeItemFrom(short x, short y) {
 
 // adds the item at (x,y) to the pack
 void pickUpItemAt(short x, short y) {
-	item *theItem;
+	item *theItem, *retItem;
 	char buf[COLS*3], buf2[COLS*3];
-	
+
 	rogue.disturbed = true;
 	
 	// find the item
@@ -712,11 +712,13 @@ void pickUpItemAt(short x, short y) {
 			return;
 		}
 		
-		theItem = addItemToPack(theItem);
+		retItem = addItemToPack(theItem);
 		
-		itemName(theItem, buf2, true, true, NULL); // include suffix, article
+		itemName(retItem, buf2, true, true, NULL); // include suffix, article
 		
-		sprintf(buf, "你获得了%s（%c）。", buf2, theItem->inventoryLetter);
+		sprintf(buf, "你%s%s（%c）。",
+			(theItem->quantity == retItem->quantity) ? "获得了" : "现在有", // differentiate stacking and get new items
+			buf2, retItem->inventoryLetter);
 		messageWithColor(buf, &itemMessageColor, false);
 		
 		removeItemFrom(x, y); // triggers tiles with T_PROMOTES_ON_ITEM_PICKUP
@@ -5435,7 +5437,7 @@ void apply(item *theItem, boolean recordCommands) {
 			}
 			player.status[STATUS_NUTRITION] = min(foodTable[theItem->kind].strengthRequired + player.status[STATUS_NUTRITION], STOMACH_SIZE);
 			if (theItem->kind == RATION) {
-				messageWithColor("嗯味道很不错。", &itemMessageColor, false);
+				messageWithColor("嗯，味道很不错。", &itemMessageColor, false);
 			} else {
 				messageWithColor("这个芒果相当美味！", &itemMessageColor, false);
 			}
