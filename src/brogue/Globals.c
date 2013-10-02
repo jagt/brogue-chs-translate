@@ -425,7 +425,7 @@ const floorTileType tileCatalog[NUMBER_TILETYPES] = {
 	{OMEGA_CHAR,	&lightBlue,				&firstStairsBackColor,	30,	0,	DF_PLAIN_FIRE,	0,			DF_REPEL_CREATURES, 0,			NO_LIGHT,		(T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_SURFACE_EFFECTS), (TM_PROMOTES_ON_STEP | TM_STAND_IN_TILE | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT | TM_BRIGHT_MEMORY), "地牢出口",		"离开地牢的大门被莫名的一股魔法的力量紧紧封锁了起来。"},
 	{OMEGA_CHAR,	&wallCrystalColor,		&firstStairsBackColor,	30,	0,	DF_PLAIN_FIRE,	0,			DF_REPEL_CREATURES, 0,			INCENDIARY_DART_LIGHT,		(T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_SURFACE_EFFECTS), (TM_PROMOTES_ON_STEP | TM_STAND_IN_TILE | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT | TM_BRIGHT_MEMORY), "传送门",		"传送门里发出不断变动的光芒。"},
 	{0xe5,		&torchColor,			&wallBackColor,			0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				TORCH_LIGHT,	(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE),														"固定在墙上的火把",	"火把被稳固的固定在了墙上，你能听到石炭燃烧的声音。"},
-	{0xe6,		&wallCrystalForeColor,		&wallCrystalColor,		0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				CRYSTAL_WALL_LIGHT,(T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_GAS | T_OBSTRUCTS_SURFACE_EFFECTS | T_OBSTRUCTS_DIAGONAL_MOVEMENT), (TM_STAND_IN_TILE | TM_REFLECTS_BOLTS),"水晶色法阵", "光滑的表面下发出璀璨的光芒。"},
+	{0xe6,		&wallCrystalForeColor,		&wallCrystalColor,		0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				CRYSTAL_WALL_LIGHT,(T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_GAS | T_OBSTRUCTS_SURFACE_EFFECTS | T_OBSTRUCTS_DIAGONAL_MOVEMENT), (TM_STAND_IN_TILE | TM_REFLECTS_BOLTS),"水晶墙", "光滑的墙壁内发出璀璨的光芒。"},
 	{0xe7,		&gray,					&floorBackColor,		10,	0,	DF_PLAIN_FIRE,	0,			DF_OPEN_PORTCULLIS,	0,			NO_LIGHT,		(T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_ITEMS), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED | TM_LIST_IN_SIDEBAR | TM_VISUALLY_DISTINCT), "铁栅门",	"上面的钢筋看起参差不齐，但仍是被坚挺的固定住。"},
 	{FLOOR_CHAR,	&floorForeColor,		&floorBackColor,		95,	0,	DF_PLAIN_FIRE,	0,			DF_ACTIVATE_PORTCULLIS,0,		NO_LIGHT,		(0), (TM_VANISHES_UPON_PROMOTION | TM_IS_WIRED),                                                    "地面",			""},
 	{0xe8,		&doorForeColor,			&floorBackColor,		10,	100,DF_WOODEN_BARRICADE_BURN,0,	DF_ADD_WOODEN_BARRICADE,10000,	NO_LIGHT,		(T_OBSTRUCTS_ITEMS | T_IS_FLAMMABLE), (TM_STAND_IN_TILE | TM_VANISHES_UPON_PROMOTION | TM_VISUALLY_DISTINCT),"木质栅栏", "这些木质的栅栏看起来很坚固，但上面覆满了由于干燥而裂开的痕迹。感觉很容易就会烧起来。"},
@@ -1489,7 +1489,7 @@ const monsterWords monsterText[NUMBER_MONSTER_KINDS] = {
 	{"电鳗潜藏在湖中深处，等待这它的猎物踏入水中。",
 		"正在吃着", "在吃着",
 		{"电击了", "咬了", {0}}},
-	{"猴子很喜欢从路过的冒险者身上盗取发光的东西。",
+	{"猴子喜欢从路过的冒险者身上盗取发光的东西。",
 		"正在观察", "正在观察",
 		{"拧了", "咬了", "用拳头攻击", {0}}},
 	{"飞鱼看起来是半透明的，里面的剧毒气体只似乎随时都要喷出来。",
@@ -1514,7 +1514,7 @@ const monsterWords monsterText[NUMBER_MONSTER_KINDS] = {
 	{"地精搭起来这些图腾，并赋予了它萨满的力量。",
 		"在凝视着", "在凝视着",
 		{"攻击了", {0}}},
-	{"全身都是粉红色的史莱姆在地面上蠕动。",
+	{"全身都是粉红色的史莱姆在地面上蠕动着。",
 		"正在吸收", "在吞噬着",
 		{"弄脏了", "粘到了", "弄湿了"}},
 	{"这种巨大的蟾蜍可以分泌出一种能让人产生幻觉的毒素。",
@@ -2075,7 +2075,7 @@ const itemTable armorTable[NUMBER_ARMOR_KINDS] = {
 	{"板甲",			"", "", 10, 1300,		19, {110,110,0},	true, false, "华丽而厚重的板甲，虽然很拉风但是其重量不是所有人都能承受的。"}
 };
 
-const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30*2] = {
+const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30] = {
 	"加速",
 	"偿还",
 	"麻痹",
@@ -2088,7 +2088,7 @@ const char weaponRunicNames[NUMBER_WEAPON_RUNIC_KINDS][30*2] = {
 	"复制"
 };
 
-const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30*2] = {
+const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30] = {
 	"召唤",
 	"散射",
 	"保护",
@@ -2107,7 +2107,7 @@ itemTable scrollTable[NUMBER_SCROLL_KINDS] = {
 	{"鉴定",					itemTitles[1], "",	30,	300,	0,{0,0,0}, false, false, "鉴定卷轴能永久性的鉴定一件物品，被鉴定的物品所有的属性都会再起描述中被显示出来。"},
 	{"传送",					itemTitles[2], "",	10,	500,	0,{0,0,0}, false, false, "传送卷轴能立即将使用者传送到同一层的另一个随机地方。你可以用它来逃出危险的状况，但被传送到得地方有可能会更危险。"},
 	{"移除诅咒",				itemTitles[3], "",	15,	150,	0,{0,0,0}, false, false, "这件卷轴上得咒语能书剑将所有物品上的邪恶诅咒移除。"},
-	{"充能",					itemTitles[4], "",	12,	375,	0,{0,0,0}, false, false, "充能卷轴能将你身上所有的法杖和法器恢复到最开始的使用状态，并增加额外的一格能量。"},
+	{"充能",					itemTitles[4], "",	12,	375,	0,{0,0,0}, false, false, "充能卷轴能将你身上所有的法杖和魔导器恢复到最开始的使用状态，并增加额外的一格能量。"},
 	{"保护护甲",				itemTitles[5], "",	10,	400,	0,{0,0,0}, false, false, "使用这件卷轴能保护你当前穿着的护甲不再会被酸液腐蚀。"},
 	{"保护武器",				itemTitles[6], "",	10,	400,	0,{0,0,0}, false, false, "使用这件卷轴能保护你当前装备的武器不再会被酸液腐蚀。"},
 	{"魔法地图",				itemTitles[7], "",	12,	500,	0,{0,0,0}, false, false, "使用了这件卷轴后，你的脑海中会突然浮现出这一层地牢中的地形结构，包括隐藏的房间和密道也能被看到。当然怪物和物品的位置还是需要靠你自己来找。"},
@@ -2145,7 +2145,7 @@ itemTable wandTable[NUMBER_WAND_KINDS] = {
 	{"支配",				itemMetals[4], "",	1,	1000,	0,{1,2,1}, false, false, "支配魔棒能永久性支配目标，使其变为友军。但是魔棒只能对濒死的敌人有效。"},
 	{"牵引",				itemMetals[5], "",	1,	500,	0,{2,4,1}, false, false, "魔棒能发出一股力量将远处的目标瞬间吸引到你可以攻击到得距离。"},
 	{"复制",				itemMetals[6], "",	1,	700,	0,{1,2,1}, false, false, "魔棒发出的能量能够将目标完美的复制！对敌人使用显然不太明智，但是对友军使用效果会比较好。"},
-	{"隐身",				itemMetals[7], "",	1,	100,	0,{3,5,1}, false, false, "隐身魔棒能让目标完全隐形，只有心灵感应或者当目标陷入烟雾中的时候才能看到它的位置。"},
+	{"隐身",				itemMetals[7], "",	1,	100,	0,{3,5,1}, false, false, "隐身魔棒能让目标完全隐形，只有心灵感应状态下或者当目标陷入烟雾中的时候才能看到它的位置。"},
 };
 
 itemTable staffTable[NUMBER_STAFF_KINDS] = {
@@ -2259,7 +2259,7 @@ const char monsterAbilityFlagDescriptions[33][COLS*3] = {
 	"能释放闪电",									// MA_CAST_SPARK
 	"能释放火球术",								// MA_CAST_FIRE
 	"能释放减速",									// MA_CAST_SLOW
-	"能释放换乱法术",								// MA_CAST_DISCORD
+	"能释放混乱法术",								// MA_CAST_DISCORD
 	"能释放魅惑法术",								// MA_CAST_BECKONING
 	"能喷出炙热的的火焰",							// MA_BREATHES_FIRE
 	"可以发射黏人的网",							// MA_SHOOTS_WEBS

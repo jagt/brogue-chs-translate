@@ -102,11 +102,11 @@ WIN32_DLL = \
 
 WIN32_OBJS = $(patsubst src/%.c,winbuild/obj/%.o,${SOURCE})
 ifeq (${RELEASE},TRUE)
-WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -O2 -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable
-WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,windows -Wall
+WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -O2 -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -m32
+WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,windows -Wall -m32
 else
-WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -g -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable
-WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,console -g -Wall
+WIN32_CFLAGS = ${BASE_CFLAGS} ${WIN32_INCLUDE} -march=pentium-mmx -DBROGUE_SDL -g -Wall -Wno-format-zero-length -Wno-parentheses -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -m32
+WIN32_LDFLAGS = ${WIN32_LIBPATH} ${WIN32_LIB} -Wl,--subsystem,console -g -Wall -m32
 endif
 
 #WIN32_GCC = i686-w64-mingw32-gcc
@@ -147,7 +147,7 @@ winbuild/brogue.exe: ${WIN32_OBJS} winbuild/brogue.res
 	@${WIN32_GCC} -o $@ ${WIN32_OBJS} winbuild/brogue.res ${WIN32_LDFLAGS}
 
 winbuild/brogue.res: res/brogue-icon.ico build/brogue.rc
-	${WIN32_WINDRES} build/brogue.rc -O coff -o $@
+	${WIN32_WINDRES} build/brogue.rc -O coff -F pe-i386 -o $@
 
 winbuild:
 	@echo 'mkdir winbuild'

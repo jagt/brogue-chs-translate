@@ -667,9 +667,9 @@ void removeItemFrom(short x, short y) {
 
 // adds the item at (x,y) to the pack
 void pickUpItemAt(short x, short y) {
-	item *theItem;
+	item *theItem, *retItem;
 	char buf[COLS*3], buf2[COLS*3];
-	
+
 	rogue.disturbed = true;
 	
 	// find the item
@@ -712,11 +712,13 @@ void pickUpItemAt(short x, short y) {
 			return;
 		}
 		
-		theItem = addItemToPack(theItem);
+		retItem = addItemToPack(theItem);
 		
-		itemName(theItem, buf2, true, true, NULL); // include suffix, article
+		itemName(retItem, buf2, true, true, NULL); // include suffix, article
 		
-		sprintf(buf, "你获得了%s（%c）。", buf2, theItem->inventoryLetter);
+		sprintf(buf, "你%s%s（%c）。",
+			(theItem->quantity == retItem->quantity) ? "获得了" : "现在有", // differentiate stacking and get new items
+			buf2, retItem->inventoryLetter);
 		messageWithColor(buf, &itemMessageColor, false);
 		
 		removeItemFrom(x, y); // triggers tiles with T_PROMOTES_ON_ITEM_PICKUP
@@ -867,7 +869,7 @@ void updateFloorItems() {
             
             if (playerCanSeeOrSense(x, y)) {
                 itemName(theItem, buf, false, false, NULL);
-                sprintf(buf2, "这件%s被冲到了你视野之外！", buf);
+                sprintf(buf2, "这件%s消失在了你视野之外！", buf);
                 messageWithColor(buf2, &itemMessageColor, false);
             }
             theItem->flags |= ITEM_PREPLACED;
@@ -1592,7 +1594,7 @@ void itemDetails(char *buf, item *theItem) {
 						tableForItemCategory(theItem->category)[theItem->kind].flavor);
 				break;
 			case CHARM: // Should never be displayed.
-				strcat(buf2, "一件神器的法器！");
+				strcat(buf2, "一件神器的魔导器！");
 				break;
 			case AMULET:
 				strcpy(buf2, "这就是传说中的护身符。\
@@ -1678,7 +1680,7 @@ void itemDetails(char *buf, item *theItem) {
 					sprintf(buf2, "这件武器的真实力量在你用它杀死%i个敌人后会显现出来。",
 							theItem->charges);
 				} else {
-					sprintf(buf2, "这件装备的真是力量在你穿着它%i回合后会显现出来。",
+					sprintf(buf2, "这件装备的真实力量在你穿着它%i回合后会显现出来。",
 							theItem->charges);
 				}
 				strcat(buf, buf2);
@@ -1959,13 +1961,13 @@ void itemDetails(char *buf, item *theItem) {
                                 strcpy(buf2, "这件护甲能吸吸收爆炸产生的伤害，但你仍然会被烧到。");
                                 break;
 							case A_BURDEN:
-								strcpy(buf2, "每次你受到攻击这件护甲都会有10%%的概率变得更重。");
+								strcpy(buf2, "每次你受到攻击这件护甲都会有10%的概率变得更重。");
 								break;
 							case A_VULNERABILITY:
 								strcpy(buf2, "这件护甲会使你受到的伤害提高两倍。");
 								break;
                             case A_IMMOLATION:
-								strcpy(buf2, "每次你受到伤害这件护甲都有10%%的概率产生爆炸。");
+								strcpy(buf2, "每次你受到伤害这件护甲都有10%的概率产生爆炸。");
 								break;
 							default:
 								break;
@@ -2175,9 +2177,9 @@ void itemDetails(char *buf, item *theItem) {
 			
 			// equipped? cursed?
 			if (theItem->flags & ITEM_EQUIPPED) {
-				sprintf(buf2, "\n\n你的手指上正带着%s。%s。",
+				sprintf(buf2, "\n\n你的手指上正戴着这件%s%s",
 						theName,
-						((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法将它取下来。" : ""));
+						((theItem->flags & ITEM_CURSED) ? "，而且由于它是被诅咒的，你现在没有办法将它取下来。" : "。"));
 				strcat(buf, buf2);
 			} else if (((theItem->flags & (ITEM_IDENTIFIED | ITEM_MAGIC_DETECTED)) || rogue.playbackOmniscience)
 					   && (theItem->flags & ITEM_CURSED)) {
@@ -2192,56 +2194,56 @@ void itemDetails(char *buf, item *theItem) {
 			enchant = theItem->enchant1;
             switch (theItem->kind) {
                 case CHARM_HEALTH:
-                    sprintf(buf2, "\n\n使用后，它能在你%i%%的生命值，在%i回合后才能重新使用。（如果这件法器被增强，回复效果变为%i%%，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它能在你%i%%的生命值，在%i回合后才能重新使用。（如果这件魔导器被增强，回复效果变为%i%%，冷却回合数将变为%i）。",
                             charmHealing(enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmHealing(enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_PROTECTION:
-                    sprintf(buf2, "\n\n使用后，它能对你释放最多持续20回合的魔法护盾，最多能吸收%i点伤害，在%i回合后才能重新使用。（如果这件法器被增强，吸收伤害提升到%i，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它能对你释放最多持续20回合的魔法护盾，最多能吸收%i点伤害，在%i回合后才能重新使用。（如果这件魔导器被增强，吸收伤害提升到%i，冷却回合数将变为%i）。",
                             charmProtection(enchant) / 10,
                             charmRechargeDelay(theItem->kind, enchant),
                             charmProtection(enchant + 1) / 10,
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_HASTE:
-                    sprintf(buf2, "\n\n使用后，它能对你释放持续%i回合的加速法术，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它能对你释放持续%i回合的加速法术，在%i回合后才能重新使用。（如果这件魔导器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_FIRE_IMMUNITY:
-                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内对火焰免疫，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内对火焰免疫，在%i回合后才能重新使用。（如果这件魔导器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_INVISIBILITY:
-                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内维持隐身，期间在两格以外的怪物无法发现你的踪迹，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它能使你在%i回合内维持隐身，期间在两格以外的怪物无法发现你的踪迹，在%i回合后才能重新使用。（如果这件魔导器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_TELEPATHY:
-                    sprintf(buf2, "\n\n使用后，它能让你在%i回合内保持心灵感应效果，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它能让你在%i回合内保持心灵感应效果，在%i回合后才能重新使用。（如果这件魔导器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_LEVITATION:
-                    sprintf(buf2, "\n\n使用后，它能让你悬浮在空中，效果持续%i回合，在%i回合后才能重新使用。（如果这件法器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它能让你悬浮在空中，效果持续%i回合，在%i回合后才能重新使用。（如果这件魔导器被增强，持续时间将提升到%i回合，冷却回合数将变为%i）。",
                             charmEffectDuration(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant),
                             charmEffectDuration(theItem->kind, enchant + 1),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_SHATTERING:
-                    sprintf(buf2, "\n\n使用后，它会将附近的墙壁溶解掉，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）",
+                    sprintf(buf2, "\n\n使用后，它会将附近的墙壁溶解掉，在%i回合后才能重新使用。（如果这件魔导器被增强，冷却回合数将变为%i）",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
@@ -2251,17 +2253,17 @@ void itemDetails(char *buf, item *theItem) {
 //                            charmRechargeDelay(theItem->kind, enchant + 1));
 //                    break;
                 case CHARM_TELEPORTATION:
-                    sprintf(buf2, "\n\n使用后，它将把你传送到当前地牢的一个随机位置，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它将把你传送到当前地牢的一个随机位置，在%i回合后才能重新使用。（如果这件魔导器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_RECHARGING:
-                    sprintf(buf2, "\n\n使用后，它将对你身上的法杖进行充能（不包括法器和魔棒），在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它将对你身上的法杖进行充能（不包括魔导器和魔棒），在%i回合后才能重新使用。（如果这件魔导器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
                 case CHARM_NEGATION:
-                    sprintf(buf2, "\n\n使用后，它将对你视野范围内的生物和地上的物品产生反魔法效果，在%i回合后才能重新使用。（如果这件法器被增强，冷却回合数将变为%i）。",
+                    sprintf(buf2, "\n\n使用后，它将对你视野范围内的生物和地上的物品产生反魔法效果，在%i回合后才能重新使用。（如果这件魔导器被增强，冷却回合数将变为%i）。",
                             charmRechargeDelay(theItem->kind, enchant),
                             charmRechargeDelay(theItem->kind, enchant + 1));
                     break;
@@ -3384,7 +3386,7 @@ void rechargeItems(unsigned long categories) {
             }
         }
         if (z) {
-            strcat(buf, "法器");
+            strcat(buf, "魔导器");
         }
         strcat(buf, "。");
         message(buf, false);
@@ -5360,7 +5362,7 @@ void useCharm(item *theItem) {
             message("你突然飘起来，悬浮在了半空中！", false);
             break;
         case CHARM_SHATTERING:
-            messageWithColor("这件法器突然发出一阵蓝色的光，击穿了附近的墙壁！", &itemMessageColor, false);
+            messageWithColor("这件魔导器突然发出一阵蓝色的光，击穿了附近的墙壁！", &itemMessageColor, false);
             crystalize(charmShattering(theItem->enchant1));
             break;
 //        case CHARM_CAUSE_FEAR:
@@ -5373,7 +5375,7 @@ void useCharm(item *theItem) {
             rechargeItems(STAFF);
             break;
         case CHARM_NEGATION:
-            negationBlast("这件法器");
+            negationBlast("这件魔导器");
             break;
         default:
             break;
@@ -5435,7 +5437,7 @@ void apply(item *theItem, boolean recordCommands) {
 			}
 			player.status[STATUS_NUTRITION] = min(foodTable[theItem->kind].strengthRequired + player.status[STATUS_NUTRITION], STOMACH_SIZE);
 			if (theItem->kind == RATION) {
-				messageWithColor("嗯味道很不错。", &itemMessageColor, false);
+				messageWithColor("嗯，味道很不错。", &itemMessageColor, false);
 			} else {
 				messageWithColor("这个芒果相当美味！", &itemMessageColor, false);
 			}
@@ -6173,9 +6175,10 @@ void unequip(item *theItem) {
 		if (theItem->category & RING) {
 			updateRingBonuses();
 		}
-		itemName(theItem, buf2, true, true, NULL);
+		// no need for article now
+		itemName(theItem, buf2, true, false, NULL);
 		if (strLenWithoutEscapes(buf2) > 52) {
-			itemName(theItem, buf2, false, true, NULL);
+			itemName(theItem, buf2, false, false, NULL);
 		}
 		confirmMessages();
 		updateEncumbrance();
