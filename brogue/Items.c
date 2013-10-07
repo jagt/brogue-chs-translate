@@ -725,7 +725,7 @@ void pickUpItemAt(short x, short y) {
 	} else {
 		theItem->flags |= ITEM_PLAYER_AVOIDS; // explore shouldn't try to pick it up more than once.
 		itemName(theItem, buf2, false, true, NULL); // include article
-		sprintf(buf, "你的身上已没有位置来存放%s。", buf2);
+		sprintf(buf, "你的身上已没有位置来存放这里的%s。", buf2);
 		message(buf, false);
 	}
 }
@@ -1714,7 +1714,7 @@ void itemDetails(char *buf, item *theItem) {
 					}
 					accuracyChange	= (new * 100 / current) - 100 + FLOAT_FUDGE;
 					damageChange	= (newDamage * 100 / currentDamage) - 100 + FLOAT_FUDGE;
-					sprintf(buf2, "使用这件%s%s将%s你%s%i%%%s的命中率, 同时%s%s%i%%%s的攻击伤害。",
+					sprintf(buf2, "装备这件%s%s将%s你%s%i%%%s的命中率, 同时%s%s%i%%%s的攻击伤害。",
 							theName,
 							((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) ? "" : "（不考虑隐藏属性的影响）",
 							(((short) accuracyChange) < 0) ? "减少" : "增加",
@@ -6182,7 +6182,7 @@ void unequip(item *theItem) {
 		}
 		confirmMessages();
 		updateEncumbrance();
-		sprintf(buf, "现在你不再%s这件%s。", (theItem->category & WEAPON ? "装备着" : "穿着"), buf2);
+		sprintf(buf, "现在你不再%s这件%s。", (theItem->category & ARMOR ? "穿着" : "装备着"), buf2);
 		messageWithColor(buf, &itemMessageColor, false);
 	}
 	playerTurnEnded();
