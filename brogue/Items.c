@@ -2161,7 +2161,7 @@ void itemDetails(char *buf, item *theItem) {
                     }
                 }
 			} else {
-				sprintf(buf2, "\n\n这件指环的隐藏属性将在装备%i回合后被发现。",
+				sprintf(buf2, "\n\n这件指环的隐藏属性将在装备%i回合后被发现",
 						theItem->charges);
 				strcat(buf, buf2);
                 
